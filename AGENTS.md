@@ -235,8 +235,28 @@ This project uses spec-driven TDD. For every new feature:
 
 1. Read the relevant spec doc
 2. Write tests first (or alongside) — never after
-3. Tests must cover the cases listed in `docs/product/user-stories-tdd-plan.md`
-4. The compatibility engine must have 100% coverage of scoring and confidence cases
+3. Run the test and verify it fails (red state) — take a Playwright screenshot
+4. Implement the feature
+5. Run the test and verify it passes (green state) — take a Playwright screenshot
+6. Save both screenshots to `docs/tdd-screenshots/` and embed them in `docs/tdd-screenshots/[story-id].md`
+7. Tests must cover the cases listed in `docs/product/user-stories-tdd-plan.md`
+8. The compatibility engine must have 100% coverage of scoring and confidence cases
+
+**Screenshot format** (`docs/tdd-screenshots/[story-id].md`):
+
+```markdown
+## SCORE-001: Kids compatibility — match
+
+**What this test verifies:** User has kids, dog isKidsOk = true → score is 18/18
+
+### Red (failing — before implementation)
+![SCORE-001 red](SCORE-001-red.png)
+
+### Green (passing — after implementation)
+![SCORE-001 green](SCORE-001-green.png)
+```
+
+See `RULES.md` Rule 1 for the complete screenshot workflow.
 
 ---
 

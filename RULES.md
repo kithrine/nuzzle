@@ -10,12 +10,20 @@ Any agent working on this codebase must follow them.
 For every feature:
 
 1. Write the test
-2. Verify the test fails
-3. Implement the feature
-4. Verify the test passes
-5. Refactor if needed
+2. Verify the test fails (red state)
+3. **Take a Playwright screenshot of the failing test output — save to `docs/tdd-screenshots/`**
+4. Implement the feature
+5. Verify the test passes (green state)
+6. **Take a Playwright screenshot of the passing test output — save to `docs/tdd-screenshots/`**
+7. **Add both screenshots to the story's TDD markdown file at `docs/tdd-screenshots/[story-id].md`**
+8. Refactor if needed
 
 No production code should be written before the corresponding test exists.
+
+**Screenshot convention:**
+- File naming: `[test-id]-red.png` and `[test-id]-green.png`
+- Markdown file per story: `docs/tdd-screenshots/[story-id].md`
+- Markdown file format: embed both screenshots with test ID as heading and a one-line description of what the test verifies
 
 Test cases for the compatibility engine are enumerated in `docs/product/user-stories-tdd-plan.md`.
 The engine test suite must also cover every case in `docs/architecture/compatibility-engine-spec.md` Section 10.
@@ -218,6 +226,8 @@ A task is complete only when all of the following are true:
 - Documentation is updated if behavior changed
 - Documentation reviewed for consistency
 - No specification conflicts introduced
+- **Playwright screenshots captured for both red (failing) and green (passing) test states**
+- **Screenshots saved to `docs/tdd-screenshots/` and embedded in the story's TDD markdown file**
 
 ---
 
@@ -226,6 +236,8 @@ A task is complete only when all of the following are true:
 Use **Vitest + React Testing Library + Playwright**. Do not use Jest.
 
 AI safety tests must verify: the scoring engine never calls AI, AI cannot mutate the score, and search result generation does not trigger AI calls.
+
+Playwright is used for both E2E tests and for **capturing TDD screenshots**. Every test run must produce a red screenshot (failing) and a green screenshot (passing) per test ID. See Rule 1 for the screenshot workflow and naming convention.
 
 ---
 
