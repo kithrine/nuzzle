@@ -21,11 +21,22 @@ For every feature:
 No production code should be written before the corresponding test exists.
 
 **Screenshot convention:**
-- File naming: `[test-id]-red.png` and `[test-id]-green.png`
+- File naming: `[story-id]-red.png` and `[story-id]-green.png`
 - Markdown file per story: `docs/tdd-screenshots/[story-id].md`
-- Markdown file format: embed both screenshots with test ID as heading and a one-line description of what the test verifies
+- Markdown file format: embed both screenshots with a one-line description of what changed
 - Screenshots must capture the **test-runner output** (the terminal/console output of the test run), not the rendered app page
-- Use the capture tool at `docs/tdd-screenshots/_src/capture.mjs` to generate these — it runs the real test commands and renders their real output into the screenshot. See `docs/tdd-screenshots/_src/README.md` for the exact step-by-step procedure (including the Windows/fnm prerequisite and how to backfill a red screenshot for an already-implemented feature).
+- Use the capture tool at `docs/tdd-screenshots/_src/capture.mjs` to generate these — it runs the real test commands and renders their real output into the screenshot. See `docs/tdd-screenshots/_src/README.md` for the exact step-by-step procedure (including the Windows/fnm prerequisite).
+
+**Red screenshot must show real assertion failures — not import errors:**
+
+Before capturing the red screenshot, always verify the test output shows `Tests: N failed`, not `Tests: no tests`. If tests fail to import (e.g. "Cannot find module"), create **minimal stubs** for each missing export so the module graph resolves, the tests run, and assertions fail meaningfully:
+
+```tsx
+// stub — real implementation intentionally absent
+export function DogCard() { return null; }
+```
+
+Capture the red screenshot only after assertions are actually failing. Then replace stubs with the real implementation and capture green.
 
 Test cases for the compatibility engine are enumerated in `docs/product/user-stories-tdd-plan.md`.
 The engine test suite must also cover every case in `docs/architecture/compatibility-engine-spec.md` Section 10.
