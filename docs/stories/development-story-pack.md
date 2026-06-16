@@ -652,3 +652,4 @@ A story is complete when **all** of the following are true:
 7. Spec doc requirements satisfied (linked in each story above)
 8. Feature matches specification — implementation never overrides spec
 9. Code reviewed (self-review at minimum for solo development)
+10. **Playwright screenshots captured for every test in this story — red (failing) state before implementation, green (passing) state after — saved to `docs/tdd-screenshots/[story-id].md`**
