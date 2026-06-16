@@ -1,0 +1,98 @@
+import { ansiToHtml } from "./ansi-to-html.mjs";
+
+const ICONS = {
+  globe: `<svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="#5f6368" stroke-width="1.3"><circle cx="8" cy="8" r="6.5"/><path d="M1.5 8h13M8 1.5c2 2 2 11 0 13M8 1.5c-2 2-2 11 0 13"/></svg>`,
+  caret: `<svg viewBox="0 0 10 6" width="8" height="5" fill="none" stroke="#5f6368" stroke-width="1.4"><path d="M1 1l4 3.5L9 1"/></svg>`,
+  pencil: `<svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="#5f6368" stroke-width="1.2"><path d="M11 1.8 14.2 5 5 14.2 1.5 14.5 1.8 11z"/></svg>`,
+  flag: `<svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="#5f6368" stroke-width="1.2"><path d="M3 1.5v13"/><path d="M3 2.2c2.5-1.6 5 1.6 7.5 0v6c-2.5 1.6-5-1.6-7.5 0"/></svg>`,
+  refresh: `<svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="#5f6368" stroke-width="1.2"><path d="M13.5 8a5.5 5.5 0 1 1-1.8-4.1M13.5 1.5v3.2h-3.2"/></svg>`,
+  kebab: `<svg viewBox="0 0 4 16" width="4" height="14" fill="#5f6368"><circle cx="2" cy="2" r="1.4"/><circle cx="2" cy="8" r="1.4"/><circle cx="2" cy="14" r="1.4"/></svg>`,
+  close: `<svg viewBox="0 0 14 14" width="13" height="13" fill="none" stroke="#5f6368" stroke-width="1.4"><path d="M1.5 1.5l11 11M12.5 1.5l-11 11"/></svg>`,
+};
+
+function renderBlock({ command, output }) {
+  const body = ansiToHtml(output).replace(/\n/g, "<br/>");
+  return `<div class="cmd-line"><span class="prompt">$</span> <span class="cmd">${command}</span></div><div class="cmd-output">${body}</div>`;
+}
+
+/**
+ * Builds a full standalone HTML document that visually mimics a browser
+ * tab showing a local file (the convention used for these TDD screenshots),
+ * with a dark terminal panel underneath rendering real captured test-runner
+ * output (colors preserved from the real ANSI output).
+ */
+export function buildTerminalWindowHtml({ title, blocks }) {
+  const blocksHtml = blocks.map(renderBlock).join("\n");
+
+  return `<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<style>
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: transparent;
+    font-family: -apple-system, "Segoe UI", Arial, sans-serif;
+  }
+  .browser-window {
+    width: 860px;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid #d0d7de;
+    box-shadow: 0 6px 24px rgba(0,0,0,0.18);
+  }
+  .tab-bar {
+    background: #f6f8fa;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    border-bottom: 1px solid #d0d7de;
+  }
+  .tab-bar .title {
+    flex: 1;
+    font-size: 13px;
+    color: #1f2328;
+  }
+  .tab-bar .icons {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .terminal-body {
+    background: #181818;
+    color: #d0d7de;
+    padding: 20px 22px;
+    font-family: "Cascadia Code", "Consolas", "SF Mono", Menlo, monospace;
+    font-size: 13.5px;
+    line-height: 1.85;
+  }
+  .cmd-line { color: #d0d7de; }
+  .prompt, .cmd { color: #56d364; }
+  .cmd-output { color: #d0d7de; margin: 0 0 18px 0; white-space: pre-wrap; }
+  .cmd-output:last-child { margin-bottom: 0; }
+</style>
+</head>
+<body>
+  <div class="browser-window" id="window">
+    <div class="tab-bar">
+      ${ICONS.globe}
+      ${ICONS.caret}
+      <div class="title">${title}</div>
+      <div class="icons">
+        ${ICONS.pencil}
+        ${ICONS.flag}
+        ${ICONS.refresh}
+        ${ICONS.kebab}
+        ${ICONS.close}
+      </div>
+    </div>
+    <div class="terminal-body">
+      ${blocksHtml}
+    </div>
+  </div>
+</body>
+</html>`;
+}

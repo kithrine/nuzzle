@@ -24,6 +24,8 @@ No production code should be written before the corresponding test exists.
 - File naming: `[test-id]-red.png` and `[test-id]-green.png`
 - Markdown file per story: `docs/tdd-screenshots/[story-id].md`
 - Markdown file format: embed both screenshots with test ID as heading and a one-line description of what the test verifies
+- Screenshots must capture the **test-runner output** (the terminal/console output of the test run), not the rendered app page
+- Use the capture tool at `docs/tdd-screenshots/_src/capture.mjs` to generate these — it runs the real test commands and renders their real output into the screenshot. See `docs/tdd-screenshots/_src/README.md` for the exact step-by-step procedure (including the Windows/fnm prerequisite and how to backfill a red screenshot for an already-implemented feature).
 
 Test cases for the compatibility engine are enumerated in `docs/product/user-stories-tdd-plan.md`.
 The engine test suite must also cover every case in `docs/architecture/compatibility-engine-spec.md` Section 10.
