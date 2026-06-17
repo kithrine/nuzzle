@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { useUser } from "@clerk/nextjs";
 import type { NormalizedDog } from "@/lib/compatibility/types";
 import { SearchFilters, type FilterValues } from "@/components/SearchFilters";
 import { SearchResults } from "@/components/SearchResults";
@@ -42,6 +43,7 @@ function buildPageUrl(filters: FilterValues & { page: number }): string {
 export function SearchPageClient() {
   const searchParams = useSearchParams();
   const router = useRouter();
+  const { isSignedIn } = useUser();
 
   const initialFilters: FilterValues = {
     zip: searchParams.get("zip") ?? "",
@@ -53,6 +55,7 @@ export function SearchPageClient() {
   const initialPage = Number(searchParams.get("page") ?? "1");
 
   const [state, setState] = useState<SearchState>({ status: "idle" });
+  const [favoriteIds, setFavoriteIds] = useState<Set<string>>(new Set());
   const didAutoSearch = useRef(false);
 
   async function runSearch(filters: FilterValues, page: number) {
@@ -84,6 +87,17 @@ export function SearchPageClient() {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // Fetch favorites once for authenticated users to show correct initial heart state
+  useEffect(() => {
+    if (!isSignedIn) return;
+    fetch("/api/favorites")
+      .then((r) => r.json())
+      .then((favs: Array<{ provider: string; externalId: string }>) => {
+        setFavoriteIds(new Set(favs.map((f) => `${f.provider}-${f.externalId}`)));
+      })
+      .catch(() => {});
+  }, [isSignedIn]);
 
   function handleSubmit(filters: FilterValues) {
     router.push(buildPageUrl({ ...filters, page: 1 }));
@@ -120,7 +134,7 @@ export function SearchPageClient() {
 
       {state.status === "success" && (
         <>
-          <SearchResults results={state.results} zip={state.zip} />
+          <SearchResults results={state.results} zip={state.zip} favoriteIds={favoriteIds} />
           {state.hasMore && (
             <button onClick={handleNextPage}>Next Page</button>
           )}

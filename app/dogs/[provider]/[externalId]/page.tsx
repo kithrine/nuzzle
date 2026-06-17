@@ -42,5 +42,18 @@ export default async function DogDetailPage({
     explanation = await generateExplanation(compatibility.result, dog);
   }
 
-  return <DogDetailClient dog={dog} compatibility={compatibility} explanation={explanation} />;
+  const isFavorited = user
+    ? !!(await prisma.favorite.findUnique({
+        where: { userId_provider_externalId: { userId: user.id, provider, externalId } },
+      }))
+    : false;
+
+  return (
+    <DogDetailClient
+      dog={dog}
+      compatibility={compatibility}
+      explanation={explanation}
+      isFavorited={isFavorited}
+    />
+  );
 }

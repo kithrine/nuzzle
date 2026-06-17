@@ -14,9 +14,11 @@ type SearchResult = {
 export function SearchResults({
   results,
   zip,
+  favoriteIds,
 }: {
   results: SearchResult[];
   zip: string;
+  favoriteIds?: Set<string>;
 }) {
   if (results.length === 0) {
     return (
@@ -31,7 +33,12 @@ export function SearchResults({
       <p>Showing Nearby Dogs</p>
       <p>{results.length} dogs found</p>
       {results.map(({ dog, compatibility }) => (
-        <DogCard key={dog.externalId} dog={dog} compatibility={compatibility} />
+        <DogCard
+          key={dog.externalId}
+          dog={dog}
+          compatibility={compatibility}
+          isFavorited={favoriteIds?.has(`${dog.provider}-${dog.externalId}`) ?? false}
+        />
       ))}
     </div>
   );

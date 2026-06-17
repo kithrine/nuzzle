@@ -1,14 +1,20 @@
 "use client";
 
 import type { CompatibilityResult, NormalizedDog } from "@/lib/compatibility/types";
+import { FavoriteButton } from "@/components/FavoriteButton";
 
 type CompatibilityProp =
   | { available: false; teaser: string }
   | { available: true; result: CompatibilityResult };
 
-type Props = { dog: NormalizedDog; compatibility: CompatibilityProp; explanation?: string | null };
+type Props = {
+  dog: NormalizedDog;
+  compatibility: CompatibilityProp;
+  explanation?: string | null;
+  isFavorited?: boolean;
+};
 
-export function DogDetailClient({ dog, compatibility, explanation }: Props) {
+export function DogDetailClient({ dog, compatibility, explanation, isFavorited }: Props) {
   const breed = dog.breed ?? "Mixed Breed";
   const photo = dog.photos[0] ?? "";
 
@@ -89,6 +95,12 @@ export function DogDetailClient({ dog, compatibility, explanation }: Props) {
           </div>
         )}
       </section>
+
+      <FavoriteButton
+        provider={dog.provider}
+        externalId={dog.externalId}
+        initialFavorited={isFavorited}
+      />
 
       {dog.shelterUrl && (
         <a href={dog.shelterUrl} target="_blank" rel="noreferrer" onClick={handleShelterClick}>

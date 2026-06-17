@@ -4,6 +4,10 @@ import { render, screen, fireEvent } from "@testing-library/react";
 import { DogDetailClient } from "@/app/dogs/[provider]/[externalId]/DogDetailClient";
 import type { NormalizedDog, CompatibilityResult } from "@/lib/compatibility/types";
 
+vi.mock("@clerk/nextjs", () => ({
+  useUser: () => ({ isSignedIn: false, isLoaded: true, user: null }),
+}));
+
 const MOCK_DOG: NormalizedDog = {
   provider: "rescuegroups",
   externalId: "rg-123",

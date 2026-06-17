@@ -1,8 +1,12 @@
 // @vitest-environment jsdom
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { DogDetailClient } from "@/app/dogs/[provider]/[externalId]/DogDetailClient";
 import type { NormalizedDog, CompatibilityResult } from "@/lib/compatibility/types";
+
+vi.mock("@clerk/nextjs", () => ({
+  useUser: () => ({ isSignedIn: false, isLoaded: true, user: null }),
+}));
 
 const MOCK_DOG: NormalizedDog = {
   provider: "rescuegroups",
