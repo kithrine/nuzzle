@@ -2,6 +2,12 @@ import { NextRequest, NextResponse } from "next/server";
 import { searchRescueGroupsDogs } from "@/lib/rescuegroups/client";
 import { RateLimitError } from "@/lib/rescuegroups/types";
 import { normalizeRescueGroupsDog } from "@/lib/compatibility/normalize";
+import { getOrCreateUser } from "@/lib/auth/get-or-create-user";
+import { prisma } from "@/lib/db/prisma";
+import { calculateCompatibility } from "@/lib/compatibility/engine";
+import type { AdopterProfile, CompatibilityResult, NormalizedDog } from "@/lib/compatibility/types";
+
+type SearchResult = { dog: NormalizedDog; compatibility?: CompatibilityResult };
 
 export async function GET(req: NextRequest) {
   const { searchParams } = req.nextUrl;
@@ -10,7 +16,7 @@ export async function GET(req: NextRequest) {
   if (!zip) {
     return NextResponse.json(
       { error: { code: "VALIDATION_ERROR", message: "zip is required" } },
-      { status: 422 }
+      { status: 422 },
     );
   }
 
@@ -20,6 +26,15 @@ export async function GET(req: NextRequest) {
   const breed = searchParams.get("breed") ?? undefined;
   const ageGroup = searchParams.get("ageGroup") ?? undefined;
   const sizeGroup = searchParams.get("sizeGroup") ?? undefined;
+  const sortParam = searchParams.get("sort");
+
+  const user = await getOrCreateUser();
+  const profile = user
+    ? await prisma.adopterProfile.findUnique({ where: { userId: user.id } })
+    : null;
+
+  const useCompatibilitySort = profile !== null && sortParam !== "distance";
+  const sort = useCompatibilitySort ? "best_match" : "distance";
 
   try {
     const { dogs, hasMore } = await searchRescueGroupsDogs({
@@ -32,16 +47,41 @@ export async function GET(req: NextRequest) {
       sizeGroup,
     });
 
-    const results = dogs.map(({ id, raw }) => ({
-      dog: normalizeRescueGroupsDog(raw, id, null),
-    }));
+    let results: SearchResult[];
+
+    if (useCompatibilitySort) {
+      results = dogs.map(({ id, raw }) => {
+        const dog = normalizeRescueGroupsDog(raw, id, null);
+        const compatibility = calculateCompatibility(
+          profile as unknown as AdopterProfile,
+          dog,
+        );
+        return { dog, compatibility };
+      });
+      results.sort((a, b) => {
+        const scoreDiff =
+          b.compatibility!.compatibilityScore - a.compatibility!.compatibilityScore;
+        if (scoreDiff !== 0) return scoreDiff;
+        const confDiff =
+          b.compatibility!.confidenceScore - a.compatibility!.confidenceScore;
+        if (confDiff !== 0) return confDiff;
+        return (a.dog.distance ?? Infinity) - (b.dog.distance ?? Infinity);
+      });
+    } else {
+      results = dogs
+        .map(({ id, raw }) => ({ dog: normalizeRescueGroupsDog(raw, id, null) }))
+        .sort((a, b) => (a.dog.distance ?? Infinity) - (b.dog.distance ?? Infinity));
+    }
 
     return NextResponse.json({
       results,
-      compatibility: {
-        available: false,
-        teaser: "Create a profile to unlock compatibility matching.",
-      },
+      compatibility: profile
+        ? { available: true }
+        : {
+            available: false,
+            teaser: "Create a profile to unlock compatibility matching.",
+          },
+      sort,
       page,
       hasMore,
     });
@@ -49,12 +89,12 @@ export async function GET(req: NextRequest) {
     if (err instanceof RateLimitError) {
       return NextResponse.json(
         { error: { code: "RATE_LIMITED", message: "Too many requests" } },
-        { status: 429 }
+        { status: 429 },
       );
     }
     return NextResponse.json(
       { error: { code: "PROVIDER_ERROR", message: "Dog search unavailable" } },
-      { status: 503 }
+      { status: 503 },
     );
   }
 }
