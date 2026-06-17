@@ -1,7 +1,11 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 import type { NormalizedDog } from "@/lib/compatibility/types";
 import { SearchResults } from "@/components/SearchResults";
+
+vi.mock("@clerk/nextjs", () => ({
+  useUser: () => ({ isSignedIn: false, isLoaded: true, user: null }),
+}));
 
 const makeDog = (id: string, name: string): NormalizedDog => ({
   provider: "rescuegroups",

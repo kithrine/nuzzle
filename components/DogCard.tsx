@@ -1,4 +1,5 @@
 import type { NormalizedDog } from "@/lib/compatibility/types";
+import { FavoriteButton } from "@/components/FavoriteButton";
 
 type AnonymousCompatibility = {
   available: false;
@@ -8,9 +9,11 @@ type AnonymousCompatibility = {
 export function DogCard({
   dog,
   compatibility,
+  isFavorited = false,
 }: {
   dog: NormalizedDog;
   compatibility: AnonymousCompatibility;
+  isFavorited?: boolean;
 }) {
   const photo = dog.photos[0] ?? "";
   const breed = dog.breed ?? "Mixed Breed";
@@ -35,6 +38,11 @@ export function DogCard({
         </ul>
       </div>
 
+      <FavoriteButton
+        provider={dog.provider}
+        externalId={dog.externalId}
+        initialFavorited={isFavorited}
+      />
       <a href={`/dogs/${dog.provider}/${dog.externalId}`}>View Details</a>
     </article>
   );
