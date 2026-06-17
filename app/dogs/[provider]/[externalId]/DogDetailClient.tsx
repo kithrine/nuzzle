@@ -54,6 +54,26 @@ export function DogDetailClient({ dog, compatibility }: Props) {
               {compatibility.result.compatibilityScore}%
             </p>
             <p>{compatibility.result.confidenceLabel} Confidence</p>
+            {compatibility.result.positiveFactors.length > 0 && (
+              <section>
+                <h2>Why This Dog Fits</h2>
+                <ul>
+                  {compatibility.result.positiveFactors.map((f) => (
+                    <li key={f}>{f}</li>
+                  ))}
+                </ul>
+              </section>
+            )}
+            {compatibility.result.concerns.length > 0 && (
+              <section>
+                <h2>Potential Concerns</h2>
+                <ul>
+                  {compatibility.result.concerns.map((c) => (
+                    <li key={c}>{c}</li>
+                  ))}
+                </ul>
+              </section>
+            )}
             {compatibility.result.shelterQuestions.length > 0 && (
               <section>
                 <h2>Before You Apply</h2>
