@@ -19,11 +19,14 @@ export function DogDetailClient({ dog, compatibility, explanation, isFavorited }
   const photo = dog.photos[0] ?? "";
 
   function handleShelterClick() {
-    window.dispatchEvent(
-      new CustomEvent("shelter_click", {
-        detail: { dogId: dog.externalId, provider: dog.provider },
-      })
-    );
+    const anonId = typeof window !== "undefined"
+      ? (localStorage.getItem("nuzzle_anon_id") ?? undefined)
+      : undefined;
+    fetch(`/api/dogs/${dog.provider}/${dog.externalId}/shelter-click`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ anonymousId: anonId }),
+    }).catch(() => {});
   }
 
   return (

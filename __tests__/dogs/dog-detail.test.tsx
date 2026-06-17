@@ -109,8 +109,8 @@ describe("DogDetailClient", () => {
     ).toBeInTheDocument();
   });
 
-  it("US-013: Visit Shelter Listing link has correct href and fires shelter_click on click", () => {
-    const dispatchSpy = vi.spyOn(window, "dispatchEvent");
+  it("US-013: Visit Shelter Listing link has correct href and fires POST to shelter-click API on click", () => {
+    vi.stubGlobal("fetch", vi.fn().mockResolvedValue({ ok: true }));
     render(
       <DogDetailClient
         dog={MOCK_DOG}
@@ -121,9 +121,10 @@ describe("DogDetailClient", () => {
     expect(link).toHaveAttribute("href", "https://happypaws.org/adopt/charlie");
     expect(link).toHaveAttribute("target", "_blank");
     fireEvent.click(link);
-    expect(dispatchSpy).toHaveBeenCalledWith(
-      expect.objectContaining({ type: "shelter_click" })
+    expect(fetch).toHaveBeenCalledWith(
+      "/api/dogs/rescuegroups/rg-123/shelter-click",
+      expect.objectContaining({ method: "POST" }),
     );
-    dispatchSpy.mockRestore();
+    vi.unstubAllGlobals();
   });
 });
