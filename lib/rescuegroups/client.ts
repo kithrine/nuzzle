@@ -69,3 +69,42 @@ export async function searchRescueGroupsDogs(
 
   return { dogs, hasMore };
 }
+
+export async function getRescueGroupsDog(
+  externalId: string,
+): Promise<{ id: string; raw: RescueGroupsRawDog } | null> {
+  const apiKey = process.env.RESCUEGROUPS_API_KEY ?? "";
+  const res = await fetch(
+    `${RG_BASE}/public/animals/${externalId}?include=shelters`,
+    {
+      headers: {
+        Authorization: apiKey,
+        "Content-Type": "application/vnd.api+json",
+      },
+    },
+  );
+
+  if (res.status === 404) return null;
+  if (res.status === 429) throw new RateLimitError();
+  if (!res.ok) throw new ProviderError(`RescueGroups returned ${res.status}`);
+
+  const json = await res.json();
+
+  const shelterMap = new Map<string, RescueGroupsApiShelter["attributes"]>();
+  for (const inc of json.included ?? []) {
+    if (inc.type === "shelters") {
+      shelterMap.set(inc.id, (inc as RescueGroupsApiShelter).attributes);
+    }
+  }
+
+  const shelterAttrs = shelterMap.values().next().value as
+    | RescueGroupsApiShelter["attributes"]
+    | undefined;
+
+  const raw: RescueGroupsRawDog = {
+    animals: { ...json.data.attributes },
+    shelters: shelterAttrs ?? null,
+  };
+
+  return { id: json.data.id, raw };
+}
