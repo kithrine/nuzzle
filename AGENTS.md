@@ -234,13 +234,18 @@ RULES.md                        ← Hard rules all agents must follow
 This project uses spec-driven TDD. For every new feature:
 
 1. Read the relevant spec doc
-2. Write tests first (or alongside) — never after
-3. Run the test and verify it fails (red state) — take a Playwright screenshot
-4. Implement the feature
-5. Run the test and verify it passes (green state) — take a Playwright screenshot
-6. Save both screenshots to `docs/tdd-screenshots/` and embed them in `docs/tdd-screenshots/[story-id].md`
-7. Tests must cover the cases listed in `docs/product/user-stories-tdd-plan.md`
-8. The compatibility engine must have 100% coverage of scoring and confidence cases
+2. Write tests first — never after
+3. Write **minimal stubs** for every module the tests import (so imports resolve and tests actually run)
+4. Run the tests — verify they fail with `Tests: N failed` (assertion failures, not import errors)
+5. Capture the red screenshot with `capture.mjs`
+6. Replace stubs with the real implementation
+7. Run tests — verify they pass with `Tests: N passed`
+8. Capture the green screenshot with `capture.mjs`
+9. Save both screenshots to `docs/tdd-screenshots/` and embed them in `docs/tdd-screenshots/[story-id].md`
+10. Tests must cover the cases listed in `docs/product/user-stories-tdd-plan.md`
+11. The compatibility engine must have 100% coverage of scoring and confidence cases
+
+**Critical:** a red screenshot that shows `Tests: no tests` is not a valid red screenshot — it means the module graph failed to resolve before any tests ran. Always use stubs to get real assertion failures before capturing.
 
 **Screenshot format** (`docs/tdd-screenshots/[story-id].md`):
 

@@ -13,8 +13,20 @@ export async function searchRescueGroupsDogs(
   params: SearchDogsParams
 ): Promise<{ dogs: Array<{ id: string; raw: RescueGroupsRawDog }>; hasMore: boolean }> {
   const apiKey = process.env.RESCUEGROUPS_API_KEY ?? "";
-  const { zip, radius = 25, page = 1, limit = 20 } = params;
+  const { zip, radius = 25, page = 1, limit = 20, breed, ageGroup, sizeGroup } = params;
   const pageSize = Math.min(limit, 50);
+
+  type FilterField = { fieldName: string; operation: string; criteria: string };
+  const filterFields: FilterField[] = [];
+  if (ageGroup) filterFields.push({ fieldName: "animals.ageGroup", operation: "equals", criteria: ageGroup });
+  if (sizeGroup) filterFields.push({ fieldName: "animals.sizeGroup", operation: "equals", criteria: sizeGroup });
+  if (breed) filterFields.push({ fieldName: "animals.breeds.primary", operation: "contains", criteria: breed });
+
+  const requestData: Record<string, unknown> = {
+    filterRadius: { miles: radius, postalcode: zip },
+    pagination: { pageNumber: page, pageSize },
+  };
+  if (filterFields.length > 0) requestData.filterFields = filterFields;
 
   const res = await fetch(
     `${RG_BASE}/public/animals/search/available/dogs`,
@@ -24,12 +36,7 @@ export async function searchRescueGroupsDogs(
         Authorization: apiKey,
         "Content-Type": "application/vnd.api+json",
       },
-      body: JSON.stringify({
-        data: {
-          filterRadius: { miles: radius, postalcode: zip },
-          pagination: { pageNumber: page, pageSize },
-        },
-      }),
+      body: JSON.stringify({ data: requestData }),
     }
   );
 

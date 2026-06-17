@@ -17,6 +17,9 @@ export async function GET(req: NextRequest) {
   const radius = Number(searchParams.get("radius") ?? 25);
   const page = Number(searchParams.get("page") ?? 1);
   const limit = Number(searchParams.get("limit") ?? 20);
+  const breed = searchParams.get("breed") ?? undefined;
+  const ageGroup = searchParams.get("ageGroup") ?? undefined;
+  const sizeGroup = searchParams.get("sizeGroup") ?? undefined;
 
   try {
     const { dogs, hasMore } = await searchRescueGroupsDogs({
@@ -24,6 +27,9 @@ export async function GET(req: NextRequest) {
       radius,
       page,
       limit,
+      breed,
+      ageGroup,
+      sizeGroup,
     });
 
     const results = dogs.map(({ id, raw }) => ({
