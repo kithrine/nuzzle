@@ -6,6 +6,9 @@ import type { RescueGroupsRawDog } from "@/lib/rescuegroups/types";
 
 // Must be hoisted before the route import so the route receives the mock.
 vi.mock("@/lib/rescuegroups/client");
+vi.mock("@/lib/auth/get-or-create-user", () => ({
+  getOrCreateUser: vi.fn().mockResolvedValue(null),
+}));
 
 import { searchRescueGroupsDogs } from "@/lib/rescuegroups/client";
 import { GET } from "@/app/api/dogs/search/route";
