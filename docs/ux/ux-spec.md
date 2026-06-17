@@ -10,6 +10,8 @@ This document defines the user experience requirements, user flows, interaction 
 
 This document is the source of truth for frontend implementation.
 
+For visual design reference (color mockups, design tokens, component patterns), see `docs/ux/visual-design-reference.md`.
+
 ---
 
 ## UX Mission
