@@ -69,7 +69,7 @@ AI is used **only** for generating natural-language explanations on the Dog Deta
 | Styling | Tailwind CSS |
 | Auth | Clerk |
 | External API | RescueGroups API |
-| AI Provider | OpenAI |
+| AI Provider | xAI Grok |
 | Testing | Vitest + React Testing Library + Playwright |
 
 ---
@@ -207,7 +207,7 @@ RULES.md                        ← Hard rules all agents must follow
 | Primary success metric | Reduce adoption return rates |
 | Compatibility engine | Deterministic, pure function — no AI in scoring |
 | AI role | Explanation text only, Dog Detail Page only |
-| AI provider | OpenAI |
+| AI provider | xAI Grok |
 | Auth provider | Clerk |
 | Testing framework | Vitest + React Testing Library + Playwright |
 | Anonymous users | Can browse; see compatibility teaser, not full score |

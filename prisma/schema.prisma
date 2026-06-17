@@ -112,7 +112,7 @@ model AiExplanation {
   id                   String             @id @default(uuid())
   compatibilityScoreId String
   compatibilityScore   CompatibilityScore @relation(fields: [compatibilityScoreId], references: [id])
-  model                String             // e.g. "gpt-4o"
+  model                String             // e.g. "grok-3-mini"
   promptVersion        Int
   explanationJson      Json
   createdAt            DateTime           @default(now())

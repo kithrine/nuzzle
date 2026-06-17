@@ -4,6 +4,7 @@ import { normalizeRescueGroupsDog } from "@/lib/compatibility/normalize";
 import { getOrCreateUser } from "@/lib/auth/get-or-create-user";
 import { prisma } from "@/lib/db/prisma";
 import { calculateCompatibility } from "@/lib/compatibility/engine";
+import { generateExplanation } from "@/lib/ai/explainer";
 import type { AdopterProfile } from "@/lib/compatibility/types";
 import { DogDetailClient } from "./DogDetailClient";
 
@@ -36,5 +37,10 @@ export default async function DogDetailPage({
         teaser: "Create a profile to unlock compatibility matching.",
       };
 
-  return <DogDetailClient dog={dog} compatibility={compatibility} />;
+  let explanation: string | null = null;
+  if (profile && compatibility.available) {
+    explanation = await generateExplanation(compatibility.result, dog);
+  }
+
+  return <DogDetailClient dog={dog} compatibility={compatibility} explanation={explanation} />;
 }

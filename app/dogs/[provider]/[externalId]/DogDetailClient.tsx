@@ -6,9 +6,9 @@ type CompatibilityProp =
   | { available: false; teaser: string }
   | { available: true; result: CompatibilityResult };
 
-type Props = { dog: NormalizedDog; compatibility: CompatibilityProp };
+type Props = { dog: NormalizedDog; compatibility: CompatibilityProp; explanation?: string | null };
 
-export function DogDetailClient({ dog, compatibility }: Props) {
+export function DogDetailClient({ dog, compatibility, explanation }: Props) {
   const breed = dog.breed ?? "Mixed Breed";
   const photo = dog.photos[0] ?? "";
 
@@ -85,6 +85,7 @@ export function DogDetailClient({ dog, compatibility }: Props) {
                 </ul>
               </section>
             )}
+            {explanation && <p data-testid="ai-explanation">{explanation}</p>}
           </div>
         )}
       </section>
