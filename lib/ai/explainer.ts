@@ -21,11 +21,11 @@ export async function generateExplanation(
 ): Promise<string> {
   try {
     const client = new OpenAI({
-      apiKey: process.env.XAI_API_KEY,
-      baseURL: "https://api.x.ai/v1",
+      apiKey: process.env.GROQ_API_KEY,
+      baseURL: "https://api.groq.com/openai/v1",
     });
     const completion = await client.chat.completions.create({
-      model: "grok-3-mini",
+      model: "llama-3.3-70b-versatile",
       messages: [{ role: "user", content: buildPrompt(result, dog) }],
       max_tokens: 200,
     });

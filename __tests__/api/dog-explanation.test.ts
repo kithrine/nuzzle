@@ -116,7 +116,7 @@ describe("POST /api/dogs/[provider]/[externalId]/explanation", () => {
     expect(mockGenerate).toHaveBeenCalledOnce();
     expect(mockCreateAi).toHaveBeenCalledWith(
       expect.objectContaining({
-        data: expect.objectContaining({ model: "grok-3-mini" }),
+        data: expect.objectContaining({ model: "llama-3.3-70b-versatile" }),
       }),
     );
   });

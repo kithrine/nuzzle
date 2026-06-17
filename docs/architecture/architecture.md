@@ -53,7 +53,7 @@ Nuzzle is a Next.js full-stack application with a PostgreSQL database and integr
 | Styling | Tailwind CSS |
 | External API | RescueGroups API |
 | Auth | Clerk |
-| AI Provider | xAI Grok — explanation only |
+| AI Provider | Groq — explanation only |
 | Testing | Vitest + React Testing Library + Playwright |
 
 ---

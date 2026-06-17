@@ -64,7 +64,7 @@ export async function POST(
   await prisma.aiExplanation.create({
     data: {
       compatibilityScoreId: score.id,
-      model: "grok-3-mini",
+      model: "llama-3.3-70b-versatile",
       promptVersion: 1,
       explanationJson: { text: explanation },
     },
