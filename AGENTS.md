@@ -69,7 +69,7 @@ AI is used **only** for generating natural-language explanations on the Dog Deta
 | Styling | Tailwind CSS |
 | Auth | Clerk |
 | External API | RescueGroups API |
-| AI Provider | OpenAI |
+| AI Provider | Groq |
 | Testing | Vitest + React Testing Library + Playwright |
 
 ---
@@ -145,6 +145,7 @@ Do not invent requirements. Do not invent scoring logic. Do not expand scope wit
 | Compatibility scoring | `docs/architecture/compatibility-engine-spec.md` |
 | Database schema | `docs/architecture/database-api-contract.md` |
 | UI screens | `docs/ux/ux-spec.md` + `docs/ux/wireframe-spec.md` |
+| Visual design / styling | `docs/ux/visual-design-reference.md` |
 | Product requirements | `docs/product/prd.md` |
 | Sprint stories | `docs/stories/development-story-pack.md` |
 | System design | `docs/architecture/architecture.md` |
@@ -189,6 +190,10 @@ docs/
     ux-spec.md                  ← User flows, screen inventory, UX rules
     wireframe-spec.md           ← Screen-by-screen wireframe specifications
     wireframe-layouts.md        ← Detailed layout descriptions
+    visual-design-reference.md  ← Color mockups, design tokens, component patterns
+    mockups/
+      mockup-color.png          ← Full-color mockup (5 screens)
+      mockup-wireframe.png      ← Labeled grayscale wireframe (5 screens)
 AGENTS.md                       ← This file
 RULES.md                        ← Hard rules all agents must follow
 ```
@@ -202,7 +207,7 @@ RULES.md                        ← Hard rules all agents must follow
 | Primary success metric | Reduce adoption return rates |
 | Compatibility engine | Deterministic, pure function — no AI in scoring |
 | AI role | Explanation text only, Dog Detail Page only |
-| AI provider | OpenAI |
+| AI provider | Groq |
 | Auth provider | Clerk |
 | Testing framework | Vitest + React Testing Library + Playwright |
 | Anonymous users | Can browse; see compatibility teaser, not full score |

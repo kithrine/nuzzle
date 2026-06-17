@@ -145,7 +145,7 @@ model AiExplanation {
   id                   String             @id @default(uuid())
   compatibilityScoreId String
   compatibilityScore   CompatibilityScore @relation(fields: [compatibilityScoreId], references: [id])
-  model                String             // e.g. "gpt-4o"
+  model                String             // e.g. "llama-3.3-70b-versatile"
   promptVersion        Int
   explanationJson      Json
   createdAt            DateTime           @default(now())
@@ -366,7 +366,7 @@ Generate or retrieve cached AI explanation.
 
 **Behavior**:
 - Returns cached explanation if one exists for the current `profileVersion` + `scoreVersion`
-- Generates a new explanation via OpenAI if no cached version exists
+- Generates a new explanation via Groq if no cached version exists
 - Falls back to structured rule-based explanation on AI failure — never returns an error to the client
 
 ---
@@ -555,7 +555,7 @@ All API errors use this shape:
 ```
 DATABASE_URL=                          # Neon PostgreSQL connection string
 RESCUEGROUPS_API_KEY=                  # RescueGroups v5 API key
-OPENAI_API_KEY=                        # OpenAI API key (explanation generation)
+GROQ_API_KEY=                          # Groq API key (explanation generation)
 CLERK_SECRET_KEY=                      # Clerk backend secret
 NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=     # Clerk frontend publishable key
 ```
