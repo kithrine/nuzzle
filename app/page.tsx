@@ -124,44 +124,16 @@ export default function Home() {
       {/* ── Hero ─────────────────────────────────────────────────────── */}
       <section className="relative overflow-hidden min-h-[380px] px-6 py-16 md:px-12 md:py-24 flex items-center">
         {/* Full-width background image */}
-        <div className="absolute inset-0 z-0">
+        <div className="absolute inset-0">
           <Image
             src="/images/homepage-hero-bg.png"
             alt=""
             fill
-            className="object-cover object-center"
+            className="object-cover object-top"
             priority
             aria-hidden="true"
           />
-          <div className="absolute inset-0 bg-white/55" />
         </div>
-
-        {/* Left botanical decoration */}
-        <svg
-          className="absolute left-0 top-0 h-full opacity-60 hidden lg:block pointer-events-none z-10"
-          width="90"
-          viewBox="0 0 90 300"
-          fill="none"
-          preserveAspectRatio="xMidYMid meet"
-          aria-hidden="true"
-        >
-          <ellipse cx="20" cy="120" rx="18" ry="80" transform="rotate(-20 20 120)" fill="#A8D5A2" />
-          <ellipse cx="55" cy="200" rx="14" ry="55" transform="rotate(15 55 200)" fill="#FFB3C6" />
-          <ellipse cx="10" cy="230" rx="10" ry="40" transform="rotate(-35 10 230)" fill="#A8D5A2" opacity="0.7" />
-        </svg>
-
-        {/* Right botanical decoration */}
-        <svg
-          className="absolute right-0 bottom-0 opacity-60 hidden lg:block pointer-events-none z-10"
-          width="80"
-          height="200"
-          viewBox="0 0 80 200"
-          fill="none"
-          aria-hidden="true"
-        >
-          <ellipse cx="65" cy="100" rx="16" ry="70" transform="rotate(25 65 100)" fill="#FFB3C6" />
-          <ellipse cx="45" cy="160" rx="12" ry="50" transform="rotate(-10 45 160)" fill="#A8D5A2" opacity="0.8" />
-        </svg>
 
         {/* Text content on top */}
         <div className="relative z-20 max-w-6xl mx-auto w-full">
