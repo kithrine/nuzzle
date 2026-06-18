@@ -36,6 +36,8 @@ The following is already true and does NOT need to be re-done in any prompt:
 Implement the full visual design for the Nuzzle homepage (Screen 1).
 
 Read these files before writing any code:
+- RULES.md
+- AGENTS.md
 - `docs/ux/mockups/01-mockup-homepage.png` — the visual reference (desktop layout)
 - `docs/ux/visual-design-reference.md` — find the "Screen 1: Home Page" section
 - `docs/ux/wireframe-spec.md` — find the "Screen 1: Home Page" section
@@ -71,6 +73,8 @@ After implementing, run `npm test` to confirm 151 tests still pass. Then commit.
 Style the DogCard component (`components/DogCard.tsx`). This component is used on Browse, Dog Detail, Favorites, and Match Results pages — getting it right here means all those pages inherit the correct card design.
 
 Read these files before writing any code:
+- RULES.md
+- AGENTS.md
 - `docs/ux/mockups/02-mockup-browse-anon.png` — shows the anonymous card state
 - `docs/ux/mockups/03-mockup-browse-auth.png` — shows the authenticated card state with match scores
 - `docs/ux/visual-design-reference.md` — find "Screen 2", "Screen 3", and the "Component Patterns" section (Match Badge, Compatibility Teaser)
@@ -116,6 +120,8 @@ After styling, run `npm test` to confirm the existing DogCard tests pass. Then c
 Style the Browse Dogs pages and search controls. This covers three related screens that share the same route `/search`.
 
 Read these files before writing any code:
+- RULES.md
+- AGENTS.md
 - `docs/ux/mockups/02-mockup-browse-anon.png` — anonymous browse layout
 - `docs/ux/mockups/03-mockup-browse-auth.png` — authenticated browse layout with match scores
 - `docs/ux/mockups/08-mockup-match-results.png` — match results (same as Screen 3 with "Your Best Matches" heading)
@@ -158,6 +164,8 @@ After styling, run `npm test` to confirm no regressions. Then commit.
 Style the Dog Detail pages. This is one route that renders two different layouts depending on auth state.
 
 Read these files before writing any code:
+- RULES.md
+- AGENTS.md
 - `docs/ux/mockups/04-mockup-dog-detail-anon.png` — anonymous layout
 - `docs/ux/mockups/05-mockup-dog-detail-auth.png` — authenticated layout with compatibility card
 - `docs/ux/visual-design-reference.md` — find "Screen 4: Dog Detail — Anonymous" and "Screen 5: Dog Detail — Authenticated"
@@ -201,6 +209,8 @@ After styling, run `npm test`. Then commit.
 Style the questionnaire flow. This is a multi-step form that currently renders unstyled semantic HTML.
 
 Read these files before writing any code:
+- RULES.md
+- AGENTS.md
 - `docs/ux/mockups/06-mockup-questionnaire-1.png` — Quick Match questionnaire (mobile-optimized layout)
 - `docs/ux/mockups/07-mockup-questionnaire-2.png` — Expanded questionnaire
 - `docs/ux/visual-design-reference.md` — find "Screen 6: Quick Match Questionnaire" and "Screen 7: Expanded Questionnaire"
@@ -246,6 +256,8 @@ After styling, run `npm test` to confirm the QuestionnaireClient tests pass. The
 Upgrade the account creation prompt in FavoriteButton from a plain text span to a proper bottom-sheet modal.
 
 Read these files before writing any code:
+- RULES.md
+- AGENTS.md
 - `docs/ux/mockups/09-mockup-modal-save-favs.png` — the full modal design
 - `docs/ux/visual-design-reference.md` — find "Screen 9: Account Creation Prompt"
 - `docs/ux/wireframe-spec.md` — find "Screen 9: Account Creation Prompt"
@@ -290,6 +302,8 @@ After implementing, run `npm test` — specifically verify the FavoriteButton te
 Style the Favorites dashboard page.
 
 Read these files before writing any code:
+- RULES.md
+- AGENTS.md
 - `docs/ux/mockups/10-mockup-user-dashboard.png` — the full dashboard layout
 - `docs/ux/visual-design-reference.md` — find "Screen 10: User Dashboard / Favorites"
 - `docs/ux/wireframe-spec.md` — find "Screen 10: User Dashboard / Favorites"
@@ -332,6 +346,8 @@ After styling, run `npm test`. Then commit.
 Implement the Edit Profile screen (Screen 11). This screen is accessed when an authenticated user who already has a profile visits `/questionnaire`.
 
 Read these files before writing any code:
+- RULES.md
+- AGENTS.md
 - `docs/ux/mockups/11-mockup-edit-profile.png` — the full edit profile layout
 - `docs/ux/visual-design-reference.md` — find "Screen 11: Profile Management / Edit Profile"
 - `docs/ux/wireframe-spec.md` — find "Screen 11: Profile Management / Edit Profile"
@@ -377,6 +393,8 @@ After implementing, run `npm test` to confirm no regressions. Then commit.
 Verify and polish the Login and Sign Up pages (Screens 12 & 13). Phase 1 already handled the major cleanup (removed redundant logo headers, applied Clerk appearance tokens, centered layout). This prompt is a final visual pass.
 
 Read these files before writing any code:
+- RULES.md
+- AGENTS.md
 - `docs/ux/mockups/12-mockup-login.png` — login page reference
 - `docs/ux/mockups/13-mockup-signup.png` — sign up page reference
 - `docs/ux/visual-design-reference.md` — find "Screen 12: Login" and "Screen 13: Sign Up"
