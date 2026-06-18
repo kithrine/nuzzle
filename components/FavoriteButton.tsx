@@ -44,7 +44,7 @@ export function FavoriteButton({ provider, externalId, initialFavorited = false 
         {isFavorited ? "♥" : "♡"}
       </button>
       {showPrompt && (
-        <span data-testid="sign-in-prompt">Sign in to save favorites</span>
+        <span data-testid="login-prompt">Log in to save favorites</span>
       )}
     </>
   );

@@ -9,7 +9,7 @@ import { FavoriteButton } from "@/components/FavoriteButton";
 
 export default async function FavoritesPage() {
   const user = await getOrCreateUser();
-  if (!user) redirect("/sign-in");
+  if (!user) redirect("/login");
 
   const [favorites, profile] = await Promise.all([
     prisma.favorite.findMany({ where: { userId: user.id }, orderBy: { createdAt: "desc" } }),

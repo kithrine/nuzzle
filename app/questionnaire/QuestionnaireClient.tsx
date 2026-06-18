@@ -69,7 +69,7 @@ export function QuestionnaireClient() {
         }),
       });
       if (res.status === 401) {
-        setErrorMsg("Please sign in to save your profile.");
+        setErrorMsg("Please log in to save your profile.");
         return;
       }
       if (!res.ok) {

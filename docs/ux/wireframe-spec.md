@@ -76,6 +76,8 @@ Avoid:
 9. Account Creation Prompt
 10. User Dashboard / Favorites
 11. Profile Management / Edit Profile
+12. Login
+13. Sign Up
 
 ---
 
@@ -323,6 +325,43 @@ Avoid:
 - Two-phase structure (Phase 1 and Phase 2 sections)
 - "Save Changes" button
 - On save: profile version increments; return to previous page (no forced redirect)
+
+---
+
+## Screen 12: Login
+
+**Goal**: Return authenticated users to the app in the fewest steps, with full Nuzzle branding.
+
+**Route**: `/login` (catch-all: `/login/[[...login]]`)
+
+**Link from**: "Log In" nav link (anonymous top nav), "Login" bottom tab bar item.
+
+**Layout**:
+- Full-page centered layout on `#F0F8FA` background
+- Nuzzle logo + wordmark centered above the form card
+- Clerk `<SignIn />` component embedded below (handles email/password, social login, MFA)
+
+**Redirect after login**: `/search` (default); back to the originating page when Clerk's `afterSignInUrl` is passed via query param.
+
+**Cross-links**: "Don't have an account? Sign up" link (handled internally by Clerk) → Screen 13.
+
+---
+
+## Screen 13: Sign Up
+
+**Goal**: Allow deliberate account creation from a standalone entry point, distinct from the contextual Screen 9 modal flow.
+
+**Route**: `/signup` (catch-all: `/signup/[[...signup]]`)
+
+**Link from**: "Sign up" link within Screen 12 (Clerk's built-in link), or any future explicit "Create Account" nav link.
+
+**Layout**: Identical shell to Screen 12.
+
+**Redirect after sign-up**: `/questionnaire` — new users are sent to build their compatibility profile immediately.
+
+**Cross-links**: "Already have an account? Log in" (handled internally by Clerk) → Screen 12.
+
+**Note**: Screen 9 (Account Creation Prompt modal) is the primary sign-up path for users who are mid-browse. Screen 13 serves users who arrive intentionally via the nav.
 
 ---
 
