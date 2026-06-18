@@ -8,7 +8,7 @@ export function TopNav() {
   const { isSignedIn, isLoaded } = useUser();
 
   return (
-    <header className="sticky top-0 z-50 bg-surface border-b border-border">
+    <header className="sticky top-0 z-50 bg-white border-b border-border">
       <nav className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 md:px-6">
         <Link href="/" className="flex items-center gap-2">
           <NuzzleLogo size={32} />

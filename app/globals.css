@@ -50,3 +50,51 @@
   color: #1E293B;
   font-family: var(--font-sans);
 }
+
+@layer utilities {
+  /* ── Primary teal ──────────────────────────────────────── */
+  .bg-primary                    { background-color: #20A39E; }
+  .text-primary                  { color: #20A39E; }
+  .border-primary                { border-color: #20A39E; }
+  .fill-primary                  { fill: #20A39E; }
+  .hover\:bg-primary:hover       { background-color: #20A39E; }
+
+  /* ── Primary light ─────────────────────────────────────── */
+  .bg-primary-light                    { background-color: #E0F5F4; }
+  .hover\:bg-primary-light:hover       { background-color: #E0F5F4; }
+
+  /* ── Secondary CTA purple ──────────────────────────────── */
+  .bg-secondary-cta              { background-color: #7C3AED; }
+  .text-secondary-cta            { color: #7C3AED; }
+  .border-secondary-cta          { border-color: #7C3AED; }
+
+  /* ── Surfaces & backgrounds ────────────────────────────── */
+  .bg-surface                    { background-color: #FFFFFF; }
+  .bg-background                 { background-color: #F0F8FA; }
+  .bg-hero-bg                    { background-color: #E8F4F8; }
+
+  /* ── Text ──────────────────────────────────────────────── */
+  .text-text-primary             { color: #1E293B; }
+  .text-text-secondary           { color: #64748B; }
+  .hover\:text-text-primary:hover { color: #1E293B; }
+
+  /* ── Border ────────────────────────────────────────────── */
+  .border-border                 { border-color: #E2E8F0; }
+
+  /* ── Dark fill (footer social icons) ───────────────────── */
+  .bg-text-primary               { background-color: #1E293B; }
+
+  /* ── Match badge tiers ─────────────────────────────────── */
+  .bg-match-high-bg              { background-color: #CCFBF1; }
+  .text-match-high-text          { color: #065F46; }
+  .bg-match-medium-bg            { background-color: #FEF3C7; }
+  .text-match-medium-text        { color: #92400E; }
+  .bg-match-low-bg               { background-color: #FFE4E6; }
+  .text-match-low-text           { color: #BE123C; }
+
+  /* ── Border radius tokens ──────────────────────────────── */
+  .rounded-card                  { border-radius: 12px; }
+  .rounded-button-full           { border-radius: 10px; }
+  .rounded-button-inline         { border-radius: 8px; }
+  .rounded-badge                 { border-radius: 6px; }
+}
