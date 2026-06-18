@@ -33,13 +33,13 @@ describe("FavoriteButton", () => {
     expect(btn.getAttribute("aria-pressed")).toBe("true");
   });
 
-  it("FAVOR-011: click when anonymous shows sign-in prompt, does not call fetch", () => {
+  it("FAVOR-011: click when anonymous shows login prompt, does not call fetch", () => {
     mockUseUser.mockReturnValue(SIGNED_OUT);
     render(<FavoriteButton provider="rescuegroups" externalId="rg-123" />);
 
     fireEvent.click(screen.getByTestId("favorite-btn"));
 
-    expect(screen.getByTestId("sign-in-prompt")).toBeTruthy();
+    expect(screen.getByTestId("login-prompt")).toBeTruthy();
     expect(fetch).not.toHaveBeenCalled();
   });
 

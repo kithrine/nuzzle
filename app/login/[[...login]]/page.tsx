@@ -9,7 +9,7 @@ const appearance = {
   },
 };
 
-export default function SignInPage() {
+export default function LoginPage() {
   return (
     <main className="min-h-screen flex flex-col items-center justify-center bg-[#F0F8FA] px-4 py-12">
       <div className="mb-8 flex flex-col items-center gap-2">

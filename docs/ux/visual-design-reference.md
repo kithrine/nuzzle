@@ -24,10 +24,10 @@ For screen content hierarchy and layout structure, see `docs/ux/wireframe-spec.m
 | `mockups/09-mockup-modal-save-favs.png` | Screen 9 — Account Creation Prompt |
 | `mockups/10-mockup-user-dashboard.png` | Screen 10 — User Dashboard / Favorites |
 | `mockups/11-mockup-edit-profile.png` | Screen 11 — Edit Profile |
+| `mockups/12-mockup-login.png` | Screen 12 — Login |
+| `mockups/13-mockup-signup.png` | Screen 13 — Sign Up |
 
 Filenames are prefixed with the screen number from `docs/ux/wireframe-spec.md` for easy cross-reference.
-
-Screens 12 (Sign In) and 13 (Sign Up) have no dedicated mockup images — their design is described in the screen sections below and follows the same visual shell as Screen 9.
 
 ---
 
@@ -436,9 +436,9 @@ Form is divided into labeled sections, each with a green checkmark when complete
 
 ---
 
-## Screen 12: Sign In
+## Screen 12: Login
 
-*No dedicated mockup image — design follows the pattern below.*
+![Login](mockups/12-mockup-login.png)
 
 ### Shell Layout
 - Full-page background: `#F0F8FA`
@@ -476,19 +476,19 @@ Customized via the `appearance` prop:
 
 ## Screen 13: Sign Up
 
-*No dedicated mockup image — identical shell to Screen 12.*
+![Sign Up](mockups/13-mockup-signup.png)
 
 ### Shell Layout
 Same as Screen 12: `#F0F8FA` background, Nuzzle logo + wordmark, tagline, centered card.
 
 Clerk `<SignUp />` component replaces `<SignIn />`.
 
-### Post-Sign-Up Redirect
+### Post-Signup Redirect
 Users are sent to `/questionnaire` immediately after account creation, so they can build their compatibility profile before browsing.
 
 ### Notes
-- This is the deliberate sign-up path for users who click in from the nav. The contextual sign-up path (Screen 9 modal) is used when a user tries to favorite a dog while anonymous — those two flows are independent and both remain in the design.
-- The Clerk component includes a built-in "Already have an account? Sign in" link that routes to `/sign-in`.
+- This is the deliberate signup path for users who click in from the nav. The contextual signup path (Screen 9 modal) is used when a user tries to favorite a dog while anonymous — those two flows are independent and both remain in the design.
+- The Clerk component includes a built-in "Already have an account? Log in" link that routes to `/login`.
 
 ---
 
