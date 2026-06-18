@@ -126,7 +126,7 @@ export default function Home() {
         {/* Full-width background image */}
         <div className="absolute inset-0">
           <Image
-            src="/images/homepage-hero-bg.png"
+            src="/images/homepage-hero.png"
             alt=""
             fill
             className="object-cover object-top"
@@ -137,15 +137,15 @@ export default function Home() {
 
         {/* Text content on top */}
         <div className="relative z-20 max-w-6xl mx-auto w-full">
-          <div className="max-w-xl text-center md:text-left">
+          <div className="max-w-[55%] sm:max-w-xl text-left sm:text-center md:text-left">
             <h1 className="text-4xl md:text-5xl font-bold leading-tight text-text-primary">
               Find a dog that fits your{" "}
               <span className="text-primary">lifestyle.</span>
             </h1>
-            <p className="mt-4 text-lg text-text-secondary max-w-md mx-auto md:mx-0">
+            <p className="mt-4 text-lg text-text-secondary max-w-md md:mx-0">
               Browse adoptable dogs and receive personalized compatibility matching.
             </p>
-            <div className="mt-8 flex flex-col sm:flex-row gap-3 justify-center md:justify-start">
+            <div className="mt-8 flex flex-col sm:flex-row gap-3 justify-start sm:justify-center md:justify-start">
               <Link
                 href="/search"
                 className="bg-primary text-white rounded-button-full px-6 py-3 font-semibold inline-flex items-center justify-center gap-2 hover:opacity-90 transition-opacity"
