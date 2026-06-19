@@ -65,13 +65,13 @@ export function DogDetailClient({ dog, compatibility, explanation, isFavorited }
         src="/images/flowers-left.png"
         alt=""
         aria-hidden="true"
-        className="hidden md:block pointer-events-none select-none absolute -bottom-4 left-0 w-44 lg:w-60 h-auto z-0"
+        className="hidden md:block pointer-events-none select-none absolute -bottom-8 left-0 w-44 lg:w-60 h-auto z-0"
       />
       <img
         src="/images/flowers-right.png"
         alt=""
         aria-hidden="true"
-        className="hidden md:block pointer-events-none select-none absolute -bottom-4 right-0 w-44 lg:w-60 h-auto z-0"
+        className="hidden md:block pointer-events-none select-none absolute -bottom-10 right-0 w-44 lg:w-60 h-auto z-0"
       />
 
       <div className="relative z-10 max-w-5xl mx-auto px-4 py-6 md:px-6 md:py-8 flex flex-col gap-6">
@@ -111,32 +111,40 @@ export function DogDetailClient({ dog, compatibility, explanation, isFavorited }
         )}
 
         {/* Info card */}
-        <section className="bg-surface rounded-card border border-border p-5">
-          <div className="flex items-center gap-3">
-            <h1 className="text-3xl md:text-4xl font-bold text-text-primary">{dog.name}</h1>
-            <FavoriteButton
-              provider={dog.provider}
-              externalId={dog.externalId}
-              initialFavorited={isFavorited}
-            />
-          </div>
-          <p className="text-text-secondary text-sm mt-1">
-            {breed} &bull; {formatAgeGroup(dog.ageGroup)} &bull; {dog.sizeGroup}
-            {dog.gender && dog.gender !== "Unknown" && <> &bull; {dog.gender}</>}
-          </p>
-          <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-2 text-text-secondary text-sm">
-            {dog.shelterName && (
-              <span className="flex items-center gap-1">
-                <MapPin size={14} />
-                {dog.shelterName}
-              </span>
-            )}
-            {dog.distance != null && (
-              <span className="flex items-center gap-1">
-                <MapPin size={14} />
-                {dog.distance} miles away
-              </span>
-            )}
+        <section className="relative overflow-hidden bg-surface rounded-card border border-border p-5">
+          <img
+            src="/images/flowers-about.png"
+            alt=""
+            aria-hidden="true"
+            className="hidden sm:block pointer-events-none select-none absolute bottom-0 right-0 w-28 lg:w-36 h-auto"
+          />
+          <div className="relative z-10 sm:pr-32 lg:pr-40">
+            <div className="flex items-center gap-3">
+              <h1 className="text-3xl md:text-4xl font-bold text-text-primary">{dog.name}</h1>
+              <FavoriteButton
+                provider={dog.provider}
+                externalId={dog.externalId}
+                initialFavorited={isFavorited}
+              />
+            </div>
+            <p className="text-text-secondary text-sm mt-1">
+              {breed} &bull; {formatAgeGroup(dog.ageGroup)} &bull; {dog.sizeGroup}
+              {dog.gender && dog.gender !== "Unknown" && <> &bull; {dog.gender}</>}
+            </p>
+            <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-2 text-text-secondary text-sm">
+              {dog.shelterName && (
+                <span className="flex items-center gap-1">
+                  <MapPin size={14} />
+                  {dog.shelterName}
+                </span>
+              )}
+              {dog.distance != null && (
+                <span className="flex items-center gap-1">
+                  <MapPin size={14} />
+                  {dog.distance} miles away
+                </span>
+              )}
+            </div>
           </div>
         </section>
 
