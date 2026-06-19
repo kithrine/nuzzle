@@ -1,46 +1,10 @@
 import type { ReactNode } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { Sparkles, MessageCircleHeart, ShieldCheck, PawPrint, Heart } from "lucide-react";
 import { NuzzleLogo } from "@/components/layout/NuzzleLogo";
 
 // ─── Icons ────────────────────────────────────────────────────────────────────
-
-function PawIcon() {
-  return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-      <circle cx="8" cy="6" r="2.5" />
-      <circle cx="16" cy="6" r="2.5" />
-      <circle cx="5" cy="11" r="2" />
-      <circle cx="19" cy="11" r="2" />
-      <path d="M12 13c-3.5 0-6 2-6 4.5S8 22 12 22s6-2 6-4.5S15.5 13 12 13z" />
-    </svg>
-  );
-}
-
-function PersonIcon() {
-  return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-      <circle cx="12" cy="7" r="4" />
-    </svg>
-  );
-}
-
-function StarIcon() {
-  return (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-      <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.86L12 17.77l-6.18 3.23L7 14.14 2 9.27l6.91-1.01L12 2z" />
-    </svg>
-  );
-}
-
-function LightbulbIcon() {
-  return (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <path d="M9 21h6M9 18h6M12 2a7 7 0 0 1 7 7 7 7 0 0 1-4 6.32V18H9v-2.68A7 7 0 0 1 5 9a7 7 0 0 1 7-7z" />
-    </svg>
-  );
-}
 
 function HeartIcon() {
   return (
@@ -80,10 +44,10 @@ function TikTokIcon() {
 
 function ValueProp({ icon, title, desc }: { icon: ReactNode; title: string; desc: string }) {
   return (
-    <div className="flex-1 flex items-start gap-3">
+    <div className="flex-1 flex items-start gap-3 px-6 py-5">
       <div className="bg-primary-light rounded-full p-3 flex-shrink-0 text-primary">{icon}</div>
       <div>
-        <p className="font-semibold text-text-primary">{title}</p>
+        <p className="font-semibold text-primary text-sm">{title}</p>
         <p className="text-text-secondary text-sm mt-1">{desc}</p>
       </div>
     </div>
@@ -152,14 +116,14 @@ export default function Home() {
               href="/search"
               className="bg-primary text-white rounded-button-full px-6 py-3 font-semibold inline-flex items-center justify-center gap-2 hover:opacity-90 transition-opacity"
             >
-              <PawIcon />
+              <PawPrint size={18} fill="currentColor" />
               Browse Dogs
             </Link>
             <Link
               href="/questionnaire"
               className="border-2 border-primary text-primary rounded-button-full px-6 py-3 font-semibold inline-flex items-center justify-center gap-2 hover:bg-primary-light transition-colors bg-white/70"
             >
-              <PersonIcon />
+              <Heart size={18} fill="currentColor" />
               Create Compatibility Profile
             </Link>
           </div>
@@ -167,22 +131,22 @@ export default function Home() {
       </section>
 
       {/* ── Value Propositions ───────────────────────────────────────── */}
-      <section className="bg-surface py-10 px-6 border-b border-border">
-        <div className="max-w-4xl mx-auto flex flex-col sm:flex-row gap-8 sm:gap-6 items-start">
+      <section className="bg-surface py-5 px-4">
+        <div className="max-w-5xl mx-auto bg-surface rounded-2xl border border-border shadow-sm flex flex-col sm:flex-row items-center">
           <ValueProp
-            icon={<StarIcon />}
+            icon={<Sparkles size={22} />}
             title="Better Matches"
             desc="We score compatibility to help you find the right fit."
           />
-          <div className="hidden sm:block w-px h-12 bg-border self-center flex-shrink-0" />
+          <div className="hidden sm:block w-px h-12 bg-border flex-shrink-0" />
           <ValueProp
-            icon={<LightbulbIcon />}
+            icon={<MessageCircleHeart size={22} />}
             title="Honest Insights"
             desc="Get clear, personalized insights about each dog."
           />
-          <div className="hidden sm:block w-px h-12 bg-border self-center flex-shrink-0" />
+          <div className="hidden sm:block w-px h-12 bg-border flex-shrink-0" />
           <ValueProp
-            icon={<HeartIcon />}
+            icon={<ShieldCheck size={22} />}
             title="Fewer Returns"
             desc="Stronger matches lead to happier, lasting adoptions."
           />
@@ -190,20 +154,25 @@ export default function Home() {
       </section>
 
       {/* ── How It Works ─────────────────────────────────────────────── */}
-      <section className="bg-surface py-14 px-6 border-b border-border">
+      <section className="bg-surface py-14 px-6">
         <div className="max-w-5xl mx-auto">
-          <h2 className="text-2xl font-bold text-text-primary text-center mb-10">
+          <h2 className="text-2xl font-bold text-text-primary text-center mb-12">
             How It Works
           </h2>
-          <div className="flex flex-col md:flex-row items-center md:items-start justify-center gap-8 md:gap-0">
+          <div className="flex flex-col md:flex-row items-start justify-center gap-10 md:gap-0">
 
-            {/* Step 1 */}
-            <div className="flex flex-col items-center text-center md:flex-1 max-w-xs">
-              <div className="w-9 h-9 rounded-full bg-primary text-white font-bold text-sm flex items-center justify-center mb-4">
-                1
-              </div>
-              <div className="w-full h-32 bg-primary-light rounded-card mb-4 flex items-center justify-center text-5xl">
-                📋
+            {/* Step 1 — teal */}
+            <div className="flex flex-col items-center text-center md:flex-1 max-w-xs mx-auto md:mx-0">
+              <div className="relative w-48 h-44 mx-auto mb-4">
+                <Image
+                  src="/images/step1.png"
+                  alt="Husky puppy with clipboard illustration"
+                  fill
+                  className="object-contain"
+                />
+                <div className="absolute top-2 left-2 w-7 h-7 rounded-full bg-primary text-white font-bold text-xs flex items-center justify-center shadow-sm z-10">
+                  1
+                </div>
               </div>
               <p className="font-semibold text-primary">Create Profile</p>
               <p className="text-text-secondary text-sm mt-2 max-w-[180px]">
@@ -211,21 +180,29 @@ export default function Home() {
               </p>
             </div>
 
-            {/* Dashed arrow 1→2 */}
-            <div className="hidden md:flex items-start pt-14 px-2 flex-shrink-0">
-              <div className="flex items-center">
-                <div className="w-10 border-t-2 border-dashed border-text-secondary" />
-                <span className="text-text-secondary text-xl leading-none ml-0.5">›</span>
-              </div>
+            {/* Arrow 1→2 */}
+            <div className="hidden md:flex items-center mt-[78px] px-1 flex-shrink-0">
+              <Image
+                src="/images/homepage-step-arrow.png"
+                alt=""
+                width={48}
+                height={20}
+                aria-hidden="true"
+              />
             </div>
 
-            {/* Step 2 */}
-            <div className="flex flex-col items-center text-center md:flex-1 max-w-xs">
-              <div className="w-9 h-9 rounded-full bg-secondary-cta text-white font-bold text-sm flex items-center justify-center mb-4">
-                2
-              </div>
-              <div className="w-full h-32 bg-[#EDE9FE] rounded-card mb-4 flex items-center justify-center text-5xl">
-                📊
+            {/* Step 2 — purple */}
+            <div className="flex flex-col items-center text-center md:flex-1 max-w-xs mx-auto md:mx-0">
+              <div className="relative w-48 h-44 mx-auto mb-4">
+                <Image
+                  src="/images/step2.png"
+                  alt="Laptop showing match score dashboard illustration"
+                  fill
+                  className="object-contain"
+                />
+                <div className="absolute top-2 left-2 w-7 h-7 rounded-full bg-secondary-cta text-white font-bold text-xs flex items-center justify-center shadow-sm z-10">
+                  2
+                </div>
               </div>
               <p className="font-semibold text-secondary-cta">Get Match Scores</p>
               <p className="text-text-secondary text-sm mt-2 max-w-[180px]">
@@ -233,24 +210,32 @@ export default function Home() {
               </p>
             </div>
 
-            {/* Dashed arrow 2→3 */}
-            <div className="hidden md:flex items-start pt-14 px-2 flex-shrink-0">
-              <div className="flex items-center">
-                <div className="w-10 border-t-2 border-dashed border-text-secondary" />
-                <span className="text-text-secondary text-xl leading-none ml-0.5">›</span>
-              </div>
+            {/* Arrow 2→3 */}
+            <div className="hidden md:flex items-center mt-[78px] px-1 flex-shrink-0">
+              <Image
+                src="/images/homepage-step-arrow.png"
+                alt=""
+                width={48}
+                height={20}
+                aria-hidden="true"
+              />
             </div>
 
-            {/* Step 3 */}
-            <div className="flex flex-col items-center text-center md:flex-1 max-w-xs">
-              <div
-                className="w-9 h-9 rounded-full text-white font-bold text-sm flex items-center justify-center mb-4"
-                style={{ backgroundColor: "#EC4899" }}
-              >
-                3
-              </div>
-              <div className="w-full h-32 bg-[#FCE7F3] rounded-card mb-4 flex items-center justify-center text-5xl">
-                🐾
+            {/* Step 3 — pink */}
+            <div className="flex flex-col items-center text-center md:flex-1 max-w-xs mx-auto md:mx-0">
+              <div className="relative w-48 h-44 mx-auto mb-4">
+                <Image
+                  src="/images/step3.png"
+                  alt="Shiba Inu with hearts and flowers illustration"
+                  fill
+                  className="object-contain"
+                />
+                <div
+                  className="absolute top-2 left-2 w-7 h-7 rounded-full text-white font-bold text-xs flex items-center justify-center shadow-sm z-10"
+                  style={{ backgroundColor: "#EC4899" }}
+                >
+                  3
+                </div>
               </div>
               <p className="font-semibold" style={{ color: "#EC4899" }}>Find Your Dog</p>
               <p className="text-text-secondary text-sm mt-2 max-w-[180px]">
@@ -323,26 +308,44 @@ export default function Home() {
       </section>
 
       {/* ── Profile Prompt Banner ─────────────────────────────────────── */}
-      <section className="px-4 md:px-6 mb-12">
-        <div className="bg-primary-light border border-border rounded-card max-w-5xl mx-auto px-6 py-5 flex flex-col md:flex-row items-center justify-between gap-4">
-          <div className="hidden md:block relative w-20 h-20 flex-shrink-0">
+      <section className="bg-surface pt-20 px-4 md:px-6 pb-12">
+        <div className="relative bg-primary-light rounded-card max-w-5xl mx-auto overflow-visible">
+
+          {/* Husky + plants: bigger, anchored bottom-left, overflows top + bottom + left */}
+          <div className="absolute -top-16 -bottom-6 -left-4 w-72 hidden md:block">
             <Image
-              src="/images/homepage-hero-bg.png"
+              src="/images/husky-plants.png"
               alt=""
               fill
               className="object-contain object-bottom"
               aria-hidden="true"
             />
           </div>
-          <p className="text-text-primary font-medium text-sm md:text-base text-center md:text-left flex-1">
-            Complete your profile to unlock full match scores and personalized insights!
-          </p>
-          <Link
-            href="/questionnaire"
-            className="bg-primary text-white rounded-button-full px-5 py-2 text-sm font-semibold flex-shrink-0 hover:opacity-90 transition-opacity whitespace-nowrap"
-          >
-            Create Your Profile →
-          </Link>
+
+          {/* Flowers: taller, anchored bottom-right, overflows bottom + right */}
+          <div className="absolute -top-10 -bottom-11 -right-6 w-52 hidden md:block">
+            <Image
+              src="/images/flowers.png"
+              alt=""
+              fill
+              className="object-contain object-bottom object-right"
+              aria-hidden="true"
+            />
+          </div>
+
+          {/* Content — padded on desktop to clear the enlarged images */}
+          <div className="flex flex-col md:flex-row items-center justify-between gap-4 py-5 px-6 md:pl-60 md:pr-44">
+            <p className="text-text-primary font-semibold text-sm md:text-base text-center md:text-left flex-1">
+              Complete your profile to unlock full match scores and personalized insights!
+            </p>
+            <Link
+              href="/questionnaire"
+              className="bg-primary text-white rounded-button-full px-6 py-3 text-sm font-semibold flex-shrink-0 hover:opacity-90 transition-opacity whitespace-nowrap"
+            >
+              Create Your Profile →
+            </Link>
+          </div>
+
         </div>
       </section>
 
