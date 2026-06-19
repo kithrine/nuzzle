@@ -4,10 +4,22 @@ import {
   RateLimitError,
   type RescueGroupsApiResponse,
   type RescueGroupsApiShelter,
+  type RescueGroupsApiPicture,
   type RescueGroupsRawDog,
 } from "@/lib/rescuegroups/types";
 
 const RG_BASE = "https://api.rescuegroups.org/v5";
+
+// RG v5 picture size fields vary; pick the first usable URL.
+function extractPictureUrl(attrs: RescueGroupsApiPicture["attributes"]): string | null {
+  return (
+    attrs?.large?.url ??
+    attrs?.original?.url ??
+    attrs?.small?.url ??
+    attrs?.url ??
+    null
+  );
+}
 
 export async function searchRescueGroupsDogs(
   params: SearchDogsParams
@@ -29,7 +41,7 @@ export async function searchRescueGroupsDogs(
   if (filterFields.length > 0) requestData.filterFields = filterFields;
 
   const res = await fetch(
-    `${RG_BASE}/public/animals/search/available/dogs`,
+    `${RG_BASE}/public/animals/search/available/dogs?include=pictures`,
     {
       method: "POST",
       headers: {
@@ -46,9 +58,13 @@ export async function searchRescueGroupsDogs(
   const json: RescueGroupsApiResponse = await res.json();
 
   const shelterMap = new Map<string, RescueGroupsApiShelter["attributes"]>();
+  const pictureMap = new Map<string, string>();
   for (const included of json.included ?? []) {
     if (included.type === "shelters") {
       shelterMap.set(included.id, (included as RescueGroupsApiShelter).attributes);
+    } else if (included.type === "pictures") {
+      const url = extractPictureUrl((included as RescueGroupsApiPicture).attributes);
+      if (url) pictureMap.set(included.id, url);
     }
   }
 
@@ -56,8 +72,12 @@ export async function searchRescueGroupsDogs(
     const shelterId = Object.keys(shelterMap)[0];
     const shelterAttrs = shelterId ? shelterMap.get(shelterId) : undefined;
 
+    const photos = (animal.relationships?.pictures?.data ?? [])
+      .map((ref) => pictureMap.get(ref.id))
+      .filter((url): url is string => Boolean(url));
+
     const raw: RescueGroupsRawDog = {
-      animals: { ...animal.attributes },
+      animals: { ...animal.attributes, photos },
       shelters: shelterAttrs ?? null,
     };
 
@@ -75,7 +95,7 @@ export async function getRescueGroupsDog(
 ): Promise<{ id: string; raw: RescueGroupsRawDog } | null> {
   const apiKey = process.env.RESCUEGROUPS_API_KEY ?? "";
   const res = await fetch(
-    `${RG_BASE}/public/animals/${externalId}?include=shelters`,
+    `${RG_BASE}/public/animals/${externalId}?include=pictures`,
     {
       headers: {
         Authorization: apiKey,
@@ -91,9 +111,14 @@ export async function getRescueGroupsDog(
   const json = await res.json();
 
   const shelterMap = new Map<string, RescueGroupsApiShelter["attributes"]>();
+  const photos: string[] = [];
   for (const inc of json.included ?? []) {
     if (inc.type === "shelters") {
       shelterMap.set(inc.id, (inc as RescueGroupsApiShelter).attributes);
+    } else if (inc.type === "pictures") {
+      // Single-animal fetch: every included picture belongs to this dog.
+      const url = extractPictureUrl((inc as RescueGroupsApiPicture).attributes);
+      if (url) photos.push(url);
     }
   }
 
@@ -102,7 +127,7 @@ export async function getRescueGroupsDog(
     | undefined;
 
   const raw: RescueGroupsRawDog = {
-    animals: { ...json.data.attributes },
+    animals: { ...json.data.attributes, photos },
     shelters: shelterAttrs ?? null,
   };
 

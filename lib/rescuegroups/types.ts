@@ -33,6 +33,9 @@ export type RescueGroupsApiAnimal = {
     photos?: string[] | null;
     description?: string | null;
   };
+  relationships?: {
+    pictures?: { data?: Array<{ id: string; type: string }> };
+  };
 };
 
 export type RescueGroupsApiShelter = {
@@ -44,9 +47,23 @@ export type RescueGroupsApiShelter = {
   };
 };
 
+// RescueGroups v5 returns photo URLs as a separate `pictures` resource in the
+// response `included` array — not inside `animals.attributes`.
+export type RescueGroupsApiPicture = {
+  id: string;
+  type: "pictures";
+  attributes: {
+    order?: number | null;
+    original?: { url?: string | null } | null;
+    large?: { url?: string | null } | null;
+    small?: { url?: string | null } | null;
+    url?: string | null;
+  };
+};
+
 export type RescueGroupsApiResponse = {
   data: RescueGroupsApiAnimal[];
-  included?: Array<RescueGroupsApiAnimal | RescueGroupsApiShelter>;
+  included?: Array<RescueGroupsApiAnimal | RescueGroupsApiShelter | RescueGroupsApiPicture>;
   meta?: {
     pagination?: {
       total?: number;
