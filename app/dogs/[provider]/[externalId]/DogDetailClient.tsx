@@ -59,8 +59,22 @@ export function DogDetailClient({ dog, compatibility, explanation, isFavorited }
   }
 
   return (
-    <main className="bg-background min-h-[calc(100vh-4rem)]">
-      <div className="max-w-5xl mx-auto px-4 py-6 md:px-6 md:py-8 flex flex-col gap-6">
+    <main className="relative overflow-hidden bg-background min-h-[calc(100vh-4rem)]">
+      {/* Decorative botanical corners (tablet+) */}
+      <img
+        src="/images/flowers-left.png"
+        alt=""
+        aria-hidden="true"
+        className="hidden md:block pointer-events-none select-none absolute bottom-0 left-0 w-44 lg:w-60 h-auto z-0"
+      />
+      <img
+        src="/images/flowers-right.png"
+        alt=""
+        aria-hidden="true"
+        className="hidden md:block pointer-events-none select-none absolute bottom-0 right-0 w-44 lg:w-60 h-auto z-0"
+      />
+
+      <div className="relative z-10 max-w-5xl mx-auto px-4 py-6 md:px-6 md:py-8 flex flex-col gap-6">
         {/* Back link */}
         <Link
           href="/search"
@@ -135,9 +149,17 @@ export function DogDetailClient({ dog, compatibility, explanation, isFavorited }
 
         {/* About */}
         {dog.description && (
-          <section className="bg-surface rounded-card border border-border p-5">
-            <p className="text-lg font-bold text-text-primary mb-2">About {dog.name}</p>
-            <p className="text-text-primary whitespace-pre-line">{dog.description}</p>
+          <section className="relative overflow-hidden bg-surface rounded-card border border-border p-5">
+            <img
+              src="/images/flowers-about.png"
+              alt=""
+              aria-hidden="true"
+              className="hidden sm:block pointer-events-none select-none absolute bottom-0 right-0 w-48 lg:w-64 h-auto"
+            />
+            <div className="relative z-10 sm:pr-48 lg:pr-64">
+              <p className="text-lg font-bold text-text-primary mb-2">About {dog.name}</p>
+              <p className="text-text-primary whitespace-pre-line">{dog.description}</p>
+            </div>
           </section>
         )}
 
