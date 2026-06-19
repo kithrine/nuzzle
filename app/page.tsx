@@ -312,7 +312,7 @@ export default function Home() {
         <div className="relative bg-primary-light rounded-card max-w-5xl mx-auto overflow-visible">
 
           {/* Husky + plants: bigger, anchored bottom-left, overflows top + bottom + left */}
-          <div className="absolute -top-16 -bottom-7 -left-4 w-72 hidden md:block">
+          <div className="absolute -top-16 -bottom-6 -left-4 w-72 hidden md:block">
             <Image
               src="/images/husky-plants.png"
               alt=""
@@ -323,7 +323,7 @@ export default function Home() {
           </div>
 
           {/* Flowers: taller, anchored bottom-right, overflows bottom + right */}
-          <div className="absolute -top-10 -bottom-7 -right-6 w-52 hidden md:block">
+          <div className="absolute -top-10 -bottom-11 -right-6 w-52 hidden md:block">
             <Image
               src="/images/flowers.png"
               alt=""
