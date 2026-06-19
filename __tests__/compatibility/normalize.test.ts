@@ -215,5 +215,25 @@ describe("normalizeRescueGroupsDog", () => {
         "She didn't mind cats & dogs."
       );
     });
+
+    it("decodes typographic named entities (rsquo, ndash, mdash, hellip)", () => {
+      const raw: RescueGroupsRawDog = {
+        animals: {
+          name: "Allie",
+          descriptionText: "It&rsquo;s a 5&ndash;10 lb pup&mdash;sweet&hellip;",
+        },
+      };
+      expect(normalizeRescueGroupsDog(raw, "x").description).toBe(
+        "It’s a 5–10 lb pup—sweet…"
+      );
+    });
+
+    it("decodes entities in the shelter name", () => {
+      const raw: RescueGroupsRawDog = {
+        animals: { name: "Allie" },
+        shelters: { name: "S&amp;L Rescue", adoptionUrl: "https://x.test" },
+      };
+      expect(normalizeRescueGroupsDog(raw, "x").shelterName).toBe("S&L Rescue");
+    });
   });
 });

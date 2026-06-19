@@ -56,24 +56,41 @@ function toGender(v: string | null | undefined): "Male" | "Female" | "Unknown" {
   return "Unknown";
 }
 
+// Keyed by entity name (without the surrounding & and ;).
 const NAMED_ENTITIES: Record<string, string> = {
-  "&nbsp;": " ",
-  "&amp;": "&",
-  "&lt;": "<",
-  "&gt;": ">",
-  "&quot;": '"',
-  "&apos;": "'",
-  "&#39;": "'",
+  amp: "&", lt: "<", gt: ">", quot: '"', apos: "'", nbsp: " ",
+  // Typographic punctuation (the common offenders in shelter descriptions)
+  lsquo: "‘", rsquo: "’", sbquo: "‚",
+  ldquo: "“", rdquo: "”", bdquo: "„",
+  ndash: "–", mdash: "—", hellip: "…",
+  bull: "•", middot: "·",
+  // Symbols
+  deg: "°", copy: "©", reg: "®", trade: "™",
+  cent: "¢", pound: "£", euro: "€", yen: "¥",
+  frac12: "½", frac14: "¼", frac34: "¾",
+  times: "×", divide: "÷", plusmn: "±",
+  // A few common accented letters
+  eacute: "é", egrave: "è", agrave: "à",
+  uuml: "ü", ouml: "ö", auml: "ä",
+  ntilde: "ñ", ccedil: "ç",
 };
 
-// RescueGroups description fields arrive HTML-escaped (e.g. "&#39;", "&nbsp;").
-// Decode named + numeric entities and collapse the runs of spaces that
+// RescueGroups text fields arrive HTML-escaped (e.g. "&#39;", "&nbsp;",
+// "&rsquo;"). Decode numeric (decimal + hex) and named entities in one pass —
+// unknown names are left untouched — then collapse the runs of spaces that
 // "&nbsp;&nbsp;" produces, while preserving newlines so paragraphs survive.
 function decodeEntities(s: string): string {
   return s
-    .replace(/&nbsp;|&amp;|&lt;|&gt;|&quot;|&apos;|&#39;/g, (m) => NAMED_ENTITIES[m])
-    .replace(/&#x([0-9a-fA-F]+);/g, (_, h) => String.fromCodePoint(parseInt(h, 16)))
-    .replace(/&#(\d+);/g, (_, d) => String.fromCodePoint(parseInt(d, 10)))
+    .replace(/&(#x?[0-9a-fA-F]+|[A-Za-z][A-Za-z0-9]*);/g, (m, body: string) => {
+      if (body[0] === "#") {
+        const code =
+          body[1] === "x" || body[1] === "X"
+            ? parseInt(body.slice(2), 16)
+            : parseInt(body.slice(1), 10);
+        return Number.isNaN(code) ? m : String.fromCodePoint(code);
+      }
+      return NAMED_ENTITIES[body] ?? NAMED_ENTITIES[body.toLowerCase()] ?? m;
+    })
     .replace(/[ \t]{2,}/g, " ");
 }
 
@@ -107,7 +124,7 @@ export function normalizeRescueGroupsDog(
       const d = animals.descriptionText ?? animals.description ?? null;
       return d ? decodeEntities(d) : null;
     })(),
-    shelterName: shelters?.name ?? undefined,
+    shelterName: shelters?.name ? decodeEntities(shelters.name) : undefined,
     shelterUrl: shelters?.adoptionUrl ?? undefined,
     distance:
       distance ?? (typeof animals.distance === "number" ? animals.distance : null),
