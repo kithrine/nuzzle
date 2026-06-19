@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { Sparkles, MessageCircleHeart, ShieldCheck } from "lucide-react";
 import { NuzzleLogo } from "@/components/layout/NuzzleLogo";
 
 // ─── Icons ────────────────────────────────────────────────────────────────────
@@ -22,22 +23,6 @@ function PersonIcon() {
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
       <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
       <circle cx="12" cy="7" r="4" />
-    </svg>
-  );
-}
-
-function StarIcon() {
-  return (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-      <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.86L12 17.77l-6.18 3.23L7 14.14 2 9.27l6.91-1.01L12 2z" />
-    </svg>
-  );
-}
-
-function LightbulbIcon() {
-  return (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <path d="M9 21h6M9 18h6M12 2a7 7 0 0 1 7 7 7 7 0 0 1-4 6.32V18H9v-2.68A7 7 0 0 1 5 9a7 7 0 0 1 7-7z" />
     </svg>
   );
 }
@@ -80,10 +65,10 @@ function TikTokIcon() {
 
 function ValueProp({ icon, title, desc }: { icon: ReactNode; title: string; desc: string }) {
   return (
-    <div className="flex-1 flex items-start gap-3">
+    <div className="flex-1 flex items-start gap-3 px-6 py-5">
       <div className="bg-primary-light rounded-full p-3 flex-shrink-0 text-primary">{icon}</div>
       <div>
-        <p className="font-semibold text-text-primary">{title}</p>
+        <p className="font-semibold text-primary text-sm">{title}</p>
         <p className="text-text-secondary text-sm mt-1">{desc}</p>
       </div>
     </div>
@@ -167,22 +152,22 @@ export default function Home() {
       </section>
 
       {/* ── Value Propositions ───────────────────────────────────────── */}
-      <section className="bg-surface py-10 px-6 border-b border-border">
-        <div className="max-w-4xl mx-auto flex flex-col sm:flex-row gap-8 sm:gap-6 items-start">
+      <section className="bg-surface py-5 px-4">
+        <div className="max-w-5xl mx-auto bg-surface rounded-2xl border border-border shadow-sm flex flex-col sm:flex-row items-center">
           <ValueProp
-            icon={<StarIcon />}
+            icon={<Sparkles size={22} />}
             title="Better Matches"
             desc="We score compatibility to help you find the right fit."
           />
-          <div className="hidden sm:block w-px h-12 bg-border self-center flex-shrink-0" />
+          <div className="hidden sm:block w-px h-12 bg-border flex-shrink-0" />
           <ValueProp
-            icon={<LightbulbIcon />}
+            icon={<MessageCircleHeart size={22} />}
             title="Honest Insights"
             desc="Get clear, personalized insights about each dog."
           />
-          <div className="hidden sm:block w-px h-12 bg-border self-center flex-shrink-0" />
+          <div className="hidden sm:block w-px h-12 bg-border flex-shrink-0" />
           <ValueProp
-            icon={<HeartIcon />}
+            icon={<ShieldCheck size={22} />}
             title="Fewer Returns"
             desc="Stronger matches lead to happier, lasting adoptions."
           />
