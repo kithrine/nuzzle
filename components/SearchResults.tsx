@@ -1,3 +1,5 @@
+import Link from "next/link";
+import { Sparkles } from "lucide-react";
 import type { NormalizedDog } from "@/lib/compatibility/types";
 import { DogCard } from "@/components/DogCard";
 
@@ -22,24 +24,42 @@ export function SearchResults({
 }) {
   if (results.length === 0) {
     return (
-      <p>
-        No dogs found near {zip}. Try expanding your search radius.
-      </p>
+      <div className="flex flex-col items-center text-center gap-4 py-16">
+        <p className="text-text-secondary">
+          No dogs found near {zip}. Try expanding your search radius.
+        </p>
+        <Link
+          href="/search"
+          className="bg-primary text-white rounded-button-inline px-4 py-2 text-sm font-semibold hover:opacity-90 transition-opacity"
+        >
+          Browse Dogs
+        </Link>
+      </div>
     );
   }
 
   return (
-    <div>
-      <p>Showing Nearby Dogs</p>
-      <p>{results.length} dogs found</p>
-      {results.map(({ dog, compatibility }) => (
-        <DogCard
-          key={dog.externalId}
-          dog={dog}
-          compatibility={compatibility}
-          isFavorited={favoriteIds?.has(`${dog.provider}-${dog.externalId}`) ?? false}
-        />
-      ))}
+    <div className="mt-6">
+      <div className="mb-4">
+        <p className="text-text-secondary text-sm flex items-center gap-1.5">
+          <Sparkles size={14} className="text-primary" />
+          Showing Nearby Dogs
+        </p>
+        <p className="text-text-primary font-semibold text-lg">
+          {results.length} dogs found
+        </p>
+      </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+        {results.map(({ dog, compatibility }) => (
+          <DogCard
+            key={dog.externalId}
+            dog={dog}
+            compatibility={compatibility}
+            isFavorited={favoriteIds?.has(`${dog.provider}-${dog.externalId}`) ?? false}
+          />
+        ))}
+      </div>
     </div>
   );
 }

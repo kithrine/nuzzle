@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import Image from "next/image";
+import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useUser } from "@clerk/nextjs";
 import type { NormalizedDog } from "@/lib/compatibility/types";
@@ -118,28 +120,92 @@ export function SearchPageClient() {
     runSearch(filters, nextPage);
   }
 
+  // Heading + subline vary by source (post-questionnaire) and auth state.
+  const source = searchParams.get("source");
+  const resultCount = state.status === "success" ? state.results.length : 0;
+
+  let heading = "Browse Dogs";
+  let subline: React.ReactNode =
+    "Browse adoptable dogs and find one that fits your lifestyle.";
+
+  if (source === "questionnaire") {
+    heading = "Your Best Matches";
+    subline = `Profile Complete · ${resultCount} Strong Matches Found`;
+  } else if (isSignedIn) {
+    heading = "Best Matches For You";
+    subline = "Based on your profile and what matters most to you.";
+  } else {
+    subline = (
+      <>
+        Find your perfect match.{" "}
+        <Link href="/questionnaire" className="text-primary font-medium hover:underline">
+          Create a profile
+        </Link>{" "}
+        to unlock your compatibility score and personalized insights.
+      </>
+    );
+  }
+
   return (
-    <main>
-      <h1>Browse Dogs</h1>
+    <main className="bg-background min-h-[calc(100vh-4rem)]">
+      {/* Hero */}
+      <section className="relative h-44 md:h-56 overflow-hidden">
+        <Image
+          src="/images/browse-hero-bg.png"
+          alt=""
+          fill
+          priority
+          className="object-cover object-center"
+          aria-hidden="true"
+        />
+        <div className="absolute inset-0 bg-gradient-to-r from-white/85 via-white/45 to-transparent" />
+        <div className="relative z-10 max-w-7xl mx-auto h-full px-4 md:px-6 flex flex-col justify-center">
+          <h1 className="text-3xl md:text-4xl font-bold text-text-primary">{heading}</h1>
+          <p className="mt-1 text-text-secondary text-sm md:text-base max-w-md">
+            {subline}
+          </p>
+        </div>
+      </section>
 
-      <SearchFilters
-        defaultValues={initialFilters}
-        onSubmit={handleSubmit}
-        isLoading={state.status === "loading"}
-      />
+      {/* Content */}
+      <div className="max-w-7xl mx-auto px-4 py-6 md:px-6 md:py-8">
+        <SearchFilters
+          defaultValues={initialFilters}
+          onSubmit={handleSubmit}
+          isLoading={state.status === "loading"}
+        />
 
-      {state.status === "error" && (
-        <p>Unable to load dogs at this time. Please try again later.</p>
-      )}
+        {state.status === "loading" && (
+          <p className="text-text-secondary mt-6">Loading dogs…</p>
+        )}
 
-      {state.status === "success" && (
-        <>
-          <SearchResults results={state.results} zip={state.zip} favoriteIds={favoriteIds} />
-          {state.hasMore && (
-            <button onClick={handleNextPage}>Next Page</button>
-          )}
-        </>
-      )}
+        {state.status === "error" && (
+          <p className="text-text-secondary mt-6">
+            Unable to load dogs at this time. Please try again later.
+          </p>
+        )}
+
+        {state.status === "success" && (
+          <>
+            <SearchResults
+              results={state.results}
+              zip={state.zip}
+              favoriteIds={favoriteIds}
+            />
+            {state.hasMore && (
+              <div className="flex items-center justify-center gap-4 mt-8">
+                <span className="text-text-secondary text-sm">Page {state.page}</span>
+                <button
+                  onClick={handleNextPage}
+                  className="bg-surface border border-border rounded-button-inline px-4 py-2 text-sm font-medium text-text-primary hover:bg-primary-light transition-colors"
+                >
+                  Next Page
+                </button>
+              </div>
+            )}
+          </>
+        )}
+      </div>
     </main>
   );
 }
