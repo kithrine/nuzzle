@@ -1,8 +1,9 @@
 import type { ReactNode } from "react";
+import { Suspense } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Sparkles, MessageCircleHeart, ShieldCheck, PawPrint, Heart } from "lucide-react";
-import { NuzzleLogo } from "@/components/layout/NuzzleLogo";
+import { FeaturedDogs } from "@/components/FeaturedDogs";
 
 // ─── Icons ────────────────────────────────────────────────────────────────────
 
@@ -14,33 +15,26 @@ function HeartIcon() {
   );
 }
 
-function InstagramIcon() {
-  return (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
-      <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
-      <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
-    </svg>
-  );
-}
-
-function FacebookIcon() {
-  return (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z" />
-    </svg>
-  );
-}
-
-function TikTokIcon() {
-  return (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-      <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.77 0 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.27 6.27 0 0 0-.79-.05 6.34 6.34 0 0 0 0 12.68 6.34 6.34 0 0 0 6.33-6.34V8.96a8.27 8.27 0 0 0 4.83 1.54V7.06a4.85 4.85 0 0 1-1.06-.37z" />
-    </svg>
-  );
-}
-
 // ─── Sub-components ───────────────────────────────────────────────────────────
+
+function FeaturedDogsSkeleton() {
+  return (
+    <div className="flex gap-4 w-max">
+      {Array.from({ length: 5 }).map((_, i) => (
+        <div
+          key={i}
+          className="bg-surface rounded-card shadow-sm flex-shrink-0 w-48 overflow-hidden"
+        >
+          <div className="h-36 bg-primary-light animate-pulse" />
+          <div className="p-3 flex flex-col gap-2">
+            <div className="h-4 w-24 bg-border rounded animate-pulse" />
+            <div className="h-3 w-32 bg-border rounded animate-pulse" />
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
 
 function ValueProp({ icon, title, desc }: { icon: ReactNode; title: string; desc: string }) {
   return (
@@ -53,31 +47,6 @@ function ValueProp({ icon, title, desc }: { icon: ReactNode; title: string; desc
     </div>
   );
 }
-
-// ─── Data ─────────────────────────────────────────────────────────────────────
-
-type MatchTier = "high" | "medium" | "low";
-
-const featuredDogs: {
-  name: string;
-  breed: string;
-  age: string;
-  years: string;
-  match: number;
-  tier: MatchTier;
-}[] = [
-  { name: "Charlie", breed: "Labrador Mix", age: "Young", years: "1 yr", match: 91, tier: "high" },
-  { name: "Bella", breed: "German Shepherd", age: "Adult", years: "3 yrs", match: 88, tier: "medium" },
-  { name: "Luna", breed: "Husky Mix", age: "Young", years: "1 yr", match: 96, tier: "high" },
-  { name: "Milo", breed: "Shiba Inu", age: "Adult", years: "2 yrs", match: 87, tier: "high" },
-  { name: "Daisy", breed: "Pomeranian", age: "Adult", years: "2 yrs", match: 82, tier: "high" },
-];
-
-const matchBadge: Record<MatchTier, string> = {
-  high: "bg-match-high-bg text-match-high-text",
-  medium: "bg-match-medium-bg text-match-medium-text",
-  low: "bg-match-low-bg text-match-low-text",
-};
 
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
@@ -263,40 +232,9 @@ export default function Home() {
             ‹
           </button>
           <div className="overflow-x-auto pb-2 flex-1">
-            <div className="flex gap-4 w-max">
-              {featuredDogs.map((dog) => (
-                <div
-                  key={dog.name}
-                  className="bg-surface rounded-card shadow-sm flex-shrink-0 w-48 overflow-hidden"
-                >
-                  <div className="relative h-36">
-                    <Image
-                      src="/images/homepage-hero-bg.png"
-                      alt={dog.name}
-                      fill
-                      className="object-cover"
-                    />
-                    <span
-                      className={`absolute bottom-2 left-2 text-xs font-bold px-2 py-1 rounded-badge text-center leading-tight ${matchBadge[dog.tier]}`}
-                    >
-                      {dog.match}%<br />Match
-                    </span>
-                  </div>
-                  <div className="p-3">
-                    <p className="font-semibold text-text-primary text-sm">{dog.name}</p>
-                    <p className="text-text-secondary text-xs">
-                      {dog.breed} · {dog.age} · {dog.years}
-                    </p>
-                    <Link
-                      href="/search"
-                      className="text-primary text-xs font-medium mt-2 block underline underline-offset-2 hover:opacity-75"
-                    >
-                      View Details
-                    </Link>
-                  </div>
-                </div>
-              ))}
-            </div>
+            <Suspense fallback={<FeaturedDogsSkeleton />}>
+              <FeaturedDogs />
+            </Suspense>
           </div>
           <button
             className="flex-shrink-0 w-8 h-8 rounded-full bg-surface border border-border flex items-center justify-center text-text-secondary hover:text-text-primary shadow-sm text-xl leading-none"
@@ -349,49 +287,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── Footer ────────────────────────────────────────────────────── */}
-      <footer className="bg-surface border-t border-border py-8 px-6">
-        <div className="max-w-5xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
-          <div className="flex flex-col items-center md:items-start gap-1">
-            <div className="flex items-center gap-2">
-              <NuzzleLogo size={24} />
-              <span className="font-semibold text-text-primary">Nuzzle</span>
-            </div>
-            <p className="text-text-secondary text-xs">Better matches. Happier tails.</p>
-          </div>
-
-          <nav aria-label="Footer" className="flex gap-4 md:gap-6 flex-wrap justify-center">
-            {["About", "Contact", "Privacy", "Terms"].map((item) => (
-              <a
-                key={item}
-                href="#"
-                className="text-sm text-text-secondary hover:text-text-primary transition-colors"
-              >
-                {item}
-              </a>
-            ))}
-          </nav>
-
-          <div className="flex gap-3">
-            {(
-              [
-                { label: "Instagram", icon: <InstagramIcon /> },
-                { label: "Facebook", icon: <FacebookIcon /> },
-                { label: "TikTok", icon: <TikTokIcon /> },
-              ] as { label: string; icon: ReactNode }[]
-            ).map(({ label, icon }) => (
-              <a
-                key={label}
-                href="#"
-                aria-label={label}
-                className="bg-text-primary text-white rounded-full p-2 hover:bg-primary transition-colors flex items-center justify-center"
-              >
-                {icon}
-              </a>
-            ))}
-          </div>
-        </div>
-      </footer>
     </main>
   );
 }

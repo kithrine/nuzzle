@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import { ClerkProvider } from "@clerk/nextjs";
 import { TopNav } from "@/components/layout/TopNav";
 import { BottomTabBar } from "@/components/layout/BottomTabBar";
+import { ConditionalFooter } from "@/components/layout/ConditionalFooter";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -34,6 +35,7 @@ export default function RootLayout({
         <body className="min-h-screen flex flex-col bg-background text-text-primary antialiased">
           <TopNav />
           <div className="flex-1 pb-16 md:pb-0">{children}</div>
+          <ConditionalFooter />
           <BottomTabBar />
         </body>
       </html>

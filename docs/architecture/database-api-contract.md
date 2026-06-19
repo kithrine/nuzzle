@@ -220,6 +220,7 @@ type NormalizedDog = {
   breed: string | null;
   ageGroup: "Baby" | "Young" | "Adult" | "Senior" | "Unknown";
   sizeGroup: "Small" | "Medium" | "Large" | "X-Large" | "Unknown";
+  gender?: "Male" | "Female" | "Unknown";
 
   // Energy is resolved in priority order: energyLevel → activityLevel → exerciseNeeds
   energyLevel:   "Low" | "Moderate" | "High" | "Unknown";
@@ -250,12 +251,16 @@ type NormalizedDog = {
 
 Source: RescueGroups v5 API. Normalization lives in `lib/compatibility/normalize.ts`.
 
+The v5 API returns `data` as an **array** (even for a single-animal fetch), photo URLs as a separate `pictures` resource in `included` (linked per-animal via `relationships.pictures`), and the shelter/rescue as an `orgs` resource in `included` (via `relationships.orgs`). Both fetches request `?include=pictures,orgs`.
+
 | RescueGroups Field | NormalizedDog Field | Notes |
 |-------------------|---------------------|-------|
 | `animals.name` | `name` | |
-| `animals.breeds.primary` | `breed` | `null` if absent |
+| `animals.breedPrimary` | `breed` | `null` if absent (legacy `breeds.primary` accepted as fallback) |
 | `animals.ageGroup` | `ageGroup` | Map to Baby/Young/Adult/Senior or `"Unknown"` |
 | `animals.sizeGroup` | `sizeGroup` | Map to Small/Medium/Large/X-Large or `"Unknown"` |
+| `animals.sex` | `gender` | Map to Male/Female or `"Unknown"` |
+| `animals.distance` | `distance` | Miles from search location; `null` when not a radius search |
 | `animals.isKidsOk` | `isKidsOk` | `"Unknown"` if not present or ambiguous |
 | `animals.isCatsOk` | `isCatsOk` | `"Unknown"` if not present or ambiguous |
 | `animals.isDogsOk` | `isDogsOk` | `"Unknown"` if not present or ambiguous |
@@ -266,10 +271,10 @@ Source: RescueGroups v5 API. Normalization lives in `lib/compatibility/normalize
 | `animals.isYardRequired` | `isYardRequired` | `"Unknown"` if absent |
 | `animals.fenceNeeds` | `fenceNeeds` | Map to fence enum or `"Unknown"` |
 | `animals.ownerExperience` | `ownerExperience` | Map to None/Species/Breed or `"Unknown"` |
-| `animals.photos` | `photos` | Array of URLs; `[]` if absent |
-| `animals.description` | `description` | `null` if absent |
-| `shelters.name` | `shelterName` | |
-| `shelters.adoptionUrl` | `shelterUrl` | |
+| `included[pictures]` | `photos` | URLs from the `pictures` resource (via `relationships.pictures`); `[]` if none |
+| `animals.descriptionText` | `description` | `null` if absent (legacy `description` accepted as fallback) |
+| `included[orgs].name` | `shelterName` | from the `orgs` resource (via `relationships.orgs`) |
+| `included[orgs].url` | `shelterUrl` | shelter/rescue website |
 
 ---
 

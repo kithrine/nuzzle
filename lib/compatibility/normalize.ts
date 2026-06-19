@@ -51,6 +51,49 @@ function toBooleanOrUnknown(
   return "Unknown";
 }
 
+function toGender(v: string | null | undefined): "Male" | "Female" | "Unknown" {
+  if (v === "Male" || v === "Female") return v;
+  return "Unknown";
+}
+
+// Keyed by entity name (without the surrounding & and ;).
+const NAMED_ENTITIES: Record<string, string> = {
+  amp: "&", lt: "<", gt: ">", quot: '"', apos: "'", nbsp: " ",
+  // Typographic punctuation (the common offenders in shelter descriptions)
+  lsquo: "‘", rsquo: "’", sbquo: "‚",
+  ldquo: "“", rdquo: "”", bdquo: "„",
+  ndash: "–", mdash: "—", hellip: "…",
+  bull: "•", middot: "·",
+  // Symbols
+  deg: "°", copy: "©", reg: "®", trade: "™",
+  cent: "¢", pound: "£", euro: "€", yen: "¥",
+  frac12: "½", frac14: "¼", frac34: "¾",
+  times: "×", divide: "÷", plusmn: "±",
+  // A few common accented letters
+  eacute: "é", egrave: "è", agrave: "à",
+  uuml: "ü", ouml: "ö", auml: "ä",
+  ntilde: "ñ", ccedil: "ç",
+};
+
+// RescueGroups text fields arrive HTML-escaped (e.g. "&#39;", "&nbsp;",
+// "&rsquo;"). Decode numeric (decimal + hex) and named entities in one pass —
+// unknown names are left untouched — then collapse the runs of spaces that
+// "&nbsp;&nbsp;" produces, while preserving newlines so paragraphs survive.
+function decodeEntities(s: string): string {
+  return s
+    .replace(/&(#x?[0-9a-fA-F]+|[A-Za-z][A-Za-z0-9]*);/g, (m, body: string) => {
+      if (body[0] === "#") {
+        const code =
+          body[1] === "x" || body[1] === "X"
+            ? parseInt(body.slice(2), 16)
+            : parseInt(body.slice(1), 10);
+        return Number.isNaN(code) ? m : String.fromCodePoint(code);
+      }
+      return NAMED_ENTITIES[body] ?? NAMED_ENTITIES[body.toLowerCase()] ?? m;
+    })
+    .replace(/[ \t]{2,}/g, " ");
+}
+
 export function normalizeRescueGroupsDog(
   raw: RescueGroupsRawDog,
   externalId: string,
@@ -62,9 +105,10 @@ export function normalizeRescueGroupsDog(
     provider: "rescuegroups",
     externalId,
     name: animals.name ?? "",
-    breed: animals.breeds?.primary ?? null,
+    breed: animals.breedPrimary ?? animals.breeds?.primary ?? null,
     ageGroup: toAgeGroup(animals.ageGroup),
     sizeGroup: toSizeGroup(animals.sizeGroup),
+    gender: toGender(animals.sex),
     energyLevel: toEnergyLevel(animals.energyLevel),
     activityLevel: toEnergyLevel(animals.activityLevel),
     exerciseNeeds: toEnergyLevel(animals.exerciseNeeds),
@@ -76,9 +120,13 @@ export function normalizeRescueGroupsDog(
     fenceNeeds: toFenceNeeds(animals.fenceNeeds),
     ownerExperience: toOwnerExperience(animals.ownerExperience),
     photos: animals.photos ?? [],
-    description: animals.description ?? null,
-    shelterName: shelters?.name ?? undefined,
+    description: (() => {
+      const d = animals.descriptionText ?? animals.description ?? null;
+      return d ? decodeEntities(d) : null;
+    })(),
+    shelterName: shelters?.name ? decodeEntities(shelters.name) : undefined,
     shelterUrl: shelters?.adoptionUrl ?? undefined,
-    distance,
+    distance:
+      distance ?? (typeof animals.distance === "number" ? animals.distance : null),
   };
 }

@@ -172,4 +172,68 @@ describe("normalizeRescueGroupsDog", () => {
       expect(normalizeRescueGroupsDog(raw, "x").shelterUrl).toBeUndefined();
     });
   });
+
+  describe("real RescueGroups v5 attribute names", () => {
+    it("maps breedPrimary → breed", () => {
+      const raw: RescueGroupsRawDog = {
+        animals: { name: "Allie", breedPrimary: "German Shepherd Dog", ageGroup: "Adult" },
+      };
+      expect(normalizeRescueGroupsDog(raw, "x").breed).toBe("German Shepherd Dog");
+    });
+
+    it("maps descriptionText → description", () => {
+      const raw: RescueGroupsRawDog = {
+        animals: { name: "Allie", descriptionText: "Sweet and playful." },
+      };
+      expect(normalizeRescueGroupsDog(raw, "x").description).toBe("Sweet and playful.");
+    });
+
+    it("maps sex → gender (Male/Female), else Unknown", () => {
+      expect(normalizeRescueGroupsDog({ animals: { sex: "Female" } }, "x").gender).toBe("Female");
+      expect(normalizeRescueGroupsDog({ animals: { sex: "Male" } }, "x").gender).toBe("Male");
+      expect(normalizeRescueGroupsDog({ animals: {} }, "x").gender).toBe("Unknown");
+    });
+
+    it("uses the attribute distance when no distance arg is passed", () => {
+      const raw: RescueGroupsRawDog = { animals: { name: "Allie", distance: 18 } };
+      expect(normalizeRescueGroupsDog(raw, "x").distance).toBe(18);
+    });
+
+    it("an explicit distance arg overrides the attribute distance", () => {
+      const raw: RescueGroupsRawDog = { animals: { name: "Allie", distance: 18 } };
+      expect(normalizeRescueGroupsDog(raw, "x", 5).distance).toBe(5);
+    });
+
+    it("decodes HTML entities in the description", () => {
+      const raw: RescueGroupsRawDog = {
+        animals: {
+          name: "Allie",
+          descriptionText: "She didn&#39;t&nbsp;&nbsp;mind cats &amp; dogs.",
+        },
+      };
+      expect(normalizeRescueGroupsDog(raw, "x").description).toBe(
+        "She didn't mind cats & dogs."
+      );
+    });
+
+    it("decodes typographic named entities (rsquo, ndash, mdash, hellip)", () => {
+      const raw: RescueGroupsRawDog = {
+        animals: {
+          name: "Allie",
+          descriptionText: "It&rsquo;s a 5&ndash;10 lb pup&mdash;sweet&hellip;",
+        },
+      };
+      expect(normalizeRescueGroupsDog(raw, "x").description).toBe(
+        "It’s a 5–10 lb pup—sweet…"
+      );
+    });
+
+    it("decodes entities in the shelter name", () => {
+      const raw: RescueGroupsRawDog = {
+        animals: { name: "Allie" },
+        shelters: { name: "S&amp;L Rescue", adoptionUrl: "https://x.test" },
+      };
+      expect(normalizeRescueGroupsDog(raw, "x").shelterName).toBe("S&L Rescue");
+    });
+  });
 });
