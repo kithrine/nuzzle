@@ -203,5 +203,17 @@ describe("normalizeRescueGroupsDog", () => {
       const raw: RescueGroupsRawDog = { animals: { name: "Allie", distance: 18 } };
       expect(normalizeRescueGroupsDog(raw, "x", 5).distance).toBe(5);
     });
+
+    it("decodes HTML entities in the description", () => {
+      const raw: RescueGroupsRawDog = {
+        animals: {
+          name: "Allie",
+          descriptionText: "She didn&#39;t&nbsp;&nbsp;mind cats &amp; dogs.",
+        },
+      };
+      expect(normalizeRescueGroupsDog(raw, "x").description).toBe(
+        "She didn't mind cats & dogs."
+      );
+    });
   });
 });

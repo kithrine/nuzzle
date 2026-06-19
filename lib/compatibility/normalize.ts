@@ -56,6 +56,27 @@ function toGender(v: string | null | undefined): "Male" | "Female" | "Unknown" {
   return "Unknown";
 }
 
+const NAMED_ENTITIES: Record<string, string> = {
+  "&nbsp;": " ",
+  "&amp;": "&",
+  "&lt;": "<",
+  "&gt;": ">",
+  "&quot;": '"',
+  "&apos;": "'",
+  "&#39;": "'",
+};
+
+// RescueGroups description fields arrive HTML-escaped (e.g. "&#39;", "&nbsp;").
+// Decode named + numeric entities and collapse the runs of spaces that
+// "&nbsp;&nbsp;" produces, while preserving newlines so paragraphs survive.
+function decodeEntities(s: string): string {
+  return s
+    .replace(/&nbsp;|&amp;|&lt;|&gt;|&quot;|&apos;|&#39;/g, (m) => NAMED_ENTITIES[m])
+    .replace(/&#x([0-9a-fA-F]+);/g, (_, h) => String.fromCodePoint(parseInt(h, 16)))
+    .replace(/&#(\d+);/g, (_, d) => String.fromCodePoint(parseInt(d, 10)))
+    .replace(/[ \t]{2,}/g, " ");
+}
+
 export function normalizeRescueGroupsDog(
   raw: RescueGroupsRawDog,
   externalId: string,
@@ -82,7 +103,10 @@ export function normalizeRescueGroupsDog(
     fenceNeeds: toFenceNeeds(animals.fenceNeeds),
     ownerExperience: toOwnerExperience(animals.ownerExperience),
     photos: animals.photos ?? [],
-    description: animals.descriptionText ?? animals.description ?? null,
+    description: (() => {
+      const d = animals.descriptionText ?? animals.description ?? null;
+      return d ? decodeEntities(d) : null;
+    })(),
     shelterName: shelters?.name ?? undefined,
     shelterUrl: shelters?.adoptionUrl ?? undefined,
     distance:
