@@ -420,12 +420,12 @@ export function QuestionnaireClient() {
 function Shell({ children }: { children: ReactNode }) {
   return (
     <main className="relative overflow-hidden bg-background min-h-[calc(100vh-4rem)] flex flex-col items-center px-4 py-8">
-      <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 bottom-0 h-32 md:h-48 z-0">
+      <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 bottom-0 z-0">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src="/images/flowers-bottom.png"
           alt=""
-          className="w-full h-full object-cover object-bottom select-none"
+          className="w-full h-auto select-none"
         />
       </div>
       <div className="relative z-10 w-full max-w-lg flex flex-col items-center">{children}</div>
