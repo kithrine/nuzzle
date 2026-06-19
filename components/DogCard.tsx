@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Lock, MapPin, Check } from "lucide-react";
 import type { NormalizedDog, CompatibilityResult } from "@/lib/compatibility/types";
+import { formatAgeGroup } from "@/lib/compatibility/display";
 import { FavoriteButton } from "@/components/FavoriteButton";
 
 type AnonymousCompatibility = {
@@ -58,7 +59,7 @@ export function DogCard({
           {dog.name}
         </h2>
         <p className="text-text-secondary text-sm">
-          {dog.ageGroup} &bull; {dog.sizeGroup} &bull; {breed}
+          {formatAgeGroup(dog.ageGroup)} &bull; {dog.sizeGroup} &bull; {breed}
         </p>
         {dog.distance != null && (
           <p className="text-text-secondary text-sm flex items-center gap-1">

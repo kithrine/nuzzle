@@ -105,7 +105,7 @@ export function SearchFilters({
           className={inputClasses}
         >
           <option value="">All Ages</option>
-          <option value="Baby">Baby</option>
+          <option value="Baby">Puppy</option>
           <option value="Young">Young</option>
           <option value="Adult">Adult</option>
           <option value="Senior">Senior</option>

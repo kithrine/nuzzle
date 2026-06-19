@@ -33,7 +33,7 @@ describe("SearchFilters", () => {
   it("age group select has All Ages plus Baby, Young, Adult, Senior options", () => {
     render(<SearchFilters defaultValues={DEFAULT_VALUES} onSubmit={vi.fn()} />);
     expect(screen.getByRole("option", { name: /all ages/i })).toBeInTheDocument();
-    expect(screen.getByRole("option", { name: /^baby$/i })).toBeInTheDocument();
+    expect(screen.getByRole("option", { name: /^puppy$/i })).toBeInTheDocument();
     expect(screen.getByRole("option", { name: /^young$/i })).toBeInTheDocument();
     expect(screen.getByRole("option", { name: /^adult$/i })).toBeInTheDocument();
     expect(screen.getByRole("option", { name: /^senior$/i })).toBeInTheDocument();

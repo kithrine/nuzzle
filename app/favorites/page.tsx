@@ -3,6 +3,7 @@ import { getOrCreateUser } from "@/lib/auth/get-or-create-user";
 import { prisma } from "@/lib/db/prisma";
 import { getRescueGroupsDog } from "@/lib/rescuegroups/client";
 import { normalizeRescueGroupsDog } from "@/lib/compatibility/normalize";
+import { formatAgeGroup } from "@/lib/compatibility/display";
 import { calculateCompatibility } from "@/lib/compatibility/engine";
 import type { AdopterProfile, NormalizedDog } from "@/lib/compatibility/types";
 import { FavoriteButton } from "@/components/FavoriteButton";
@@ -58,7 +59,7 @@ export default async function FavoritesPage() {
             {dog.photos[0] && <img src={dog.photos[0]} alt={dog.name} />}
             <h2>{dog.name}</h2>
             <p>
-              {dog.ageGroup} &bull; {dog.sizeGroup} &bull; {dog.breed ?? "Mixed Breed"}
+              {formatAgeGroup(dog.ageGroup)} &bull; {dog.sizeGroup} &bull; {dog.breed ?? "Mixed Breed"}
             </p>
             {dog.shelterName && <p>{dog.shelterName}</p>}
             {compatibility && (

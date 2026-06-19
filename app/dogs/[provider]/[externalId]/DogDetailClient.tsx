@@ -1,6 +1,7 @@
 "use client";
 
 import type { CompatibilityResult, NormalizedDog } from "@/lib/compatibility/types";
+import { formatAgeGroup } from "@/lib/compatibility/display";
 import { FavoriteButton } from "@/components/FavoriteButton";
 
 type CompatibilityProp =
@@ -36,7 +37,7 @@ export function DogDetailClient({ dog, compatibility, explanation, isFavorited }
       <section>
         <h1>{dog.name}</h1>
         <p>
-          {dog.ageGroup} &bull; {dog.sizeGroup} &bull; {breed}
+          {formatAgeGroup(dog.ageGroup)} &bull; {dog.sizeGroup} &bull; {breed}
         </p>
         {dog.shelterName && <p>{dog.shelterName}</p>}
         {dog.distance != null && <p>{dog.distance} miles away</p>}
