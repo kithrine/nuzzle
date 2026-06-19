@@ -25,13 +25,13 @@ describe("Home page", () => {
     expect(screen.getByText(/find your dog/i)).toBeInTheDocument();
   });
 
-  it("renders the Featured Dogs section with sample dogs", () => {
+  it("renders the Featured Dogs section heading", () => {
     render(<Home />);
 
+    // The dog cards themselves are an async server component (FeaturedDogs)
+    // loaded via Suspense; only the section heading renders synchronously here.
     expect(
       screen.getByRole("heading", { name: /featured dogs/i }),
     ).toBeInTheDocument();
-    expect(screen.getByText("Charlie")).toBeInTheDocument();
-    expect(screen.getByText("Bella")).toBeInTheDocument();
   });
 });

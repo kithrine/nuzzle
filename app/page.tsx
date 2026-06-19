@@ -1,8 +1,10 @@
 import type { ReactNode } from "react";
+import { Suspense } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Sparkles, MessageCircleHeart, ShieldCheck, PawPrint, Heart } from "lucide-react";
 import { NuzzleLogo } from "@/components/layout/NuzzleLogo";
+import { FeaturedDogs } from "@/components/FeaturedDogs";
 
 // ─── Icons ────────────────────────────────────────────────────────────────────
 
@@ -42,6 +44,25 @@ function TikTokIcon() {
 
 // ─── Sub-components ───────────────────────────────────────────────────────────
 
+function FeaturedDogsSkeleton() {
+  return (
+    <div className="flex gap-4 w-max">
+      {Array.from({ length: 5 }).map((_, i) => (
+        <div
+          key={i}
+          className="bg-surface rounded-card shadow-sm flex-shrink-0 w-48 overflow-hidden"
+        >
+          <div className="h-36 bg-primary-light animate-pulse" />
+          <div className="p-3 flex flex-col gap-2">
+            <div className="h-4 w-24 bg-border rounded animate-pulse" />
+            <div className="h-3 w-32 bg-border rounded animate-pulse" />
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 function ValueProp({ icon, title, desc }: { icon: ReactNode; title: string; desc: string }) {
   return (
     <div className="flex-1 flex items-start gap-3 px-6 py-5">
@@ -53,31 +74,6 @@ function ValueProp({ icon, title, desc }: { icon: ReactNode; title: string; desc
     </div>
   );
 }
-
-// ─── Data ─────────────────────────────────────────────────────────────────────
-
-type MatchTier = "high" | "medium" | "low";
-
-const featuredDogs: {
-  name: string;
-  breed: string;
-  age: string;
-  years: string;
-  match: number;
-  tier: MatchTier;
-}[] = [
-  { name: "Charlie", breed: "Labrador Mix", age: "Young", years: "1 yr", match: 91, tier: "high" },
-  { name: "Bella", breed: "German Shepherd", age: "Adult", years: "3 yrs", match: 88, tier: "medium" },
-  { name: "Luna", breed: "Husky Mix", age: "Young", years: "1 yr", match: 96, tier: "high" },
-  { name: "Milo", breed: "Shiba Inu", age: "Adult", years: "2 yrs", match: 87, tier: "high" },
-  { name: "Daisy", breed: "Pomeranian", age: "Adult", years: "2 yrs", match: 82, tier: "high" },
-];
-
-const matchBadge: Record<MatchTier, string> = {
-  high: "bg-match-high-bg text-match-high-text",
-  medium: "bg-match-medium-bg text-match-medium-text",
-  low: "bg-match-low-bg text-match-low-text",
-};
 
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
@@ -263,40 +259,9 @@ export default function Home() {
             ‹
           </button>
           <div className="overflow-x-auto pb-2 flex-1">
-            <div className="flex gap-4 w-max">
-              {featuredDogs.map((dog) => (
-                <div
-                  key={dog.name}
-                  className="bg-surface rounded-card shadow-sm flex-shrink-0 w-48 overflow-hidden"
-                >
-                  <div className="relative h-36">
-                    <Image
-                      src="/images/homepage-hero-bg.png"
-                      alt={dog.name}
-                      fill
-                      className="object-cover"
-                    />
-                    <span
-                      className={`absolute bottom-2 left-2 text-xs font-bold px-2 py-1 rounded-badge text-center leading-tight ${matchBadge[dog.tier]}`}
-                    >
-                      {dog.match}%<br />Match
-                    </span>
-                  </div>
-                  <div className="p-3">
-                    <p className="font-semibold text-text-primary text-sm">{dog.name}</p>
-                    <p className="text-text-secondary text-xs">
-                      {dog.breed} · {dog.age} · {dog.years}
-                    </p>
-                    <Link
-                      href="/search"
-                      className="text-primary text-xs font-medium mt-2 block underline underline-offset-2 hover:opacity-75"
-                    >
-                      View Details
-                    </Link>
-                  </div>
-                </div>
-              ))}
-            </div>
+            <Suspense fallback={<FeaturedDogsSkeleton />}>
+              <FeaturedDogs />
+            </Suspense>
           </div>
           <button
             className="flex-shrink-0 w-8 h-8 rounded-full bg-surface border border-border flex items-center justify-center text-text-secondary hover:text-text-primary shadow-sm text-xl leading-none"
