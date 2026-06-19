@@ -51,6 +51,11 @@ function toBooleanOrUnknown(
   return "Unknown";
 }
 
+function toGender(v: string | null | undefined): "Male" | "Female" | "Unknown" {
+  if (v === "Male" || v === "Female") return v;
+  return "Unknown";
+}
+
 export function normalizeRescueGroupsDog(
   raw: RescueGroupsRawDog,
   externalId: string,
@@ -62,9 +67,10 @@ export function normalizeRescueGroupsDog(
     provider: "rescuegroups",
     externalId,
     name: animals.name ?? "",
-    breed: animals.breeds?.primary ?? null,
+    breed: animals.breedPrimary ?? animals.breeds?.primary ?? null,
     ageGroup: toAgeGroup(animals.ageGroup),
     sizeGroup: toSizeGroup(animals.sizeGroup),
+    gender: toGender(animals.sex),
     energyLevel: toEnergyLevel(animals.energyLevel),
     activityLevel: toEnergyLevel(animals.activityLevel),
     exerciseNeeds: toEnergyLevel(animals.exerciseNeeds),
@@ -76,9 +82,10 @@ export function normalizeRescueGroupsDog(
     fenceNeeds: toFenceNeeds(animals.fenceNeeds),
     ownerExperience: toOwnerExperience(animals.ownerExperience),
     photos: animals.photos ?? [],
-    description: animals.description ?? null,
+    description: animals.descriptionText ?? animals.description ?? null,
     shelterName: shelters?.name ?? undefined,
     shelterUrl: shelters?.adoptionUrl ?? undefined,
-    distance,
+    distance:
+      distance ?? (typeof animals.distance === "number" ? animals.distance : null),
   };
 }

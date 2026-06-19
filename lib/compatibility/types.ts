@@ -5,6 +5,7 @@ export type NormalizedDog = {
   breed: string | null;
   ageGroup: "Baby" | "Young" | "Adult" | "Senior" | "Unknown";
   sizeGroup: "Small" | "Medium" | "Large" | "X-Large" | "Unknown";
+  gender?: "Male" | "Female" | "Unknown";
   energyLevel: "Low" | "Moderate" | "High" | "Unknown";
   activityLevel: "Low" | "Moderate" | "High" | "Unknown";
   exerciseNeeds: "Low" | "Moderate" | "High" | "Unknown";

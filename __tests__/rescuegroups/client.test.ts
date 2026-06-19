@@ -41,24 +41,37 @@ describe("searchRescueGroupsDogs — pictures", () => {
   });
 });
 
-describe("getRescueGroupsDog — pictures", () => {
-  it("uses a valid include and returns photos from included pictures", async () => {
+describe("getRescueGroupsDog — pictures + orgs", () => {
+  it("reads the array-shaped data and returns photos + shelter from included", async () => {
+    // RG v5 returns `data` as an array even for a single-animal fetch.
     const fetchMock = mockFetchOnce(200, {
-      data: { id: "rg-9", type: "animals", attributes: { name: "Sadie" } },
+      data: [
+        {
+          id: "rg-9",
+          type: "animals",
+          attributes: { name: "Sadie", breedPrimary: "Boxer" },
+          relationships: { orgs: { data: [{ id: "org-1", type: "orgs" }] } },
+        },
+      ],
       included: [
         { id: "pic-1", type: "pictures", attributes: { original: { url: "https://img.test/sadie-1.jpg" } } },
         { id: "pic-2", type: "pictures", attributes: { small: { url: "https://img.test/sadie-2.jpg" } } },
+        { id: "org-1", type: "orgs", attributes: { name: "Happy Paws", url: "https://happypaws.org" } },
       ],
     });
 
     const result = await getRescueGroupsDog("rg-9");
 
+    expect(result?.id).toBe("rg-9");
+    expect(result?.raw.animals.name).toBe("Sadie");
     expect(result?.raw.animals.photos).toEqual([
       "https://img.test/sadie-1.jpg",
       "https://img.test/sadie-2.jpg",
     ]);
+    expect(result?.raw.shelters?.name).toBe("Happy Paws");
+    expect(result?.raw.shelters?.adoptionUrl).toBe("https://happypaws.org");
     const calledUrl = fetchMock.mock.calls[0][0] as string;
-    expect(calledUrl).toContain("include=pictures");
+    expect(calledUrl).toContain("include=pictures,orgs");
     expect(calledUrl).not.toContain("include=shelters");
   });
 

@@ -18,8 +18,11 @@ export type RescueGroupsApiAnimal = {
   attributes: {
     name?: string | null;
     breeds?: { primary?: string | null } | null;
+    breedPrimary?: string | null;
+    breedString?: string | null;
     ageGroup?: string | null;
     sizeGroup?: string | null;
+    sex?: string | null;
     isKidsOk?: boolean | null;
     isCatsOk?: boolean | null;
     isDogsOk?: boolean | null;
@@ -32,9 +35,13 @@ export type RescueGroupsApiAnimal = {
     ownerExperience?: string | null;
     photos?: string[] | null;
     description?: string | null;
+    descriptionText?: string | null;
+    descriptionHtml?: string | null;
+    distance?: number | null;
   };
   relationships?: {
     pictures?: { data?: Array<{ id: string; type: string }> };
+    orgs?: { data?: Array<{ id: string; type: string }> };
   };
 };
 
@@ -44,6 +51,19 @@ export type RescueGroupsApiShelter = {
   attributes: {
     name?: string | null;
     adoptionUrl?: string | null;
+  };
+};
+
+// RescueGroups v5 exposes the shelter/rescue as an `orgs` resource in `included`.
+export type RescueGroupsApiOrg = {
+  id: string;
+  type: "orgs";
+  attributes: {
+    name?: string | null;
+    url?: string | null;
+    city?: string | null;
+    state?: string | null;
+    postalcode?: string | null;
   };
 };
 
@@ -63,7 +83,9 @@ export type RescueGroupsApiPicture = {
 
 export type RescueGroupsApiResponse = {
   data: RescueGroupsApiAnimal[];
-  included?: Array<RescueGroupsApiAnimal | RescueGroupsApiShelter | RescueGroupsApiPicture>;
+  included?: Array<
+    RescueGroupsApiAnimal | RescueGroupsApiShelter | RescueGroupsApiPicture | RescueGroupsApiOrg
+  >;
   meta?: {
     pagination?: {
       total?: number;
@@ -77,8 +99,11 @@ export type RescueGroupsRawDog = {
   animals: {
     name?: string | null;
     breeds?: { primary?: string | null } | null;
+    breedPrimary?: string | null;
+    breedString?: string | null;
     ageGroup?: string | null;
     sizeGroup?: string | null;
+    sex?: string | null;
     isKidsOk?: boolean | null;
     isCatsOk?: boolean | null;
     isDogsOk?: boolean | null;
@@ -91,6 +116,9 @@ export type RescueGroupsRawDog = {
     ownerExperience?: string | null;
     photos?: string[] | null;
     description?: string | null;
+    descriptionText?: string | null;
+    descriptionHtml?: string | null;
+    distance?: number | null;
   };
   shelters?: {
     name?: string | null;

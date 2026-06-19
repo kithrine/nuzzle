@@ -99,7 +99,7 @@ export function DogDetailClient({ dog, compatibility, explanation, isFavorited }
         {/* Info card */}
         <section className="bg-surface rounded-card border border-border p-5">
           <div className="flex items-center gap-3">
-            <h1 className="text-2xl font-bold text-text-primary">{dog.name}</h1>
+            <h1 className="text-3xl md:text-4xl font-bold text-text-primary">{dog.name}</h1>
             <FavoriteButton
               provider={dog.provider}
               externalId={dog.externalId}
@@ -108,6 +108,7 @@ export function DogDetailClient({ dog, compatibility, explanation, isFavorited }
           </div>
           <p className="text-text-secondary text-sm mt-1">
             {breed} &bull; {formatAgeGroup(dog.ageGroup)} &bull; {dog.sizeGroup}
+            {dog.gender && dog.gender !== "Unknown" && <> &bull; {dog.gender}</>}
           </p>
           <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-2 text-text-secondary text-sm">
             {dog.shelterName && (

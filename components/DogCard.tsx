@@ -60,6 +60,7 @@ export function DogCard({
         </h2>
         <p className="text-text-secondary text-sm">
           {formatAgeGroup(dog.ageGroup)} &bull; {dog.sizeGroup} &bull; {breed}
+          {dog.gender && dog.gender !== "Unknown" && <> &bull; {dog.gender}</>}
         </p>
         {dog.distance != null && (
           <p className="text-text-secondary text-sm flex items-center gap-1">

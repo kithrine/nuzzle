@@ -172,4 +172,36 @@ describe("normalizeRescueGroupsDog", () => {
       expect(normalizeRescueGroupsDog(raw, "x").shelterUrl).toBeUndefined();
     });
   });
+
+  describe("real RescueGroups v5 attribute names", () => {
+    it("maps breedPrimary → breed", () => {
+      const raw: RescueGroupsRawDog = {
+        animals: { name: "Allie", breedPrimary: "German Shepherd Dog", ageGroup: "Adult" },
+      };
+      expect(normalizeRescueGroupsDog(raw, "x").breed).toBe("German Shepherd Dog");
+    });
+
+    it("maps descriptionText → description", () => {
+      const raw: RescueGroupsRawDog = {
+        animals: { name: "Allie", descriptionText: "Sweet and playful." },
+      };
+      expect(normalizeRescueGroupsDog(raw, "x").description).toBe("Sweet and playful.");
+    });
+
+    it("maps sex → gender (Male/Female), else Unknown", () => {
+      expect(normalizeRescueGroupsDog({ animals: { sex: "Female" } }, "x").gender).toBe("Female");
+      expect(normalizeRescueGroupsDog({ animals: { sex: "Male" } }, "x").gender).toBe("Male");
+      expect(normalizeRescueGroupsDog({ animals: {} }, "x").gender).toBe("Unknown");
+    });
+
+    it("uses the attribute distance when no distance arg is passed", () => {
+      const raw: RescueGroupsRawDog = { animals: { name: "Allie", distance: 18 } };
+      expect(normalizeRescueGroupsDog(raw, "x").distance).toBe(18);
+    });
+
+    it("an explicit distance arg overrides the attribute distance", () => {
+      const raw: RescueGroupsRawDog = { animals: { name: "Allie", distance: 18 } };
+      expect(normalizeRescueGroupsDog(raw, "x", 5).distance).toBe(5);
+    });
+  });
 });
