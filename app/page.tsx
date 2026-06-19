@@ -1,31 +1,10 @@
 import type { ReactNode } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Sparkles, MessageCircleHeart, ShieldCheck } from "lucide-react";
+import { Sparkles, MessageCircleHeart, ShieldCheck, PawPrint, Heart } from "lucide-react";
 import { NuzzleLogo } from "@/components/layout/NuzzleLogo";
 
 // ─── Icons ────────────────────────────────────────────────────────────────────
-
-function PawIcon() {
-  return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-      <circle cx="8" cy="6" r="2.5" />
-      <circle cx="16" cy="6" r="2.5" />
-      <circle cx="5" cy="11" r="2" />
-      <circle cx="19" cy="11" r="2" />
-      <path d="M12 13c-3.5 0-6 2-6 4.5S8 22 12 22s6-2 6-4.5S15.5 13 12 13z" />
-    </svg>
-  );
-}
-
-function PersonIcon() {
-  return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-      <circle cx="12" cy="7" r="4" />
-    </svg>
-  );
-}
 
 function HeartIcon() {
   return (
@@ -137,14 +116,14 @@ export default function Home() {
               href="/search"
               className="bg-primary text-white rounded-button-full px-6 py-3 font-semibold inline-flex items-center justify-center gap-2 hover:opacity-90 transition-opacity"
             >
-              <PawIcon />
+              <PawPrint size={18} fill="currentColor" />
               Browse Dogs
             </Link>
             <Link
               href="/questionnaire"
               className="border-2 border-primary text-primary rounded-button-full px-6 py-3 font-semibold inline-flex items-center justify-center gap-2 hover:bg-primary-light transition-colors bg-white/70"
             >
-              <PersonIcon />
+              <Heart size={18} fill="currentColor" />
               Create Compatibility Profile
             </Link>
           </div>
