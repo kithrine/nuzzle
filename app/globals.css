@@ -1,26 +1,105 @@
 @import "tailwindcss";
 
+@theme {
+  /* Brand colors */
+  --color-primary: #20A39E;
+  --color-primary-light: #E0F5F4;
+  --color-secondary-cta: #7C3AED;
+
+  /* Surface & background */
+  --color-surface: #FFFFFF;
+  --color-background: #F0F8FA;
+  --color-hero-bg: #E8F4F8;
+
+  /* Text */
+  --color-text-primary: #1E293B;
+  --color-text-secondary: #64748B;
+
+  /* Borders */
+  --color-border: #E2E8F0;
+
+  /* Match score tiers */
+  --color-match-high-bg: #CCFBF1;
+  --color-match-high-text: #065F46;
+  --color-match-medium-bg: #FEF3C7;
+  --color-match-medium-text: #92400E;
+  --color-match-low-bg: #FFE4E6;
+  --color-match-low-text: #BE123C;
+
+  /* Semantic indicators */
+  --color-concern: #F97316;
+  --color-question: #3B82F6;
+
+  /* Botanical illustration accents */
+  --color-botanical-pink: #FFB3C6;
+  --color-botanical-green: #A8D5A2;
+
+  /* Border radius */
+  --radius-card: 12px;
+  --radius-button-full: 10px;
+  --radius-button-inline: 8px;
+  --radius-badge: 6px;
+
+  /* Typography */
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+}
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  background-color: #F0F8FA;
+  color: #1E293B;
+  font-family: var(--font-sans);
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+@layer utilities {
+  /* ── Primary teal ──────────────────────────────────────── */
+  .bg-primary                    { background-color: #20A39E; }
+  .text-primary                  { color: #20A39E; }
+  .border-primary                { border-color: #20A39E; }
+  .fill-primary                  { fill: #20A39E; }
+  .hover\:bg-primary:hover       { background-color: #20A39E; }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
+  /* ── Primary light ─────────────────────────────────────── */
+  .bg-primary-light                    { background-color: #E0F5F4; }
+  .hover\:bg-primary-light:hover       { background-color: #E0F5F4; }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  /* ── Secondary CTA purple ──────────────────────────────── */
+  .bg-secondary-cta              { background-color: #7C3AED; }
+  .text-secondary-cta            { color: #7C3AED; }
+  .border-secondary-cta          { border-color: #7C3AED; }
+
+  /* ── Surfaces & backgrounds ────────────────────────────── */
+  .bg-surface                    { background-color: #FFFFFF; }
+  .bg-background                 { background-color: #F0F8FA; }
+  .bg-hero-bg                    { background-color: #E8F4F8; }
+
+  /* ── Text ──────────────────────────────────────────────── */
+  .text-text-primary             { color: #1E293B; }
+  .text-text-secondary           { color: #64748B; }
+  .hover\:text-text-primary:hover { color: #1E293B; }
+
+  /* ── Border ────────────────────────────────────────────── */
+  .border-border                 { border-color: #E2E8F0; }
+
+  /* ── Dark fill (footer social icons) ───────────────────── */
+  .bg-text-primary               { background-color: #1E293B; }
+
+  /* ── Match badge tiers ─────────────────────────────────── */
+  .bg-match-high-bg              { background-color: #CCFBF1; }
+  .text-match-high-text          { color: #065F46; }
+  .bg-match-medium-bg            { background-color: #FEF3C7; }
+  .text-match-medium-text        { color: #92400E; }
+  .bg-match-low-bg               { background-color: #FFE4E6; }
+  .text-match-low-text           { color: #BE123C; }
+
+  /* ── Hero image position (responsive pan) ─────────────── */
+  .object-hero                     { object-position: 65% 50%; }
+  @media (min-width: 640px)  { .object-hero { object-position: center; } }
+  @media (min-width: 1024px) { .object-hero { object-position: top; } }
+
+  /* ── Border radius tokens ──────────────────────────────── */
+  .rounded-card                  { border-radius: 12px; }
+  .rounded-button-full           { border-radius: 10px; }
+  .rounded-button-inline         { border-radius: 8px; }
+  .rounded-badge                 { border-radius: 6px; }
 }

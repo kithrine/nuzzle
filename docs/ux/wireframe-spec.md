@@ -338,8 +338,8 @@ Avoid:
 
 **Layout**:
 - Full-page centered layout on `#F0F8FA` background
-- Nuzzle logo + wordmark centered above the form card
-- Clerk `<SignIn />` component embedded below (handles email/password, social login, MFA)
+- Clerk `<SignIn />` component embedded and centered (handles email/password, social login, MFA)
+- TopNav and BottomTabBar are present, same as all other screens
 
 **Redirect after login**: `/search` (default); back to the originating page when Clerk's `afterSignInUrl` is passed via query param.
 

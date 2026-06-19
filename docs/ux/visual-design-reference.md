@@ -443,9 +443,7 @@ Form is divided into labeled sections, each with a green checkmark when complete
 ### Shell Layout
 - Full-page background: `#F0F8FA`
 - Content centered vertically and horizontally
-- Nuzzle heart-shield SVG icon (teal `#20A39E`) + "Nuzzle" wordmark (dark navy, semibold) centered above the form card
-- Tagline: "Find a dog that fits your lifestyle." in `text-secondary` below the wordmark
-- Clerk `<SignIn />` component rendered below the logo block
+- Clerk `<SignIn />` component centered on the page (no separate logo block — TopNav handles the logo on this page like all other screens)
 
 ### Clerk Component Appearance
 Customized via the `appearance` prop:
@@ -470,7 +468,7 @@ Customized via the `appearance` prop:
 
 ### Notes
 - No botanical illustrations on this page — keep it clean and focused
-- Bottom tab bar and top nav are not rendered on auth pages
+- TopNav and BottomTabBar are visible on this page, same as all other screens
 
 ---
 
@@ -479,7 +477,7 @@ Customized via the `appearance` prop:
 ![Sign Up](mockups/13-mockup-signup.png)
 
 ### Shell Layout
-Same as Screen 12: `#F0F8FA` background, Nuzzle logo + wordmark, tagline, centered card.
+Same as Screen 12: `#F0F8FA` background, centered Clerk card. TopNav handles the logo.
 
 Clerk `<SignUp />` component replaces `<SignIn />`.
 
