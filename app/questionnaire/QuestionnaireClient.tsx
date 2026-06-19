@@ -420,11 +420,14 @@ export function QuestionnaireClient() {
 function Shell({ children }: { children: ReactNode }) {
   return (
     <main className="relative overflow-hidden bg-background min-h-[calc(100vh-4rem)] flex flex-col items-center px-4 py-8">
-      <BotanicalCluster className="absolute bottom-0 left-0 w-36 lg:w-48 h-auto opacity-80 pointer-events-none" />
-      <BotanicalCluster
-        className="absolute bottom-0 right-0 w-36 lg:w-48 h-auto opacity-80 pointer-events-none"
-        mirrored
-      />
+      <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 bottom-0 h-32 md:h-48 z-0">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src="/images/flowers-bottom.png"
+          alt=""
+          className="w-full h-full object-cover object-bottom select-none"
+        />
+      </div>
       <div className="relative z-10 w-full max-w-lg flex flex-col items-center">{children}</div>
     </main>
   );
@@ -581,38 +584,3 @@ function QuestionCard({
   );
 }
 
-function BotanicalCluster({ className, mirrored }: { className?: string; mirrored?: boolean }) {
-  return (
-    <svg
-      aria-hidden="true"
-      viewBox="0 0 140 120"
-      className={className}
-      style={mirrored ? { transform: "scaleX(-1)" } : undefined}
-      fill="none"
-    >
-      {/* stems */}
-      <path d="M30 120 C28 90 22 70 26 48" stroke="#A8D5A2" strokeWidth="3" strokeLinecap="round" />
-      <path d="M55 120 C56 95 60 78 54 58" stroke="#A8D5A2" strokeWidth="3" strokeLinecap="round" />
-      <path d="M80 120 C82 100 88 84 84 66" stroke="#A8D5A2" strokeWidth="3" strokeLinecap="round" />
-      {/* leaves */}
-      <ellipse cx="20" cy="78" rx="9" ry="5" fill="#A8D5A2" transform="rotate(-30 20 78)" />
-      <ellipse cx="38" cy="92" rx="9" ry="5" fill="#A8D5A2" transform="rotate(25 38 92)" />
-      <ellipse cx="48" cy="84" rx="9" ry="5" fill="#A8D5A2" transform="rotate(-25 48 84)" />
-      <ellipse cx="70" cy="98" rx="9" ry="5" fill="#A8D5A2" transform="rotate(20 70 98)" />
-      <ellipse cx="92" cy="92" rx="9" ry="5" fill="#A8D5A2" transform="rotate(-20 92 92)" />
-      {/* flowers */}
-      <g>
-        <circle cx="26" cy="46" r="6" fill="#FFB3C6" />
-        <circle cx="26" cy="46" r="2.5" fill="#FCE7A0" />
-      </g>
-      <g>
-        <circle cx="54" cy="56" r="6" fill="#FFB3C6" />
-        <circle cx="54" cy="56" r="2.5" fill="#FCE7A0" />
-      </g>
-      <g>
-        <circle cx="84" cy="64" r="6" fill="#C9B6F0" />
-        <circle cx="84" cy="64" r="2.5" fill="#FCE7A0" />
-      </g>
-    </svg>
-  );
-}
