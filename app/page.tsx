@@ -122,18 +122,18 @@ export default function Home() {
     <main className="bg-background">
 
       {/* ── Hero ─────────────────────────────────────────────────────── */}
-      <section className="relative overflow-hidden min-h-[380px] px-6 py-16 md:px-12 md:py-24 flex items-center">
+      <section className="relative overflow-hidden min-h-[450px] lg:min-h-[575px] px-6 py-16 md:px-12 md:py-24 flex items-center">
         {/* Full-width background image */}
         <div className="absolute inset-0">
           <Image
             src="/images/homepage-hero.png"
             alt=""
             fill
-            className="object-cover object-top"
+            className="object-cover object-hero"
             priority
             aria-hidden="true"
           />
-          <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-white to-transparent pointer-events-none" />
+          <div className="absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-white to-transparent pointer-events-none" />
         </div>
 
         {/* Text content on top */}
@@ -146,22 +146,22 @@ export default function Home() {
             <p className="mt-4 text-lg text-text-secondary max-w-md md:mx-0">
               Browse adoptable dogs and receive personalized compatibility matching.
             </p>
-            <div className="mt-8 flex flex-col sm:flex-row gap-3 justify-start sm:justify-center md:justify-start">
-              <Link
-                href="/search"
-                className="bg-primary text-white rounded-button-full px-6 py-3 font-semibold inline-flex items-center justify-center gap-2 hover:opacity-90 transition-opacity"
-              >
-                <PawIcon />
-                Browse Dogs
-              </Link>
-              <Link
-                href="/questionnaire"
-                className="border-2 border-primary text-primary rounded-button-full px-6 py-3 font-semibold inline-flex items-center justify-center gap-2 hover:bg-primary-light transition-colors bg-white/70"
-              >
-                <PersonIcon />
-                Create Compatibility Profile
-              </Link>
-            </div>
+          </div>
+          <div className="mt-8 flex flex-col sm:flex-row gap-3 justify-center md:justify-start">
+            <Link
+              href="/search"
+              className="bg-primary text-white rounded-button-full px-6 py-3 font-semibold inline-flex items-center justify-center gap-2 hover:opacity-90 transition-opacity"
+            >
+              <PawIcon />
+              Browse Dogs
+            </Link>
+            <Link
+              href="/questionnaire"
+              className="border-2 border-primary text-primary rounded-button-full px-6 py-3 font-semibold inline-flex items-center justify-center gap-2 hover:bg-primary-light transition-colors bg-white/70"
+            >
+              <PersonIcon />
+              Create Compatibility Profile
+            </Link>
           </div>
         </div>
       </section>

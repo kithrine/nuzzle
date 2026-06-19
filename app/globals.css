@@ -92,6 +92,11 @@
   .bg-match-low-bg               { background-color: #FFE4E6; }
   .text-match-low-text           { color: #BE123C; }
 
+  /* ── Hero image position (responsive pan) ─────────────── */
+  .object-hero                     { object-position: 65% 50%; }
+  @media (min-width: 640px)  { .object-hero { object-position: center; } }
+  @media (min-width: 1024px) { .object-hero { object-position: top; } }
+
   /* ── Border radius tokens ──────────────────────────────── */
   .rounded-card                  { border-radius: 12px; }
   .rounded-button-full           { border-radius: 10px; }
