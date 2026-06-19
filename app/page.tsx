@@ -175,20 +175,25 @@ export default function Home() {
       </section>
 
       {/* ── How It Works ─────────────────────────────────────────────── */}
-      <section className="bg-surface py-14 px-6 border-b border-border">
+      <section className="bg-surface py-14 px-6">
         <div className="max-w-5xl mx-auto">
-          <h2 className="text-2xl font-bold text-text-primary text-center mb-10">
+          <h2 className="text-2xl font-bold text-text-primary text-center mb-12">
             How It Works
           </h2>
-          <div className="flex flex-col md:flex-row items-center md:items-start justify-center gap-8 md:gap-0">
+          <div className="flex flex-col md:flex-row items-start justify-center gap-10 md:gap-0">
 
-            {/* Step 1 */}
-            <div className="flex flex-col items-center text-center md:flex-1 max-w-xs">
-              <div className="w-9 h-9 rounded-full bg-primary text-white font-bold text-sm flex items-center justify-center mb-4">
-                1
-              </div>
-              <div className="w-full h-32 bg-primary-light rounded-card mb-4 flex items-center justify-center text-5xl">
-                📋
+            {/* Step 1 — teal */}
+            <div className="flex flex-col items-center text-center md:flex-1 max-w-xs mx-auto md:mx-0">
+              <div className="relative w-48 h-44 mx-auto mb-4">
+                <Image
+                  src="/images/step1.png"
+                  alt="Husky puppy with clipboard illustration"
+                  fill
+                  className="object-contain"
+                />
+                <div className="absolute top-2 left-2 w-7 h-7 rounded-full bg-primary text-white font-bold text-xs flex items-center justify-center shadow-sm z-10">
+                  1
+                </div>
               </div>
               <p className="font-semibold text-primary">Create Profile</p>
               <p className="text-text-secondary text-sm mt-2 max-w-[180px]">
@@ -196,21 +201,29 @@ export default function Home() {
               </p>
             </div>
 
-            {/* Dashed arrow 1→2 */}
-            <div className="hidden md:flex items-start pt-14 px-2 flex-shrink-0">
-              <div className="flex items-center">
-                <div className="w-10 border-t-2 border-dashed border-text-secondary" />
-                <span className="text-text-secondary text-xl leading-none ml-0.5">›</span>
-              </div>
+            {/* Arrow 1→2 */}
+            <div className="hidden md:flex items-center mt-[78px] px-1 flex-shrink-0">
+              <Image
+                src="/images/homepage-step-arrow.png"
+                alt=""
+                width={48}
+                height={20}
+                aria-hidden="true"
+              />
             </div>
 
-            {/* Step 2 */}
-            <div className="flex flex-col items-center text-center md:flex-1 max-w-xs">
-              <div className="w-9 h-9 rounded-full bg-secondary-cta text-white font-bold text-sm flex items-center justify-center mb-4">
-                2
-              </div>
-              <div className="w-full h-32 bg-[#EDE9FE] rounded-card mb-4 flex items-center justify-center text-5xl">
-                📊
+            {/* Step 2 — purple */}
+            <div className="flex flex-col items-center text-center md:flex-1 max-w-xs mx-auto md:mx-0">
+              <div className="relative w-48 h-44 mx-auto mb-4">
+                <Image
+                  src="/images/step2.png"
+                  alt="Laptop showing match score dashboard illustration"
+                  fill
+                  className="object-contain"
+                />
+                <div className="absolute top-2 left-2 w-7 h-7 rounded-full bg-secondary-cta text-white font-bold text-xs flex items-center justify-center shadow-sm z-10">
+                  2
+                </div>
               </div>
               <p className="font-semibold text-secondary-cta">Get Match Scores</p>
               <p className="text-text-secondary text-sm mt-2 max-w-[180px]">
@@ -218,24 +231,32 @@ export default function Home() {
               </p>
             </div>
 
-            {/* Dashed arrow 2→3 */}
-            <div className="hidden md:flex items-start pt-14 px-2 flex-shrink-0">
-              <div className="flex items-center">
-                <div className="w-10 border-t-2 border-dashed border-text-secondary" />
-                <span className="text-text-secondary text-xl leading-none ml-0.5">›</span>
-              </div>
+            {/* Arrow 2→3 */}
+            <div className="hidden md:flex items-center mt-[78px] px-1 flex-shrink-0">
+              <Image
+                src="/images/homepage-step-arrow.png"
+                alt=""
+                width={48}
+                height={20}
+                aria-hidden="true"
+              />
             </div>
 
-            {/* Step 3 */}
-            <div className="flex flex-col items-center text-center md:flex-1 max-w-xs">
-              <div
-                className="w-9 h-9 rounded-full text-white font-bold text-sm flex items-center justify-center mb-4"
-                style={{ backgroundColor: "#EC4899" }}
-              >
-                3
-              </div>
-              <div className="w-full h-32 bg-[#FCE7F3] rounded-card mb-4 flex items-center justify-center text-5xl">
-                🐾
+            {/* Step 3 — pink */}
+            <div className="flex flex-col items-center text-center md:flex-1 max-w-xs mx-auto md:mx-0">
+              <div className="relative w-48 h-44 mx-auto mb-4">
+                <Image
+                  src="/images/step3.png"
+                  alt="Shiba Inu with hearts and flowers illustration"
+                  fill
+                  className="object-contain"
+                />
+                <div
+                  className="absolute top-2 left-2 w-7 h-7 rounded-full text-white font-bold text-xs flex items-center justify-center shadow-sm z-10"
+                  style={{ backgroundColor: "#EC4899" }}
+                >
+                  3
+                </div>
               </div>
               <p className="font-semibold" style={{ color: "#EC4899" }}>Find Your Dog</p>
               <p className="text-text-secondary text-sm mt-2 max-w-[180px]">
