@@ -17,7 +17,6 @@ import {
 import type { CompatibilityResult, NormalizedDog } from "@/lib/compatibility/types";
 import { formatAgeGroup } from "@/lib/compatibility/display";
 import { FavoriteButton } from "@/components/FavoriteButton";
-import { SiteFooter } from "@/components/layout/SiteFooter";
 
 type CompatibilityProp =
   | { available: false; teaser: string }
@@ -186,8 +185,6 @@ export function DogDetailClient({ dog, compatibility, explanation, isFavorited }
           </section>
         )}
       </div>
-
-      <SiteFooter />
     </main>
   );
 }

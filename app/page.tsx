@@ -4,7 +4,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { Sparkles, MessageCircleHeart, ShieldCheck, PawPrint, Heart } from "lucide-react";
 import { FeaturedDogs } from "@/components/FeaturedDogs";
-import { SiteFooter } from "@/components/layout/SiteFooter";
 
 // ─── Icons ────────────────────────────────────────────────────────────────────
 
@@ -288,8 +287,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── Footer ────────────────────────────────────────────────────── */}
-      <SiteFooter />
     </main>
   );
 }
