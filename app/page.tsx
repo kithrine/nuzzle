@@ -329,26 +329,44 @@ export default function Home() {
       </section>
 
       {/* ── Profile Prompt Banner ─────────────────────────────────────── */}
-      <section className="px-4 md:px-6 mb-12">
-        <div className="bg-primary-light border border-border rounded-card max-w-5xl mx-auto px-6 py-5 flex flex-col md:flex-row items-center justify-between gap-4">
-          <div className="hidden md:block relative w-20 h-20 flex-shrink-0">
+      <section className="bg-surface pt-20 px-4 md:px-6 pb-12">
+        <div className="relative bg-primary-light rounded-card max-w-5xl mx-auto overflow-visible">
+
+          {/* Husky + plants: bigger, anchored bottom-left, overflows top + bottom + left */}
+          <div className="absolute -top-16 -bottom-7 -left-4 w-72 hidden md:block">
             <Image
-              src="/images/homepage-hero-bg.png"
+              src="/images/husky-plants.png"
               alt=""
               fill
               className="object-contain object-bottom"
               aria-hidden="true"
             />
           </div>
-          <p className="text-text-primary font-medium text-sm md:text-base text-center md:text-left flex-1">
-            Complete your profile to unlock full match scores and personalized insights!
-          </p>
-          <Link
-            href="/questionnaire"
-            className="bg-primary text-white rounded-button-full px-5 py-2 text-sm font-semibold flex-shrink-0 hover:opacity-90 transition-opacity whitespace-nowrap"
-          >
-            Create Your Profile →
-          </Link>
+
+          {/* Flowers: taller, anchored bottom-right, overflows bottom + right */}
+          <div className="absolute -top-10 -bottom-7 -right-6 w-52 hidden md:block">
+            <Image
+              src="/images/flowers.png"
+              alt=""
+              fill
+              className="object-contain object-bottom object-right"
+              aria-hidden="true"
+            />
+          </div>
+
+          {/* Content — padded on desktop to clear the enlarged images */}
+          <div className="flex flex-col md:flex-row items-center justify-between gap-4 py-5 px-6 md:pl-60 md:pr-44">
+            <p className="text-text-primary font-semibold text-sm md:text-base text-center md:text-left flex-1">
+              Complete your profile to unlock full match scores and personalized insights!
+            </p>
+            <Link
+              href="/questionnaire"
+              className="bg-primary text-white rounded-button-full px-6 py-3 text-sm font-semibold flex-shrink-0 hover:opacity-90 transition-opacity whitespace-nowrap"
+            >
+              Create Your Profile →
+            </Link>
+          </div>
+
         </div>
       </section>
 
