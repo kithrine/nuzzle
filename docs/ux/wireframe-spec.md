@@ -349,8 +349,9 @@ Avoid:
 **Link from**: "Log In" nav link (anonymous top nav), "Login" bottom tab bar item.
 
 **Layout**:
-- Full-page centered layout on `#F0F8FA` background
-- Clerk `<SignIn />` component embedded and centered (handles email/password, social login, MFA)
+- Full-bleed background image (`public/images/login-bg.png`) over the `#F0F8FA` fallback
+- Centered Nuzzle logo + "Better matches. Happier tails." tagline above the card
+- Clerk `<SignIn />` component embedded and centered (handles email/password, social login, MFA), with a lifted (`shadow-xl`) card
 - TopNav and BottomTabBar are present, same as all other screens
 
 **Redirect after login**: `/search` (default); back to the originating page when Clerk's `afterSignInUrl` is passed via query param.

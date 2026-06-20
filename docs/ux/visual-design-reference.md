@@ -448,9 +448,10 @@ Use the canonical app-wide 3-tier system (see "Component Patterns → Match Badg
 ![Login](mockups/12-mockup-login.png)
 
 ### Shell Layout
-- Full-page background: `#F0F8FA`
-- Content centered vertically and horizontally
-- Clerk `<SignIn />` component centered on the page (no separate logo block — TopNav handles the logo on this page like all other screens)
+- **Full-bleed background image**: `public/images/login-bg.png` (a meadow scene with dogs and flowers) covers the content area via `next/image` `fill object-cover`; `#F0F8FA` is the fallback color
+- A **centered header above the card**: Nuzzle logo (paw-heart + wordmark) + tagline "Better matches. Happier tails."
+- Clerk `<SignIn />` component centered below the header, with a `shadow-xl` card so it lifts off the photo
+- TopNav and BottomTabBar remain present (so the TopNav logo also shows at the top-left)
 
 ### Clerk Component Appearance
 Customized via the `appearance` prop:
@@ -474,7 +475,7 @@ Customized via the `appearance` prop:
 - Mobile: card fills width with `16px` horizontal page padding; Clerk's component is responsive by default
 
 ### Notes
-- No botanical illustrations on this page — keep it clean and focused
+- The auth screens use the full-bleed `login-bg.png` photo background + the centered logo/tagline header (above) — they are the most illustrative screens in the app
 - TopNav and BottomTabBar are visible on this page, same as all other screens
 
 ---
@@ -484,7 +485,7 @@ Customized via the `appearance` prop:
 ![Sign Up](mockups/13-mockup-signup.png)
 
 ### Shell Layout
-Same as Screen 12: `#F0F8FA` background, centered Clerk card. TopNav handles the logo.
+Same as Screen 12: full-bleed `login-bg.png` background, centered Nuzzle logo + "Better matches. Happier tails." tagline above the Clerk card.
 
 Clerk `<SignUp />` component replaces `<SignIn />`.
 
