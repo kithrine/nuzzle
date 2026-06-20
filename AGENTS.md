@@ -186,6 +186,8 @@ docs/
     database-api-contract.md    ← Schema + API contracts
   stories/
     development-story-pack.md   ← Build-ready story pack
+  ops/
+    clerk-production-setup.md   ← Clerk prod instance + domain/DNS setup (auth email delivery)
   ux/
     ux-spec.md                  ← User flows, screen inventory, UX rules
     wireframe-spec.md           ← Screen-by-screen wireframe specifications
