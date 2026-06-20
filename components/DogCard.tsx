@@ -48,6 +48,7 @@ export function DogCard({
           <FavoriteButton
             provider={dog.provider}
             externalId={dog.externalId}
+            dogName={dog.name}
             initialFavorited={isFavorited}
           />
         </div>
