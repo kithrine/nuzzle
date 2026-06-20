@@ -622,27 +622,59 @@ Profile Complete
 
 ---
 
-## Screen 11: Profile Management
+## Screen 11: Profile Management / Edit Profile
+
+(Authed user with a profile visiting `/questionnaire`. Desktop adds the shared dashboard sidebar with "Edit Profile" active. Two views: summary → form.)
+
+**View 1 — Your Profile (summary)**
 
 ```
 ┌─────────────────────────────────────┐
-│  Compatibility Profile              │
+│ ‹ Back to Saved Dogs                │
+│  Your Profile                       │
+│  ✓ Profile Complete · Updated · v3  │
+├─────────────────────────────────────┤
+│  Current Profile Summary            │
+│  🏠 Home Type        House     ✓    │
+│  👶 Children         Yes       ✓    │
+│  🐱 Cats             No        ✓    │
+│  🐕 Other Dogs       Yes       ✓    │
+│  🏃 Activity         Moderate  ✓    │
+│  🎀 Experience       Owned…    ✓    │
+├─────────────────────────────────────┤
+│  💡 The more we know, the better…   │
+├─────────────────────────────────────┤
+│  What would you like to do?         │
+│  ✎ Edit Profile               ›     │
+│  ✦ Improve Accuracy           ›     │
 └─────────────────────────────────────┘
+```
 
-Current Profile
+**View 2 — Edit Your Profile (form)**
 
-Children:    Yes
-Cats:        No
-Dogs:        Yes
-Activity:    Moderate
-Experience:  Previous Owner
-Home Type:   House
-
-───────────────────────────────────────
-
-[ Edit Profile ]
-
-[ Improve Accuracy ]
+```
+┌─────────────────────────────────────┐
+│ ‹ Cancel                            │
+│  Edit Your Profile                  │
+│  ①Phase 1·Quick Match —— ②Additional│
+├─────────────────────────────────────┤
+│  Phase 1: Quick Match           ✓   │
+│  Home Type        [House      ▾]    │
+│  Children         [Yes        ▾]    │
+│  Cats             [No         ▾]    │
+│  Other Dogs       [Yes        ▾]    │
+│  Activity   [Low][Moderate][High]   │
+│  Experience  ○ First-time ●Owned ○… │
+├─────────────────────────────────────┤
+│  Phase 2: Additional Details    ✓   │
+│  Grooming/Fence/Yard/SpecialNeeds   │
+│  Distance [25mi ▾]  [——●———] slider │
+│  Size Preference  [No Preference ▾] │
+├─────────────────────────────────────┤
+│  ✓ Will be updated to Version 4     │
+│  [        Save Changes        ]     │
+│  [           Cancel           ]     │
+└─────────────────────────────────────┘
 ```
 
 ---

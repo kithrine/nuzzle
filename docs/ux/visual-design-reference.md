@@ -413,29 +413,30 @@ Use the canonical app-wide 3-tier system (see "Component Patterns → Match Badg
 
 ![Edit Profile](mockups/11-mockup-edit-profile.png)
 
-### Layout (Two-Column)
-- **Left sidebar**: "Your Profile" read-only summary
-  - Profile completion status
-  - Current answers listed (lifestyle, children, pets, yard, grooming, etc.)
-  - Toggles or checkmarks showing current values
-- **Main content**: "Edit Your Profile" multi-section form
+**Entry**: edit mode is shown when an **authenticated user who already has a profile** visits `/questionnaire` (detected server-side). Anonymous / no-profile users get the creation questionnaire instead.
 
-### Form Structure
-Form is divided into labeled sections, each with a green checkmark when complete:
-- **Section 1**: Quick Match fields (home type, children, pets, activity level, experience)
-- **Section 2**: Additional details (grooming, yard, special needs willingness)
-- **Section 3**: Preferences (size, distance, breed preference)
+### Layout
+- **Left sidebar** (desktop only): the **same `DashboardSidebar` as Screen 10** (greeting + nav), with **"Edit Profile" active**.
+- **Main content**: a **two-view flow** (not two side-by-side panels) — a read-only "Your Profile" summary that switches to an "Edit Your Profile" form.
 
-### Form Components Used
-- Text inputs
-- Select/dropdown menus
-- Checkboxes with labels
-- Toggle switches
-- Radio buttons for Yes/No questions
+### View 1 — "Your Profile" summary
+- "‹ Back to Saved Dogs" link
+- Status card: green check + "Profile Complete" + "Last updated: {date} · Version {n}" (with a small flowers accent)
+- "Current Profile Summary": each answer as a labeled row (icon + label + value, with an Activity/Experience sub-description) and a green checkmark
+- Tip banner: "The more we know, the better the match. Answer a few more questions…"
+- "What would you like to do?": two action cards — **Edit Profile** (→ form) and **Improve Accuracy** (→ form, scrolled to Phase 2)
+- Bottom banner: "You can update your profile anytime."
+
+### View 2 — "Edit Your Profile" form
+- "‹ Cancel" link; "Edit Your Profile" heading
+- 2-step indicator (① Phase 1 · Quick Match (6) —— ② Additional (6))
+- **Section "Phase 1: Quick Match"** and **Section "Phase 2: Additional Details (Optional)"**, each with a green checkmark when all its fields are complete
+- Compact controls per the mockup: `<select>` dropdowns (home type, children, cats, other dogs, grooming, fence, yard, special needs, distance, size), a **segmented control** for Activity Level (with description), and **radio buttons** for Experience Level; distance also has a range slider
+- Confirmation banner: "Your profile will be updated to Version {n+1} · Your matches may update based on your changes."
 
 ### Actions
-- "Save Changes" button (teal, prominent at bottom of form)
-- Green checkmarks show section completion status
+- "Save Changes" (teal, full-width) → `PUT /api/profile` (increments `profileVersion`) → brief "Saved!" confirmation, returns to the summary view (no forced redirect)
+- "Cancel" (outlined) → back to the summary view
 
 ### Footer Navigation
 - Bottom nav bar with Profile tab active (teal highlight)

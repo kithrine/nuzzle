@@ -4,7 +4,6 @@ import { currentUser } from "@clerk/nextjs/server";
 import {
   Heart,
   SquarePen,
-  Bell,
   Award,
   ChevronRight,
   MapPin,
@@ -19,6 +18,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import { getOrCreateUser } from "@/lib/auth/get-or-create-user";
+import { DashboardSidebar } from "@/components/DashboardSidebar";
 import { prisma } from "@/lib/db/prisma";
 import { getRescueGroupsDog } from "@/lib/rescuegroups/client";
 import { normalizeRescueGroupsDog } from "@/lib/compatibility/normalize";
@@ -74,25 +74,7 @@ export default async function FavoritesPage({
 
   const firstName = clerkUser?.firstName ?? "there";
 
-  const sidebar = (
-    <aside className="hidden md:block w-60 flex-shrink-0">
-      <p className="text-text-primary font-semibold text-lg mb-6">Welcome back, {firstName}</p>
-      <nav className="flex flex-col gap-1">
-        <span className="flex items-center gap-2 px-3 py-2 rounded-button-inline text-sm bg-primary-light text-primary font-medium">
-          <Heart size={16} /> Saved Dogs
-        </span>
-        <Link
-          href="/questionnaire"
-          className="flex items-center gap-2 px-3 py-2 rounded-button-inline text-sm text-text-secondary hover:bg-primary-light/50 transition-colors"
-        >
-          <SquarePen size={16} /> Edit Profile
-        </Link>
-        <span className="flex items-center gap-2 px-3 py-2 rounded-button-inline text-sm text-text-secondary">
-          <Bell size={16} /> Notification Preferences
-        </span>
-      </nav>
-    </aside>
-  );
+  const sidebar = <DashboardSidebar firstName={firstName} active="saved" />;
 
   const privacyNote = (
     <p className="flex items-center justify-center gap-1.5 text-text-secondary text-xs mt-8">

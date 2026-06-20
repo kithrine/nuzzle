@@ -1,8 +1,9 @@
 "use client";
 
-import type { ReactNode } from "react";
+import type { Dispatch, ReactNode, SetStateAction } from "react";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import {
   Building2,
   Home,
@@ -24,9 +25,32 @@ import {
   Sparkles,
   Search,
   ChevronLeft,
+  ChevronRight,
   X,
   CircleHelp,
+  CircleCheck,
+  Pencil,
+  Lightbulb,
+  MapPin,
 } from "lucide-react";
+import { DashboardSidebar } from "@/components/DashboardSidebar";
+
+export type EditProfileData = {
+  homeType: string;
+  hasChildren: boolean;
+  hasCats: boolean;
+  hasOtherDogs: boolean;
+  activityLevel: string;
+  experienceLevel: string;
+  groomingTolerance: string | null;
+  hasFence: boolean | null;
+  hasYard: boolean | null;
+  specialNeedsWilling: boolean | null;
+  maxDistance: number | null;
+  sizePreference: string | null;
+  profileVersion: number;
+  updatedAt: string;
+};
 
 type Phase1Answers = {
   homeType: "Apartment" | "House" | "Other" | "";
@@ -50,7 +74,13 @@ type UIPhase = 0 | 1 | 2 | 3 | 4 | 5 | "phase1-done" | "phase2" | "done";
 
 const PHASE1_TOTAL = 6;
 
-export function QuestionnaireClient() {
+export function QuestionnaireClient({
+  initialProfile = null,
+  firstName = "there",
+}: {
+  initialProfile?: EditProfileData | null;
+  firstName?: string;
+} = {}) {
   const router = useRouter();
   const [step, setStep] = useState<UIPhase>(0);
   const [p2step, setP2step] = useState(0);
@@ -75,6 +105,11 @@ export function QuestionnaireClient() {
     maxDistance: "25",
   });
   const [specialNeedsChoice, setSpecialNeedsChoice] = useState<"" | "Yes" | "No" | "Open">("");
+
+  // Authenticated user with an existing profile → edit mode (Screen 11).
+  if (initialProfile) {
+    return <EditProfileView initialProfile={initialProfile} firstName={firstName} />;
+  }
 
   const skipToBrowse = () => router.push("/search");
 
@@ -580,6 +615,711 @@ function QuestionCard({
           </button>
         )}
       </div>
+    </div>
+  );
+}
+
+// ─── Edit mode (Screen 11) ────────────────────────────────────────────────────
+
+const SELECT_CLS =
+  "border border-border rounded-button-inline px-3 py-1.5 text-sm bg-surface text-text-primary focus:outline-none focus:ring-2 focus:ring-primary/40";
+
+const ACTIVITY_DESC: Record<string, string> = {
+  Low: "I prefer relaxed walks and quiet time at home.",
+  Moderate: "Daily walks and some playtime.",
+  High: "Outdoor adventures, hikes, and lots of play!",
+};
+
+const EXPERIENCE_OPTS = [
+  { v: "None", label: "First-time owner" },
+  { v: "Species", label: "I've owned dogs before" },
+  { v: "Breed", label: "I have experience with specific breeds" },
+];
+
+const EXPERIENCE_SUMMARY: Record<string, { label: string; desc: string }> = {
+  None: { label: "First-time owner", desc: "This will be my first dog." },
+  Species: { label: "I've owned dogs before", desc: "I've cared for dogs in the past." },
+  Breed: { label: "Experience with specific breeds", desc: "I'm experienced with certain breeds." },
+};
+
+function EditProfileView({
+  initialProfile,
+  firstName,
+}: {
+  initialProfile: EditProfileData;
+  firstName: string;
+}) {
+  const router = useRouter();
+  const [view, setView] = useState<"summary" | "form">("summary");
+  const [saving, setSaving] = useState(false);
+  const [saved, setSaved] = useState(false);
+  const [errorMsg, setErrorMsg] = useState("");
+  const [version, setVersion] = useState(initialProfile.profileVersion);
+
+  const [p1, setP1] = useState<Phase1Answers>({
+    homeType: initialProfile.homeType as Phase1Answers["homeType"],
+    hasChildren: initialProfile.hasChildren,
+    hasCats: initialProfile.hasCats,
+    hasOtherDogs: initialProfile.hasOtherDogs,
+    activityLevel: initialProfile.activityLevel as Phase1Answers["activityLevel"],
+    experienceLevel: initialProfile.experienceLevel as Phase1Answers["experienceLevel"],
+  });
+  const [p2, setP2] = useState<Phase2Answers>({
+    hasYard: initialProfile.hasYard,
+    hasFence: initialProfile.hasFence,
+    groomingTolerance: (initialProfile.groomingTolerance ?? "") as Phase2Answers["groomingTolerance"],
+    sizePreference: (initialProfile.sizePreference ?? "") as Phase2Answers["sizePreference"],
+    specialNeedsWilling: initialProfile.specialNeedsWilling,
+    maxDistance: initialProfile.maxDistance != null ? String(initialProfile.maxDistance) : "25",
+  });
+
+  const lastUpdated = new Date(initialProfile.updatedAt).toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+
+  const p1Complete = Boolean(
+    p1.homeType &&
+      p1.hasChildren !== null &&
+      p1.hasCats !== null &&
+      p1.hasOtherDogs !== null &&
+      p1.activityLevel &&
+      p1.experienceLevel,
+  );
+  const p2Complete = Boolean(
+    p2.groomingTolerance &&
+      p2.hasFence !== null &&
+      p2.hasYard !== null &&
+      p2.specialNeedsWilling !== null &&
+      p2.maxDistance &&
+      p2.sizePreference,
+  );
+
+  async function save() {
+    setSaving(true);
+    setErrorMsg("");
+    try {
+      const res = await fetch("/api/profile", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          homeType: p1.homeType,
+          hasChildren: p1.hasChildren,
+          hasCats: p1.hasCats,
+          hasOtherDogs: p1.hasOtherDogs,
+          activityLevel: p1.activityLevel,
+          experienceLevel: p1.experienceLevel,
+          groomingTolerance: p2.groomingTolerance || null,
+          hasFence: p2.hasFence,
+          hasYard: p2.hasYard,
+          specialNeedsWilling: p2.specialNeedsWilling,
+          maxDistance: p2.maxDistance ? Number(p2.maxDistance) : null,
+          sizePreference: p2.sizePreference || null,
+        }),
+      });
+      if (!res.ok) {
+        setErrorMsg("Something went wrong. Please try again.");
+        return;
+      }
+      const data = (await res.json().catch(() => null)) as { profileVersion?: number } | null;
+      if (data?.profileVersion) setVersion(data.profileVersion);
+      setSaved(true);
+      router.refresh();
+      setView("summary");
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  const openForm = (scrollToPhase2 = false) => {
+    setSaved(false);
+    setView("form");
+    if (scrollToPhase2) {
+      requestAnimationFrame(() =>
+        document
+          .getElementById("phase2-section")
+          ?.scrollIntoView({ behavior: "smooth", block: "start" }),
+      );
+    }
+  };
+
+  return (
+    <main className="bg-background min-h-[calc(100vh-4rem)]">
+      <div className="flex gap-8 max-w-7xl mx-auto px-4 py-6 md:px-6 md:py-8">
+        <DashboardSidebar firstName={firstName} active="profile" />
+        <section className="flex-1 min-w-0 max-w-3xl">
+          {view === "summary" ? (
+            <ProfileSummary
+              p1={p1}
+              p2={p2}
+              version={version}
+              lastUpdated={lastUpdated}
+              saved={saved}
+              onEdit={() => openForm(false)}
+              onImprove={() => openForm(true)}
+            />
+          ) : (
+            <EditForm
+              p1={p1}
+              setP1={setP1}
+              p2={p2}
+              setP2={setP2}
+              p1Complete={p1Complete}
+              p2Complete={p2Complete}
+              version={version}
+              saving={saving}
+              errorMsg={errorMsg}
+              onSave={save}
+              onCancel={() => setView("summary")}
+            />
+          )}
+        </section>
+      </div>
+    </main>
+  );
+}
+
+function ProfileSummary({
+  p1,
+  p2,
+  version,
+  lastUpdated,
+  saved,
+  onEdit,
+  onImprove,
+}: {
+  p1: Phase1Answers;
+  p2: Phase2Answers;
+  version: number;
+  lastUpdated: string;
+  saved: boolean;
+  onEdit: () => void;
+  onImprove: () => void;
+}) {
+  const yesNo = (v: boolean | null) => (v === true ? "Yes" : v === false ? "No" : "—");
+  const exp = p1.experienceLevel ? EXPERIENCE_SUMMARY[p1.experienceLevel] : null;
+
+  return (
+    <div>
+      <Link
+        href="/favorites"
+        className="inline-flex items-center gap-1 text-primary text-sm font-medium hover:underline mb-3"
+      >
+        <ChevronLeft size={16} /> Back to Saved Dogs
+      </Link>
+      <h1 className="text-3xl font-bold text-text-primary">Your Profile</h1>
+      <p className="text-text-secondary text-sm mt-1">
+        Your answers help us find the best matches for you.
+      </p>
+
+      {saved && (
+        <p
+          role="status"
+          className="mt-4 flex items-center gap-2 text-match-high-text text-sm font-medium bg-match-high-bg rounded-button-inline px-3 py-2"
+        >
+          <CircleCheck size={16} /> Saved!
+        </p>
+      )}
+
+      {/* Status card */}
+      <div className="relative overflow-hidden bg-primary-light/40 border border-border rounded-card p-4 mt-5 flex items-center gap-3">
+        <span className="bg-match-high-bg rounded-full p-2 flex-shrink-0">
+          <CircleCheck size={20} className="text-match-high-text" />
+        </span>
+        <div className="relative z-10">
+          <p className="font-semibold text-primary">Profile Complete</p>
+          <p className="text-text-secondary text-sm">
+            Last updated: {lastUpdated} &bull; Version {version}
+          </p>
+        </div>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src="/images/flowers-about.png"
+          alt=""
+          aria-hidden="true"
+          className="pointer-events-none select-none absolute bottom-0 right-0 w-24 h-auto opacity-90"
+        />
+      </div>
+
+      <h2 className="text-lg font-bold text-text-primary mt-8">Current Profile Summary</h2>
+      <p className="text-text-secondary text-sm mb-4">Here&apos;s a quick look at your current answers.</p>
+      <div className="flex flex-col gap-3">
+        <SummaryRow icon={<Home size={18} />} label="Home Type" value={p1.homeType || "—"} />
+        <SummaryRow icon={<Baby size={18} />} label="Children in Home" value={yesNo(p1.hasChildren)} />
+        <SummaryRow icon={<Cat size={18} />} label="Cats in Home" value={yesNo(p1.hasCats)} />
+        <SummaryRow icon={<Dog size={18} />} label="Other Dogs in Home" value={yesNo(p1.hasOtherDogs)} />
+        <SummaryRow
+          icon={<Footprints size={18} />}
+          label="Activity Level"
+          value={p1.activityLevel || "—"}
+          description={p1.activityLevel ? ACTIVITY_DESC[p1.activityLevel] : undefined}
+        />
+        <SummaryRow
+          icon={<Award size={18} />}
+          label="Experience Level"
+          value={exp?.label ?? "—"}
+          description={exp?.desc}
+        />
+        {p2.groomingTolerance && (
+          <SummaryRow icon={<Brush size={18} />} label="Grooming Tolerance" value={p2.groomingTolerance} />
+        )}
+        {p2.hasFence !== null && (
+          <SummaryRow icon={<Fence size={18} />} label="Fenced Yard" value={yesNo(p2.hasFence)} />
+        )}
+        {p2.hasYard !== null && (
+          <SummaryRow icon={<Trees size={18} />} label="Yard" value={yesNo(p2.hasYard)} />
+        )}
+        {p2.specialNeedsWilling !== null && (
+          <SummaryRow
+            icon={<Heart size={18} />}
+            label="Open to Special Needs"
+            value={yesNo(p2.specialNeedsWilling)}
+          />
+        )}
+        {p2.maxDistance && (
+          <SummaryRow icon={<MapPin size={18} />} label="Max Distance" value={`${p2.maxDistance} miles`} />
+        )}
+        {p2.sizePreference && (
+          <SummaryRow icon={<Dog size={18} />} label="Size Preference" value={p2.sizePreference} />
+        )}
+      </div>
+
+      {/* Tip banner */}
+      <div className="relative overflow-hidden bg-secondary-cta/10 border border-border rounded-card p-4 mt-6 flex items-start gap-3">
+        <span className="bg-secondary-cta/15 rounded-full p-2 flex-shrink-0">
+          <Lightbulb size={18} className="text-secondary-cta" />
+        </span>
+        <div className="relative z-10">
+          <p className="font-semibold text-text-primary text-sm">
+            The more we know, the better the match.
+          </p>
+          <p className="text-text-secondary text-sm">
+            Answer a few more questions to increase your confidence scores and get even better
+            recommendations.
+          </p>
+        </div>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src="/images/flowers-about.png"
+          alt=""
+          aria-hidden="true"
+          className="pointer-events-none select-none absolute bottom-0 right-0 w-24 h-auto opacity-90 hidden sm:block"
+        />
+      </div>
+
+      <h2 className="text-lg font-bold text-text-primary mt-8 mb-3">What would you like to do?</h2>
+      <div className="flex flex-col gap-3">
+        <button
+          type="button"
+          onClick={onEdit}
+          className="bg-surface border border-border rounded-card p-4 flex items-center justify-between gap-3 text-left hover:border-primary transition-colors"
+        >
+          <span className="flex items-center gap-3">
+            <span className="text-primary">
+              <Pencil size={20} />
+            </span>
+            <span className="flex flex-col">
+              <span className="font-semibold text-primary">Edit Profile</span>
+              <span className="text-text-secondary text-sm">Update your current answers</span>
+            </span>
+          </span>
+          <ChevronRight size={18} className="text-text-secondary" />
+        </button>
+        <button
+          type="button"
+          onClick={onImprove}
+          className="bg-surface border border-border rounded-card p-4 flex items-center justify-between gap-3 text-left hover:border-primary transition-colors"
+        >
+          <span className="flex items-center gap-3">
+            <span className="text-primary">
+              <Sparkles size={20} />
+            </span>
+            <span className="flex flex-col">
+              <span className="font-semibold text-primary">Improve Accuracy</span>
+              <span className="text-text-secondary text-sm">
+                Answer 6 more questions to improve your matches
+              </span>
+            </span>
+          </span>
+          <ChevronRight size={18} className="text-text-secondary" />
+        </button>
+      </div>
+
+      {/* Bottom banner */}
+      <div className="relative overflow-hidden bg-primary-light/40 border border-border rounded-card p-4 mt-6">
+        <div className="relative z-10">
+          <p className="font-semibold text-text-primary text-sm">You can update your profile anytime.</p>
+          <p className="text-text-secondary text-sm">Your matches will update as your needs change.</p>
+        </div>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src="/images/flowers-about.png"
+          alt=""
+          aria-hidden="true"
+          className="pointer-events-none select-none absolute bottom-0 right-0 w-28 h-auto opacity-90"
+        />
+      </div>
+    </div>
+  );
+}
+
+function EditForm({
+  p1,
+  setP1,
+  p2,
+  setP2,
+  p1Complete,
+  p2Complete,
+  version,
+  saving,
+  errorMsg,
+  onSave,
+  onCancel,
+}: {
+  p1: Phase1Answers;
+  setP1: Dispatch<SetStateAction<Phase1Answers>>;
+  p2: Phase2Answers;
+  setP2: Dispatch<SetStateAction<Phase2Answers>>;
+  p1Complete: boolean;
+  p2Complete: boolean;
+  version: number;
+  saving: boolean;
+  errorMsg: string;
+  onSave: () => void;
+  onCancel: () => void;
+}) {
+  const [snChoice, setSnChoice] = useState<string>(
+    p2.specialNeedsWilling === true ? "Open to it" : p2.specialNeedsWilling === false ? "No" : "",
+  );
+
+  return (
+    <div>
+      <button
+        type="button"
+        onClick={onCancel}
+        className="inline-flex items-center gap-1 text-primary text-sm font-medium hover:underline mb-3"
+      >
+        <ChevronLeft size={16} /> Cancel
+      </button>
+      <h1 className="text-3xl font-bold text-text-primary">Edit Your Profile</h1>
+      <p className="text-text-secondary text-sm mt-1 mb-6">Update your answers below.</p>
+
+      {/* 2-step indicator */}
+      <div className="flex items-center gap-3 mb-8">
+        <StepBadge n={1} label="Phase 1" sub="Quick Match (6)" />
+        <div className="h-0.5 flex-1 bg-primary/40" />
+        <StepBadge n={2} label="Additional" sub="(6)" />
+      </div>
+
+      {/* Section 1 */}
+      <div className="bg-surface border border-border rounded-card p-6">
+        <div className="flex items-center gap-2 mb-1">
+          <h2 className="text-lg font-bold text-text-primary">Phase 1: Quick Match</h2>
+          {p1Complete && <CircleCheck size={18} className="text-match-high-text" />}
+        </div>
+        <p className="text-text-secondary text-sm mb-4">These answers help us find your best matches.</p>
+        <div className="flex flex-col gap-3">
+          <FieldRow icon={<Home size={18} />} label="Home Type">
+            <select
+              className={SELECT_CLS}
+              value={p1.homeType}
+              onChange={(e) =>
+                setP1((p) => ({ ...p, homeType: e.target.value as Phase1Answers["homeType"] }))
+              }
+            >
+              <option value="Apartment">Apartment</option>
+              <option value="House">House</option>
+              <option value="Other">Other</option>
+            </select>
+          </FieldRow>
+          <FieldRow icon={<Baby size={18} />} label="Children in Home">
+            <BoolSelect value={p1.hasChildren} onChange={(v) => setP1((p) => ({ ...p, hasChildren: v }))} />
+          </FieldRow>
+          <FieldRow icon={<Cat size={18} />} label="Cats in Home">
+            <BoolSelect value={p1.hasCats} onChange={(v) => setP1((p) => ({ ...p, hasCats: v }))} />
+          </FieldRow>
+          <FieldRow icon={<Dog size={18} />} label="Other Dogs in Home">
+            <BoolSelect value={p1.hasOtherDogs} onChange={(v) => setP1((p) => ({ ...p, hasOtherDogs: v }))} />
+          </FieldRow>
+
+          {/* Activity — segmented */}
+          <div className="bg-surface border border-border rounded-card px-4 py-3">
+            <div className="flex items-center justify-between gap-3">
+              <span className="flex items-center gap-2 text-sm text-text-primary font-medium">
+                <span className="text-primary flex-shrink-0">
+                  <Footprints size={18} />
+                </span>{" "}
+                Activity Level
+              </span>
+              <div className="flex gap-2">
+                {(["Low", "Moderate", "High"] as const).map((v) => (
+                  <button
+                    key={v}
+                    type="button"
+                    onClick={() => setP1((p) => ({ ...p, activityLevel: v }))}
+                    className={`px-3 py-1.5 rounded-button-inline text-sm border transition-colors ${
+                      p1.activityLevel === v
+                        ? "bg-primary text-white border-primary"
+                        : "border-border text-text-primary hover:border-primary"
+                    }`}
+                  >
+                    {v}
+                  </button>
+                ))}
+              </div>
+            </div>
+            {p1.activityLevel && (
+              <p className="text-text-secondary text-xs mt-2">{ACTIVITY_DESC[p1.activityLevel]}</p>
+            )}
+          </div>
+
+          {/* Experience — radios */}
+          <div className="bg-surface border border-border rounded-card px-4 py-3">
+            <span className="flex items-center gap-2 text-sm text-text-primary font-medium mb-2">
+              <span className="text-primary flex-shrink-0">
+                <Award size={18} />
+              </span>{" "}
+              Experience Level
+            </span>
+            <div className="flex flex-col gap-2">
+              {EXPERIENCE_OPTS.map((o) => (
+                <label
+                  key={o.v}
+                  className="flex items-center gap-2 text-sm text-text-primary cursor-pointer"
+                >
+                  <input
+                    type="radio"
+                    name="experienceLevel"
+                    className="accent-primary"
+                    checked={p1.experienceLevel === o.v}
+                    onChange={() =>
+                      setP1((p) => ({ ...p, experienceLevel: o.v as Phase1Answers["experienceLevel"] }))
+                    }
+                  />
+                  {o.label}
+                </label>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Section 2 */}
+      <div id="phase2-section" className="bg-surface border border-border rounded-card p-6 mt-6">
+        <div className="flex items-center gap-2 mb-1">
+          <h2 className="text-lg font-bold text-text-primary">Phase 2: Additional Details (Optional)</h2>
+          {p2Complete && <CircleCheck size={18} className="text-match-high-text" />}
+        </div>
+        <p className="text-text-secondary text-sm mb-4">These help us improve accuracy and confidence.</p>
+        <div className="flex flex-col gap-3">
+          <FieldRow icon={<Brush size={18} />} label="Grooming Tolerance">
+            <select
+              className={SELECT_CLS}
+              value={p2.groomingTolerance}
+              onChange={(e) =>
+                setP2((p) => ({
+                  ...p,
+                  groomingTolerance: e.target.value as Phase2Answers["groomingTolerance"],
+                }))
+              }
+            >
+              <option value="" disabled>
+                Select…
+              </option>
+              <option value="Low">Low</option>
+              <option value="Moderate">Moderate</option>
+              <option value="High">High</option>
+            </select>
+          </FieldRow>
+          <FieldRow icon={<Fence size={18} />} label="Fenced Yard">
+            <BoolSelect value={p2.hasFence} onChange={(v) => setP2((p) => ({ ...p, hasFence: v }))} />
+          </FieldRow>
+          <FieldRow icon={<Trees size={18} />} label="Yard (unfenced ok)">
+            <BoolSelect value={p2.hasYard} onChange={(v) => setP2((p) => ({ ...p, hasYard: v }))} />
+          </FieldRow>
+          <FieldRow icon={<Heart size={18} />} label="Open to a dog with special needs?">
+            <select
+              className={SELECT_CLS}
+              value={snChoice}
+              onChange={(e) => {
+                const val = e.target.value;
+                setSnChoice(val);
+                setP2((p) => ({
+                  ...p,
+                  specialNeedsWilling: val === "No" ? false : val === "" ? null : true,
+                }));
+              }}
+            >
+              <option value="" disabled>
+                Select…
+              </option>
+              <option value="Yes">Yes</option>
+              <option value="No">No</option>
+              <option value="Open to it">Open to it</option>
+            </select>
+          </FieldRow>
+
+          {/* Distance — select + range */}
+          <div className="bg-surface border border-border rounded-card px-4 py-3">
+            <div className="flex items-center justify-between gap-3">
+              <span className="flex items-center gap-2 text-sm text-text-primary font-medium">
+                <span className="text-primary flex-shrink-0">
+                  <MapPin size={18} />
+                </span>{" "}
+                Preferred Adoption Distance
+              </span>
+              <select
+                className={SELECT_CLS}
+                value={p2.maxDistance}
+                onChange={(e) => setP2((p) => ({ ...p, maxDistance: e.target.value }))}
+              >
+                <option value="10">10 miles</option>
+                <option value="25">25 miles</option>
+                <option value="50">50 miles</option>
+                <option value="100">100 miles</option>
+              </select>
+            </div>
+            <input
+              type="range"
+              min={5}
+              max={100}
+              step={5}
+              value={p2.maxDistance}
+              onChange={(e) => setP2((p) => ({ ...p, maxDistance: e.target.value }))}
+              className="w-full accent-primary mt-3"
+              aria-label="Maximum distance in miles"
+            />
+            <div className="flex justify-between text-text-secondary text-xs mt-1">
+              <span>5 mi</span>
+              <span>100 mi</span>
+            </div>
+          </div>
+
+          <FieldRow icon={<Dog size={18} />} label="Size Preference">
+            <select
+              className={SELECT_CLS}
+              value={p2.sizePreference}
+              onChange={(e) =>
+                setP2((p) => ({ ...p, sizePreference: e.target.value as Phase2Answers["sizePreference"] }))
+              }
+            >
+              <option value="" disabled>
+                Select…
+              </option>
+              <option value="Small">Small</option>
+              <option value="Medium">Medium</option>
+              <option value="Large">Large</option>
+              <option value="X-Large">X-Large</option>
+              <option value="No Preference">No Preference</option>
+            </select>
+          </FieldRow>
+        </div>
+      </div>
+
+      {/* Version banner */}
+      <div className="bg-primary-light/40 border border-border rounded-card p-4 mt-6 flex items-center gap-3">
+        <CircleCheck size={18} className="text-match-high-text flex-shrink-0" />
+        <div>
+          <p className="font-semibold text-text-primary text-sm">
+            Your profile will be updated to Version {version + 1}
+          </p>
+          <p className="text-text-secondary text-sm">Your matches may update based on your changes.</p>
+        </div>
+      </div>
+
+      {errorMsg && (
+        <p role="alert" className="text-match-low-text text-sm mt-4 text-center">
+          {errorMsg}
+        </p>
+      )}
+
+      <button
+        type="button"
+        onClick={onSave}
+        disabled={saving}
+        className="mt-6 w-full bg-primary text-white rounded-button-full py-3 font-semibold hover:opacity-90 transition-opacity disabled:opacity-50"
+      >
+        {saving ? "Saving…" : "Save Changes"}
+      </button>
+      <button
+        type="button"
+        onClick={onCancel}
+        className="mt-3 w-full border border-primary text-primary rounded-button-full py-3 font-semibold hover:bg-primary-light transition-colors"
+      >
+        Cancel
+      </button>
+    </div>
+  );
+}
+
+function StepBadge({ n, label, sub }: { n: number; label: string; sub: string }) {
+  return (
+    <div className="flex items-center gap-2">
+      <div className="w-7 h-7 rounded-full text-xs font-semibold flex items-center justify-center flex-shrink-0 bg-primary text-white">
+        {n}
+      </div>
+      <div className="leading-tight">
+        <p className="text-sm font-medium text-text-primary">{label}</p>
+        <p className="text-xs text-text-secondary">{sub}</p>
+      </div>
+    </div>
+  );
+}
+
+function FieldRow({ icon, label, children }: { icon: ReactNode; label: string; children: ReactNode }) {
+  return (
+    <div className="bg-surface border border-border rounded-card px-4 py-3 flex items-center justify-between gap-3">
+      <span className="flex items-center gap-2 text-sm text-text-primary font-medium">
+        <span className="text-primary flex-shrink-0">{icon}</span> {label}
+      </span>
+      {children}
+    </div>
+  );
+}
+
+function BoolSelect({ value, onChange }: { value: boolean | null; onChange: (v: boolean) => void }) {
+  return (
+    <select
+      className={SELECT_CLS}
+      value={value === true ? "Yes" : value === false ? "No" : ""}
+      onChange={(e) => onChange(e.target.value === "Yes")}
+    >
+      {value === null && (
+        <option value="" disabled>
+          Select…
+        </option>
+      )}
+      <option value="Yes">Yes</option>
+      <option value="No">No</option>
+    </select>
+  );
+}
+
+function SummaryRow({
+  icon,
+  label,
+  value,
+  description,
+}: {
+  icon: ReactNode;
+  label: string;
+  value: string;
+  description?: string;
+}) {
+  return (
+    <div className="bg-surface border border-border rounded-card px-4 py-3 flex items-center justify-between gap-3">
+      <span className="flex items-center gap-3 text-sm">
+        <span className="text-primary flex-shrink-0">{icon}</span>
+        <span className="text-text-secondary">{label}</span>
+      </span>
+      <span className="flex items-center gap-2">
+        <span className="flex flex-col items-end text-right">
+          <span className="text-text-primary font-medium text-sm">{value}</span>
+          {description && <span className="text-text-secondary text-xs">{description}</span>}
+        </span>
+        <CircleCheck size={16} className="text-match-high-text flex-shrink-0" />
+      </span>
     </div>
   );
 }
