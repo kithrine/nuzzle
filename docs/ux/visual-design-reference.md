@@ -371,11 +371,14 @@ Match Results (Screen 8) shares the same visual layout as Browse Dogs — Authen
 ![User Dashboard / Favorites](mockups/10-mockup-user-dashboard.png)
 
 ### Layout (Two-Panel)
-- **Left sidebar**: User profile summary + navigation menu
-  - "Saved Dogs" heading
-  - Greeting text
-  - Menu: Edit Profile, Saved Dogs (active), Notification Preferences
-- **Main content area**: Saved dogs list
+- **Left sidebar** (desktop only, hidden on mobile): greeting + navigation menu
+  - Greeting text: "Welcome back, [first name]" (from Clerk)
+  - Menu: Saved Dogs (active), Edit Profile → `/questionnaire`, Notification Preferences (placeholder)
+- **Main content area**: dashboard header + matches banner + count/sort row + saved dogs list
+  - **Header row**: "Saved Dogs" heading (filled heart) + subtitle ("Your favorite dogs and their compatibility matches.") + status line ("✓ Profile: Complete · Last updated: Today"); an outlined **"Edit Profile"** button sits at the top-right (in addition to the sidebar link).
+  - **Matches banner** (shown when a profile exists): award/ribbon icon + "We're finding great matches for you!" + supporting line + a "Learn how matches work" link.
+  - **Count + Sort row**: "{N} Saved Dogs" on the left; a **"Sort by"** control on the right (Best Match default / Recently Saved), backed by a `?sort=` query param.
+- **Footer line**: "🔒 Your data is private and never shared."
 
 ### Saved Dogs List
 Horizontal-layout cards (stacked vertically), each showing:
@@ -383,14 +386,17 @@ Horizontal-layout cards (stacked vertically), each showing:
 - Dog name with filled heart icon
 - Breed, age, gender, size
 - Shelter name with location icon + distance
-- Match score badge (color-coded by tier, e.g., "96% MATCH" in green)
+- **Trait chips** (up to 3, derived from the dog's normalized traits — e.g., "Moderate Energy", "Good with Cats", "Good with Dogs", "Family Friendly")
+- **2-line description preview** (clamped)
+- Match score badge (color-coded by tier, e.g., "96% MATCH") + confidence label ("{High/Medium/Low} Confidence")
 - "View Details" button (teal)
-- Ellipsis menu (⋯) for additional actions
+- **× remove button** (top-right) — deletes the favorite (`DELETE /api/favorites/[provider]/[externalId]`) and refreshes the list
 
 ### Match Score Colors in Dashboard
-- 90%+: Bright green badge ("96%", "92%")
-- 80%+: Teal/muted green ("88%", "85%")
-- 70%+: Orange/amber
+Use the canonical app-wide 3-tier system (see "Component Patterns → Match Badge") — the same thresholds as the search cards and detail page; the dashboard does not define its own scheme:
+- **High (≥80%)**: teal/green (`match-high`)
+- **Medium (60–79%)**: amber/orange (`match-medium`)
+- **Low (<60%)**: pink/coral (`match-low`)
 
 ### Empty State
 - Friendly illustration of a dog
