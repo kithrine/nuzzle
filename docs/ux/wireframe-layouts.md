@@ -578,23 +578,27 @@ Profile Complete
 
 ## Screen 10: User Dashboard / Favorites
 
+(Mobile — sidebar collapses; desktop adds a left sidebar with greeting + nav.)
+
 ```
 ┌─────────────────────────────────────┐
 │  🐾 Nuzzle               [Profile] │
 ├─────────────────────────────────────┤
-│  Saved Dogs (3)                     │
-│                       [Edit Profile]│
-├──────────────┬──────────────────────┤
-│ [Photo]      │  [Photo]             │
-│ Charlie      │  Bella               │
-│ 🟢 91%       │  🟡 78%              │
-│ ✓ High       │  🟡 Med              │
-│ [View][✕]    │  [View][✕]           │
-├──────────────┴──────────────────────┤
-│ [Photo]                             │
-│ Luna                                │
-│ 🟢 88%  ✓ High                      │
-│ [View Details]  [✕ Remove]          │
+│  ♥ Saved Dogs          [Edit Profile]│
+│  Your favorite dogs & matches.      │
+│  ✓ Profile: Complete · Updated Today│
+├─────────────────────────────────────┤
+│  🎀 We're finding great matches!    │
+│     ... Learn how matches work ›    │
+├─────────────────────────────────────┤
+│  3 Saved Dogs       Sort by:[Best ▾]│
+├─────────────────────────────────────┤
+│ [Photo]  Charlie ♥          🟢 91%  │
+│          Lab · Young · M · Med  MATCH│
+│          📍 Shelter · 5 mi   ✓ High │
+│          [Mod Energy][Good w/Cats]  │
+│          Friendly pup who loves...  │
+│          [View Details]         [✕] │
 ├─────────────────────────────────────┤
 │  Home   Search   ♡ Saved  Profile  │
 └─────────────────────────────────────┘

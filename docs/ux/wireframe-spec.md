@@ -295,17 +295,22 @@ Avoid:
 **Goal**: Let users review saved dogs and manage their profile.
 
 **Layout**:
-- Header: "Saved Dogs"
+- Left sidebar (desktop): greeting ("Welcome back, [first name]") + nav (Saved Dogs active / Edit Profile / Notification Preferences). Hidden on mobile.
+- Header: "Saved Dogs" + subtitle + status line ("Profile: Complete · Last updated: Today"); "Edit Profile" link/button at top-right
+- Matches banner ("We're finding great matches for you!") — shown when a profile exists
+- Count + **Sort control** ("{N} Saved Dogs" + "Sort by: Best Match / Recently Saved"; default Best Match, via `?sort=` query param)
 - Favorites list (same card format as authenticated search results, showing current compatibility score and labels)
-- "Edit Profile" link
 
 **Favorite card**:
 - Photo
 - Name
-- Match label
-- Confidence label
+- Breed · age · gender · size
+- Shelter name + distance
+- Trait chips (up to 3, derived from the dog's normalized traits)
+- 2-line description preview
+- Match label / score + confidence label
 - "View Details"
-- Remove favorite (swipe left on mobile, X button on desktop)
+- Remove favorite (swipe left on mobile, X button on desktop) — calls `DELETE /api/favorites/[provider]/[externalId]` and refreshes the list
 
 **Empty state**: "You haven't saved any dogs yet. Browse dogs to get started." with Browse CTA.
 
