@@ -5,12 +5,13 @@ import { NuzzleLogo } from "@/components/layout/NuzzleLogo";
 const appearance = {
   variables: {
     colorPrimary: "#20A39E",
-    colorBackground: "#FFFFFF",
+    colorBackground: "rgba(255, 255, 255, 0.60)",
+    colorInputBackground: "#FFFFFF",
     borderRadius: "12px",
     fontFamily: "inherit",
   },
   elements: {
-    card: "shadow-xl",
+    card: "shadow-xl backdrop-blur-md",
   },
 };
 
