@@ -143,13 +143,13 @@ Dog Detail Page with full breakdown
 ```
 User Dashboard → Edit Profile
         ↓
-Questionnaire pre-filled with current answers
+/questionnaire edit mode: "Your Profile" summary → "Edit Your Profile" form (pre-filled)
         ↓
-User updates answers → Submit
+User updates answers → Save Changes
         ↓
 Profile version incremented
         ↓
-Return to search — scores reflect updated profile immediately
+Return to the profile summary (no forced redirect); scores reflect the updated profile on next view
 ```
 
 ---

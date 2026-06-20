@@ -320,16 +320,23 @@ Avoid:
 
 **Goal**: Allow users to review and update questionnaire answers.
 
-**Current Profile Summary** (read-only view):
-- Children / Cats / Dogs / Activity Level / Experience Level / Home Type
+**Entry**: shown when an authenticated user **with an existing profile** visits `/questionnaire` (detected server-side); anonymous / no-profile users get the creation flow.
 
-**Actions**: "Edit Profile" | "Improve Accuracy" (opens Expanded Questionnaire)
+**Layout**: left **dashboard sidebar** (same as Screen 10, "Edit Profile" active) + a main **two-view flow** (summary → form).
 
-**Edit form**:
+**View 1 — "Your Profile" summary** (read-only):
+- "Back to Saved Dogs" link; "Profile Complete · Last updated · Version N" status
+- Current answers listed (Home Type / Children / Cats / Other Dogs / Activity Level / Experience Level, plus filled Phase 2 fields), each with a checkmark
+- Tip banner ("answer a few more questions…")
+- Actions: "Edit Profile" | "Improve Accuracy" (both open the edit form; Improve Accuracy scrolls to Phase 2)
+
+**View 2 — "Edit Your Profile" form**:
 - Pre-filled with current answers
-- Two-phase structure (Phase 1 and Phase 2 sections)
-- "Save Changes" button
-- On save: profile version increments; return to previous page (no forced redirect)
+- Two-section structure (Phase 1: Quick Match / Phase 2: Additional Details), each with a completion checkmark
+- 2-step indicator; compact controls (selects, a segmented Activity control, Experience radios, distance slider)
+- Confirmation banner: "Your profile will be updated to Version N+1"
+- "Save Changes" button + "Cancel"
+- On save: profile version increments; brief "Saved!" confirmation; return to the summary view (no forced redirect)
 
 ---
 
