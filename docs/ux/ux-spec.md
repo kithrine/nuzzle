@@ -236,7 +236,7 @@ Young • Medium • Labrador Mix
 - Confidence is shown as a colored label, not a number
 - 2–3 match reasons shown as short phrases (not full sentences)
 - Low match cards are not hidden — they appear with their explanation snippets
-- Sort label shown: "Showing Best Matches for You" (profiled) / "Showing Nearby Dogs" (anonymous)
+- Sort label shown: "Showing Your Matches" (nationwide / profiled) / "Showing Nearby Dogs" (when a zip filter is applied)
 
 ### Confidence Color Coding
 

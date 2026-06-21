@@ -9,8 +9,13 @@ vi.mock("@/lib/rescuegroups/client");
 vi.mock("@/lib/auth/get-or-create-user", () => ({
   getOrCreateUser: vi.fn().mockResolvedValue(null),
 }));
+vi.mock("@/lib/db/prisma", () => ({
+  prisma: { adopterProfile: { findUnique: vi.fn() } },
+}));
 
 import { searchRescueGroupsDogs } from "@/lib/rescuegroups/client";
+import { getOrCreateUser } from "@/lib/auth/get-or-create-user";
+import { prisma } from "@/lib/db/prisma";
 import { GET } from "@/app/api/dogs/search/route";
 
 const mockSearch = vi.mocked(searchRescueGroupsDogs);
@@ -105,5 +110,46 @@ describe("GET /api/dogs/search", () => {
     expect(mockSearch).toHaveBeenCalledWith(
       expect.objectContaining({ zip: "10001", page: 2, limit: 5 })
     );
+  });
+
+  it("no zip → nationwide search (200, zip not required)", async () => {
+    mockSearch.mockResolvedValueOnce({ dogs: [], hasMore: false, total: 0 });
+
+    const res = await GET(makeRequest(""));
+
+    expect(res.status).toBe(200);
+    expect(mockSearch).toHaveBeenCalledWith(expect.objectContaining({ zip: undefined }));
+  });
+
+  it("defaults to 12 results per page", async () => {
+    mockSearch.mockResolvedValueOnce({ dogs: [], hasMore: false, total: 0 });
+
+    await GET(makeRequest("?zip=10001"));
+
+    expect(mockSearch).toHaveBeenCalledWith(expect.objectContaining({ limit: 12 }));
+  });
+
+  it("profiled user → results scored, response available, total surfaced", async () => {
+    vi.mocked(getOrCreateUser).mockResolvedValueOnce({ id: "u1" } as never);
+    vi.mocked(prisma.adopterProfile.findUnique).mockResolvedValueOnce({
+      homeType: "House",
+      hasChildren: false,
+      hasCats: false,
+      hasOtherDogs: true,
+      activityLevel: "High",
+      experienceLevel: "Species",
+    } as never);
+    mockSearch.mockResolvedValueOnce({
+      dogs: [{ id: "rg-001", raw: MOCK_RAW_DOG }],
+      hasMore: false,
+      total: 1,
+    });
+
+    const res = await GET(makeRequest("?zip=10001"));
+    const body = await res.json();
+
+    expect(body.compatibility.available).toBe(true);
+    expect(typeof body.results[0].compatibility.compatibilityScore).toBe("number");
+    expect(body.total).toBe(1);
   });
 });

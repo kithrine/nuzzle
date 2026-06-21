@@ -41,6 +41,31 @@ describe("searchRescueGroupsDogs — pictures", () => {
   });
 });
 
+describe("searchRescueGroupsDogs — pagination & location", () => {
+  it("no zip → nationwide (no filterRadius), query-param pagination, total from meta.count", async () => {
+    const fetchMock = mockFetchOnce(200, { data: [], meta: { count: 33084 } });
+
+    const { hasMore, total } = await searchRescueGroupsDogs({ page: 1, limit: 12 });
+
+    const url = fetchMock.mock.calls[0][0] as string;
+    const body = JSON.parse(fetchMock.mock.calls[0][1].body as string);
+    expect(url).toContain("limit=12");
+    expect(url).toContain("page=1");
+    expect(body.data.filterRadius).toBeUndefined();
+    expect(total).toBe(33084);
+    expect(hasMore).toBe(true); // 1 * 12 < 33084
+  });
+
+  it("with zip → filterRadius included in the request body", async () => {
+    const fetchMock = mockFetchOnce(200, { data: [], meta: { count: 5 } });
+
+    await searchRescueGroupsDogs({ zip: "10001", radius: 50, page: 1, limit: 12 });
+
+    const body = JSON.parse(fetchMock.mock.calls[0][1].body as string);
+    expect(body.data.filterRadius).toEqual({ miles: 50, postalcode: "10001" });
+  });
+});
+
 describe("getRescueGroupsDog — pictures + orgs", () => {
   it("reads the array-shaped data and returns photos + shelter from included", async () => {
     // RG v5 returns `data` as an array even for a single-animal fetch.

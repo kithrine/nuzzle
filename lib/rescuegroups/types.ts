@@ -87,6 +87,12 @@ export type RescueGroupsApiResponse = {
     RescueGroupsApiAnimal | RescueGroupsApiShelter | RescueGroupsApiPicture | RescueGroupsApiOrg
   >;
   meta?: {
+    // RG v5 reports pagination at the top of `meta`.
+    count?: number; // total matching records
+    countReturned?: number;
+    pageReturned?: number;
+    limit?: number;
+    pages?: number;
     pagination?: {
       total?: number;
       pageNumber?: number;

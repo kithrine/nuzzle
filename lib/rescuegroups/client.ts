@@ -23,7 +23,7 @@ function extractPictureUrl(attrs: RescueGroupsApiPicture["attributes"]): string 
 
 export async function searchRescueGroupsDogs(
   params: SearchDogsParams
-): Promise<{ dogs: Array<{ id: string; raw: RescueGroupsRawDog }>; hasMore: boolean }> {
+): Promise<{ dogs: Array<{ id: string; raw: RescueGroupsRawDog }>; hasMore: boolean; total?: number }> {
   const apiKey = process.env.RESCUEGROUPS_API_KEY ?? "";
   const { zip, radius = 25, page = 1, limit = 20, breed, ageGroup, sizeGroup } = params;
   const pageSize = Math.min(limit, 50);
@@ -34,14 +34,14 @@ export async function searchRescueGroupsDogs(
   if (sizeGroup) filterFields.push({ fieldName: "animals.sizeGroup", operation: "equals", criteria: sizeGroup });
   if (breed) filterFields.push({ fieldName: "animals.breedPrimary", operation: "contains", criteria: breed });
 
-  const requestData: Record<string, unknown> = {
-    filterRadius: { miles: radius, postalcode: zip },
-    pagination: { pageNumber: page, pageSize },
-  };
+  // Location filter only when a zip is supplied; otherwise search nationwide.
+  const requestData: Record<string, unknown> = {};
+  if (zip) requestData.filterRadius = { miles: radius, postalcode: zip };
   if (filterFields.length > 0) requestData.filterFields = filterFields;
 
+  // RG v5 paginates via query params (limit/page), not the request body.
   const res = await fetch(
-    `${RG_BASE}/public/animals/search/available/dogs?include=pictures,orgs`,
+    `${RG_BASE}/public/animals/search/available/dogs?include=pictures,orgs&limit=${pageSize}&page=${page}`,
     {
       method: "POST",
       headers: {
@@ -84,10 +84,12 @@ export async function searchRescueGroupsDogs(
     return { id: animal.id, raw };
   });
 
-  const total = json.meta?.pagination?.total ?? 0;
-  const hasMore = total > page * pageSize;
+  // RG v5 exposes the total match count as `meta.count` (with `meta.pagination.total`
+  // kept as a fallback for older shapes).
+  const total = json.meta?.count ?? json.meta?.pagination?.total ?? 0;
+  const hasMore = page * pageSize < total;
 
-  return { dogs, hasMore };
+  return { dogs, hasMore, total };
 }
 
 export async function getRescueGroupsDog(

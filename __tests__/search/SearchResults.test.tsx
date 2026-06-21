@@ -65,4 +65,32 @@ describe("SearchResults", () => {
       screen.getByText(/no dogs found near 10001/i)
     ).toBeInTheDocument();
   });
+
+  it("renders the compatibility score for authenticated results", () => {
+    const AUTH_COMPAT = {
+      available: true as const,
+      result: {
+        compatibilityScore: 91,
+        matchLabel: "Strong Match" as const,
+        confidenceScore: 80,
+        confidenceLabel: "High" as const,
+        breakdown: [],
+        positiveFactors: ["Good with kids"],
+        concerns: [],
+        shelterQuestions: [],
+      },
+    };
+    render(
+      <SearchResults
+        results={[{ dog: makeDog("rg-1", "Rex"), compatibility: AUTH_COMPAT }]}
+        zip="10001"
+      />,
+    );
+    expect(screen.getByText(/91%/)).toBeInTheDocument();
+  });
+
+  it("uses a nationwide header when no zip is provided", () => {
+    render(<SearchResults results={THREE_RESULTS} zip="" />);
+    expect(screen.getByText(/showing your matches/i)).toBeInTheDocument();
+  });
 });

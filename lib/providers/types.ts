@@ -1,7 +1,7 @@
 import type { NormalizedDog } from "@/lib/compatibility/types";
 
 export interface SearchDogsParams {
-  zip: string;
+  zip?: string;
   radius?: number;
   page?: number;
   limit?: number;
