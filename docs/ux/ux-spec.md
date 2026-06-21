@@ -97,33 +97,30 @@ Dog Detail Page (compatibility gated with teaser)
         ↓
 User clicks "Get My Compatibility Match"
         ↓
-Quick Match Questionnaire (~2 min, required)
+Quick Match Questionnaire (~2 min, required) — answers held in localStorage while anonymous
         ↓
-Results shown immediately (in session, no account yet)
+On completion → Account creation (/signup)
         ↓
-User favorites a dog
+After sign-up → returns to /questionnaire, which auto-creates the profile from the stored answers
         ↓
-Prompt: "Create an account to save your matches"
-        ↓
-Account creation
-        ↓
-Favorites saved, profile persisted to database
+Best Matches (nationwide, ranked by compatibility); profile persisted to database
 ```
+
+(Favoriting a dog while anonymous also triggers account creation via the Screen 9 modal — an independent entry point.)
 
 ### Flow 2: Personalized Matching (First-Time Profiled User)
 
+Two orderings, same destination:
+
 ```
-Questionnaire
+Account-first:  Sign Up → /questionnaire (forced redirect) → complete → Best Matches
+Questionnaire-first:  /questionnaire (anonymous) → complete → Sign Up → resume → Best Matches
         ↓
-Generate Profile
-        ↓
-Best Matches (scored, sorted by compatibility)
+Best Matches (nationwide, scored, sorted by compatibility)
         ↓
 Dog Detail Page (full compatibility breakdown)
         ↓
-Favorite Dog
-        ↓
-Visit Shelter Listing (external redirect)
+Favorite Dog → Visit Shelter Listing (external redirect)
 ```
 
 ### Flow 3: Returning User
