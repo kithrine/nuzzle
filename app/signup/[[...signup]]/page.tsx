@@ -33,7 +33,7 @@ export default function SignupPage() {
           <span className="text-3xl font-bold text-primary">Nuzzle</span>
         </div>
         <p className="text-text-primary font-medium mt-1 mb-6">Better matches. Happier tails.</p>
-        <SignUp appearance={appearance} />
+        <SignUp appearance={appearance} forceRedirectUrl="/questionnaire" signInUrl="/login" />
       </div>
     </main>
   );
