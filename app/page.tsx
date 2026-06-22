@@ -6,8 +6,11 @@ import { Sparkles, MessageCircleHeart, ShieldCheck, PawPrint, Heart } from "luci
 import { FeaturedDogs } from "@/components/FeaturedDogs";
 import { FeaturedCarousel } from "@/components/FeaturedCarousel";
 
-// Regenerate the homepage every 5 hours so Featured Dogs rotates on that
-// cadence (one RescueGroups call per window) rather than on every request.
+// Regenerate the homepage every 5 hours (complementary full-route cache). The
+// real guarantee that the RescueGroups call runs at most once per window is the
+// data-layer cache in lib/homepage/featured-data.ts (unstable_cache), which
+// holds regardless of whether this route renders statically or dynamically.
+// (Must stay a literal — Next reads `revalidate` statically.)
 export const revalidate = 18000;
 
 // ─── Sub-components ───────────────────────────────────────────────────────────

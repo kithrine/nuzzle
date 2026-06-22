@@ -133,7 +133,7 @@ Values are inferred from mockup analysis. Confirm exact hex values against rende
   - "View Details" link → that dog's real detail page
   - (No compatibility percentage — the homepage is anonymous/marketing context.)
 - **Functional carousel arrows** (`< >`) flank the row and scroll it left/right (`FeaturedCarousel` client wrapper owns the scroll ref).
-- **Rotation:** the featured set rotates every ~5 hours. A time-window seed (`featuredWindowSeed`) both varies which page is fetched and shuffles the picks (`pickFeatured`); the homepage uses ISR (`revalidate = 18000`) so it regenerates on that cadence with ~one RescueGroups call per window. The same 8 dogs are shown to everyone within a window.
+- **Rotation + caching:** the featured set rotates every ~5 hours. A time-window seed (`featuredWindowSeed`) both varies which page is fetched and shuffles the picks (`pickFeatured`). The nationwide pool is cached at the **data layer** in `getFeaturedPool` (`unstable_cache`, `revalidate 18000`, seed-keyed cache key), so the RescueGroups call runs **at most once per 5-hour window regardless of render mode** (the RG search is a POST, which Next's fetch cache won't cache). The homepage also sets `revalidate = 18000` as a complementary full-route cache. The same 8 dogs are shown to everyone within a window.
 
 ### Profile Prompt Banner
 - Teal background banner below featured dogs

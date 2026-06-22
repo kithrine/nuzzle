@@ -1,33 +1,27 @@
 import Link from "next/link";
-import { searchRescueGroupsDogs } from "@/lib/rescuegroups/client";
-import { normalizeRescueGroupsDog } from "@/lib/compatibility/normalize";
 import { formatAgeGroup } from "@/lib/compatibility/display";
 import type { NormalizedDog } from "@/lib/compatibility/types";
 import { DogImage } from "@/components/DogImage";
 import { featuredWindowSeed, pickFeatured } from "@/lib/homepage/featured";
+import { getFeaturedPool } from "@/lib/homepage/featured-data";
 
 // Featured Dogs surfaces 8 real, adoptable dogs nationwide that rotate every
-// ~5 hours. The homepage is regenerated on that cadence (ISR `revalidate` in
-// app/page.tsx), so this makes ~one RescueGroups call per window. The seed
-// both varies the page we fetch and shuffles the picks, so the set changes
-// each window. Each card links to that dog's real detail page.
-const FEATURED_POOL_PAGES = 8;
+// ~5 hours. The nationwide pool is cached per window in getFeaturedPool
+// (unstable_cache), so the RescueGroups call runs at most once per window. The
+// seed varies the page we fetch and shuffles the picks, so the set changes each
+// window. Each card links to that dog's real detail page.
 const FEATURED_COUNT = 8;
 
 export async function FeaturedDogs() {
   // Server component: reading the wall clock is intentional — it selects the
-  // current 5-hour rotation window. The page is ISR-regenerated on that cadence
-  // (revalidate in app/page.tsx), so this isn't a per-render instability.
+  // current 5-hour rotation window (which is also the cache key in
+  // getFeaturedPool), so this isn't a per-render instability.
   // eslint-disable-next-line react-hooks/purity
   const seed = featuredWindowSeed(Date.now());
 
   let dogs: NormalizedDog[] = [];
   try {
-    const { dogs: raw } = await searchRescueGroupsDogs({
-      page: (seed % FEATURED_POOL_PAGES) + 1,
-      limit: 40,
-    });
-    dogs = raw.map(({ id, raw: rawDog }) => normalizeRescueGroupsDog(rawDog, id, null));
+    dogs = await getFeaturedPool(seed);
   } catch {
     dogs = [];
   }

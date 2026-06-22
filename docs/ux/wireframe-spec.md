@@ -95,7 +95,7 @@ Avoid:
    - Secondary CTA: "Create Compatibility Profile" → Questionnaire
 3. Value proposition callouts (3 short items: Better Matches · Honest Insights · Fewer Returns)
 4. How It Works (3 cards: Create Profile → Get Match Scores → Find Your Dog)
-5. Featured Dogs — 8 real, adoptable dogs drawn nationwide (Photo, Name, Breed · Age, View Details), rotating every ~5 hours (window-seeded selection + homepage ISR `revalidate`). Horizontal scroll with functional `< >` arrow buttons. Encourages browsing / profile creation.
+5. Featured Dogs — 8 real, adoptable dogs drawn nationwide (Photo, Name, Breed · Age, View Details), rotating every ~5 hours. Window-seeded selection; the pool is cached at the data layer (`unstable_cache`, 5h, seed-keyed) so the RescueGroups call runs ≤1×/window regardless of render mode. Horizontal scroll with functional `< >` arrow buttons. Encourages browsing / profile creation.
 6. Footer (About · Contact · Privacy · Terms)
 
 **Key design decision**: Primary CTA is Browse, not the questionnaire. Prove value before asking for commitment.
