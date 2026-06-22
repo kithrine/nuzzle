@@ -1,0 +1,15 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "nuzzle-dev",
+      "runtimeExecutable": "powershell",
+      "runtimeArgs": [
+        "-NoProfile",
+        "-Command",
+        "fnm env | Out-String | Invoke-Expression; $env:PORT=3010; npm run dev"
+      ],
+      "port": 3010
+    }
+  ]
+}
