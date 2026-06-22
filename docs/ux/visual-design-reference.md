@@ -350,16 +350,11 @@ Match Results (Screen 8) shares the same visual layout as Browse Dogs — Authen
 
 ### Content
 - Heading: "Save [Dog Name] to your favorites"
-- Subheading: "Create a free account to save your matches"
-
-### Form Fields
-- Email input with envelope icon and "Email address" label
-- Password input with lock icon and "Password" label
-- Password requirement note: "Password must be at least 8 characters"
-- Eye icon toggle for show/hide password
+- Subheading: "Create a free account to save your matches and come back anytime."
+- **No inline form fields.** Account creation happens on `/signup` (Clerk owns it), so the modal does not show email/password inputs — it routes the user there.
 
 ### Actions
-- **Primary**: Full-width solid teal button — "Create Account"
+- **Primary**: Full-width solid teal button — "Create Account" → `/signup`
 - **Secondary**: "Maybe Later" text link (smaller, gray, dismisses modal)
 
 ### Notes
@@ -373,9 +368,10 @@ Match Results (Screen 8) shares the same visual layout as Browse Dogs — Authen
 ![User Dashboard / Favorites](mockups/10-mockup-user-dashboard.png)
 
 ### Layout (Two-Panel)
-- **Left sidebar** (desktop only, hidden on mobile): greeting + navigation menu
+- **Left sidebar** (`DashboardSidebar`, desktop only, hidden on mobile): greeting + navigation menu, **sticky** so the links stay in view while the main column scrolls
   - Greeting text: "Welcome back, [first name]" (from Clerk)
   - Menu: Saved Dogs (active), Edit Profile → `/questionnaire`, Notification Preferences (placeholder)
+  - **Decorative samoyed art** (`/images/sidenav-samoyed.png`, rounded) anchored at the **bottom** of the sticky sidebar
 - **Main content area**: dashboard header + matches banner + count/sort row + saved dogs list
   - **Header row**: "Saved Dogs" heading (filled heart) + subtitle ("Your favorite dogs and their compatibility matches.") + status line ("✓ Profile: Complete · Last updated: Today"); an outlined **"Edit Profile"** button sits at the top-right (in addition to the sidebar link).
   - **Matches banner** (shown when a profile exists): award/ribbon icon + "We're finding great matches for you!" + supporting line + a "Learn how matches work" link.
@@ -601,6 +597,9 @@ Subtle motion makes the app feel responsive and alive. **All motion is gated beh
 
 ### Hero parallax (homepage)
 - The homepage hero background image drifts subtly as the page scrolls (`.hero-parallax`, CSS scroll-driven `animation-timeline: scroll()`). Progressive enhancement — browsers without scroll-driven-animation support render it static; disabled under reduced motion. A baseline `scale(1.08)` keeps the frame covered through the drift.
+
+### Page fade-in (all routes)
+- Page content fades + slides in on arrival (`.page-fade`). A `PageTransition` client wrapper in the root layout is keyed by `usePathname()`, so the fade replays on every client-side navigation (not just hard loads). Scroll reveals and parallax remain homepage-only; this gentle fade applies everywhere. Disabled under reduced motion.
 
 ---
 

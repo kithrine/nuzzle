@@ -127,6 +127,9 @@
 
   /* ── Favorite heart pop ────────────────────────────────── */
   .animate-heart-pop  { animation: heart-pop 0.3s ease-out; }
+
+  /* ── Page fade-in (replays per route via PageTransition key) ── */
+  .page-fade          { animation: page-fade-in 0.4s ease-out; }
 }
 
 /* Baseline scale over-covers the frame so the ±4% drift never reveals an edge. */
@@ -139,6 +142,11 @@
   0%   { transform: scale(1); }
   40%  { transform: scale(1.35); }
   100% { transform: scale(1); }
+}
+
+@keyframes page-fade-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: none; }
 }
 
 /* Honor users who prefer reduced motion (Rule 13). */
@@ -162,6 +170,9 @@
     animation: none;
   }
   .animate-heart-pop {
+    animation: none;
+  }
+  .page-fade {
     animation: none;
   }
 }
