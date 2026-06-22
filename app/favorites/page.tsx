@@ -227,9 +227,13 @@ export default async function FavoritesPage({
                   />
                   <div className="flex gap-4">
                     {dog.photos[0] && (
-                      <div className="relative w-24 h-24 sm:w-32 sm:h-32 rounded-button-inline overflow-hidden bg-primary-light flex-shrink-0">
+                      <Link
+                        href={`/dogs/${provider}/${externalId}`}
+                        aria-label={`View ${dog.name}`}
+                        className="relative block w-24 h-24 sm:w-32 sm:h-32 rounded-button-inline overflow-hidden bg-primary-light flex-shrink-0"
+                      >
                         <DogImage src={dog.photos[0]} alt={dog.name} />
-                      </div>
+                      </Link>
                     )}
                     <div className="flex-1 min-w-0 flex flex-col sm:flex-row sm:justify-between gap-3">
                       {/* Info */}

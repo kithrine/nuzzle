@@ -32,14 +32,22 @@ export function RemoveFavoriteButton({
   }
 
   return (
-    <button
-      type="button"
-      onClick={handleRemove}
-      disabled={pending}
-      aria-label={`Remove ${dogName ?? "dog"} from favorites`}
-      className={`text-text-secondary hover:text-text-primary disabled:opacity-50 transition-colors ${className ?? ""}`}
-    >
-      <X size={20} />
-    </button>
+    <span className={`group relative inline-flex ${className ?? ""}`}>
+      <button
+        type="button"
+        onClick={handleRemove}
+        disabled={pending}
+        aria-label={`Remove ${dogName ?? "dog"} from favorites`}
+        className="text-text-secondary hover:text-text-primary disabled:opacity-50 transition-colors"
+      >
+        <X size={20} />
+      </button>
+      <span
+        role="tooltip"
+        className="pointer-events-none absolute top-full right-0 mt-1 z-20 whitespace-nowrap rounded-md bg-text-primary px-2 py-1 text-xs text-white opacity-0 transition-opacity group-hover:opacity-100"
+      >
+        Remove from favorites
+      </span>
+    </span>
   );
 }

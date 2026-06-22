@@ -157,7 +157,7 @@ Values are inferred from mockup analysis. Confirm exact hex values against rende
 
 ### Dog Cards (Anonymous)
 Each card shows:
-- Large dog photo
+- Large dog photo — **links to the dog's detail page** (in addition to "View Details"; the heart chip sits above the link and still toggles favorites)
 - Dog name (bold)
 - Breed + age + size descriptor (e.g., "Golden Retriever • Adult • 2 yrs")
 - Location icon + distance (e.g., "18 miles away")
@@ -383,7 +383,7 @@ Match Results (Screen 8) shares the same visual layout as Browse Dogs — Authen
 
 ### Saved Dogs List
 Horizontal-layout cards (stacked vertically), each showing:
-- Square thumbnail photo (left)
+- Square thumbnail photo (left) — **links to the dog's detail page** (in addition to "View Details")
 - Dog name with filled heart icon
 - Breed, age, gender, size
 - Shelter name with location icon + distance
@@ -391,7 +391,7 @@ Horizontal-layout cards (stacked vertically), each showing:
 - **2-line description preview** (clamped)
 - Match score badge (color-coded by tier, e.g., "96% MATCH") + confidence label ("{High/Medium/Low} Confidence")
 - "View Details" button (teal)
-- **× remove button** (top-right) — deletes the favorite (`DELETE /api/favorites/[provider]/[externalId]`) and refreshes the list
+- **× remove button** (top-right) — deletes the favorite (`DELETE /api/favorites/[provider]/[externalId]`) and refreshes the list; shows a **"Remove from favorites" tooltip** on hover (`aria-label` kept for screen readers)
 
 ### Match Score Colors in Dashboard
 Use the canonical app-wide 3-tier system (see "Component Patterns → Match Badge") — the same thresholds as the search cards and detail page; the dashboard does not define its own scheme:
