@@ -572,6 +572,11 @@ Confidence always rendered as text label ("High Confidence", "Medium Confidence"
 - When breed/age/size/location filters are applied, each appears as a small teal chip (`bg-primary-light text-primary`, `rounded-badge`) with an ✕ to remove just that filter, plus a "Clear all filters" text button.
 - Sits between the filter bar and the results. Removing a chip or clearing re-runs the search and returns the user to their overall list (a profiled user's full compatibility-ranked matches; an anonymous user's nationwide list).
 
+### Loading Skeletons (dog lists)
+- While dog cards load, the UI shows animated placeholder cards (`DogCardSkeleton` — `animate-pulse`, mirrors the DogCard photo + text shell) instead of a blank area or a plain "Loading…" line.
+- `DogCardSkeletonGrid` renders these in the same responsive grid as results (`grid-cols-1 sm:grid-cols-2 lg:grid-cols-3`) and carries a screen-reader loading status (`role="status"`, accessible name "Loading dogs"). Individual skeletons are `aria-hidden`.
+- Used on **Search / Matches** (in-page loading state) and as route-level loaders on **Favorites** (`favorites/loading.tsx`, dashboard shell) and **Dog Detail** (`loading.tsx`, hero + info + compatibility shell).
+
 ---
 
 ## Botanical Design Theme

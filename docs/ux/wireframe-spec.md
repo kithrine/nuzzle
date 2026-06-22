@@ -406,6 +406,7 @@ Filters (breed/age/size) narrow the result set; they apply for both anonymous an
 
 | State | Treatment |
 |-------|-----------|
+| Loading dog lists | Animated card skeletons (`DogCardSkeleton`) in the results grid, plus a screen-reader "Loading dogs" status. Used on Search/Matches (in-page) and as route loaders on Favorites + Dog Detail. |
 | No search results | "No dogs found near [location]. Try expanding your search radius." |
 | No strong matches | "We couldn't find strong matches using your current profile. Try adjusting your preferences." |
 | RescueGroups API error | "Unable to load dogs at this time. Please try again later." |
