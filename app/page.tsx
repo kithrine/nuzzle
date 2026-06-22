@@ -18,16 +18,16 @@ export const revalidate = 18000;
 
 function FeaturedDogsSkeleton() {
   return (
-    <div className="flex gap-4 w-max">
+    <div className="flex gap-5 w-max">
       {Array.from({ length: 8 }).map((_, i) => (
         <div
           key={i}
-          className="bg-surface rounded-card shadow-sm flex-shrink-0 w-48 overflow-hidden"
+          className="bg-surface rounded-card shadow-sm flex-shrink-0 w-64 overflow-hidden"
         >
-          <div className="h-36 bg-primary-light animate-pulse" />
-          <div className="p-3 flex flex-col gap-2">
-            <div className="h-4 w-24 bg-border rounded animate-pulse" />
-            <div className="h-3 w-32 bg-border rounded animate-pulse" />
+          <div className="h-48 bg-primary-light animate-pulse" />
+          <div className="p-4 flex flex-col gap-2">
+            <div className="h-4 w-28 bg-border rounded animate-pulse" />
+            <div className="h-3 w-36 bg-border rounded animate-pulse" />
           </div>
         </div>
       ))}

@@ -39,22 +39,22 @@ export async function FeaturedDogs() {
   }
 
   return (
-    <div className="flex gap-4 w-max">
+    <div className="flex gap-5 w-max">
       {featured.map((dog) => (
         <Link
           key={`${dog.provider}-${dog.externalId}`}
           href={`/dogs/${dog.provider}/${dog.externalId}`}
-          className="bg-surface rounded-card shadow-sm flex-shrink-0 w-48 overflow-hidden block hover-lift"
+          className="bg-surface rounded-card shadow-sm flex-shrink-0 w-64 overflow-hidden block hover-lift"
         >
-          <div className="relative h-36 overflow-hidden bg-primary-light">
+          <div className="relative h-48 overflow-hidden bg-primary-light">
             {dog.photos[0] && <DogImage src={dog.photos[0]} alt={dog.name} />}
           </div>
-          <div className="p-3">
-            <p className="font-semibold text-text-primary text-sm">{dog.name}</p>
-            <p className="text-text-secondary text-xs">
+          <div className="p-4">
+            <p className="font-semibold text-text-primary text-base">{dog.name}</p>
+            <p className="text-text-secondary text-sm">
               {dog.breed ?? "Mixed Breed"} · {formatAgeGroup(dog.ageGroup)}
             </p>
-            <span className="text-primary text-xs font-medium mt-2 block underline underline-offset-2">
+            <span className="text-primary text-sm font-medium mt-2 block underline underline-offset-2">
               View Details
             </span>
           </div>
