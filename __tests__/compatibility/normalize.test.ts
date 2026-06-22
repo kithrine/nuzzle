@@ -194,6 +194,14 @@ describe("normalizeRescueGroupsDog", () => {
       expect(normalizeRescueGroupsDog({ animals: {} }, "x").gender).toBe("Unknown");
     });
 
+    it("maps coatLength → groomingNeeds (Short→Low, Medium→Moderate, Long→High, else Unknown)", () => {
+      expect(normalizeRescueGroupsDog({ animals: { coatLength: "Short" } }, "x").groomingNeeds).toBe("Low");
+      expect(normalizeRescueGroupsDog({ animals: { coatLength: "Medium" } }, "x").groomingNeeds).toBe("Moderate");
+      expect(normalizeRescueGroupsDog({ animals: { coatLength: "Long" } }, "x").groomingNeeds).toBe("High");
+      expect(normalizeRescueGroupsDog({ animals: { coatLength: "Hairless" } }, "x").groomingNeeds).toBe("Low");
+      expect(normalizeRescueGroupsDog({ animals: {} }, "x").groomingNeeds).toBe("Unknown");
+    });
+
     it("uses the attribute distance when no distance arg is passed", () => {
       const raw: RescueGroupsRawDog = { animals: { name: "Allie", distance: 18 } };
       expect(normalizeRescueGroupsDog(raw, "x").distance).toBe(18);

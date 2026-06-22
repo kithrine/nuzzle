@@ -9,6 +9,8 @@ export type NormalizedDog = {
   energyLevel: "Low" | "Moderate" | "High" | "Unknown";
   activityLevel: "Low" | "Moderate" | "High" | "Unknown";
   exerciseNeeds: "Low" | "Moderate" | "High" | "Unknown";
+  // Grooming effort derived from coat length (Short→Low, Medium→Moderate, Long→High).
+  groomingNeeds?: "Low" | "Moderate" | "High" | "Unknown";
   isKidsOk: boolean | "Unknown";
   isCatsOk: boolean | "Unknown";
   isDogsOk: boolean | "Unknown";
@@ -61,4 +63,6 @@ export interface AdopterProfile {
   specialNeedsWilling?: boolean;
   maxDistance?: number;
   sizePreference?: "Small" | "Medium" | "Large" | "X-Large" | "No Preference";
+  agePreference?: "Baby" | "Young" | "Adult" | "Senior" | "No Preference";
+  sexPreference?: "Male" | "Female" | "No Preference";
 }
