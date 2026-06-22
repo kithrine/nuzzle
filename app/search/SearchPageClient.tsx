@@ -56,7 +56,7 @@ function buildPageUrl(filters: FilterValues, page: number, source: string | null
 export function SearchPageClient() {
   const searchParams = useSearchParams();
   const router = useRouter();
-  const { isSignedIn } = useUser();
+  const { isSignedIn, isLoaded } = useUser();
 
   const source = searchParams.get("source");
 
@@ -85,7 +85,8 @@ export function SearchPageClient() {
 
     setState({ status: "loading" });
     try {
-      const res = await fetch(buildApiUrl(filters, page));
+      // never reuse a cached response — results depend on the current session.
+      const res = await fetch(buildApiUrl(filters, page), { cache: "no-store" });
       if (!res.ok) {
         setState({ status: "error" });
         return;
@@ -133,6 +134,24 @@ export function SearchPageClient() {
     loadPage(initialFilters, initialPage);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // Re-fetch when the user logs in/out without leaving the page, so results match
+  // the new session instead of lingering on the previous one's (the mount effect
+  // only runs once). The first resolved auth state is recorded without re-fetching
+  // since the mount effect already loaded.
+  const prevSignedIn = useRef<boolean | undefined>(undefined);
+  useEffect(() => {
+    if (!isLoaded) return;
+    if (prevSignedIn.current === undefined) {
+      prevSignedIn.current = isSignedIn;
+      return;
+    }
+    if (prevSignedIn.current === isSignedIn) return;
+    prevSignedIn.current = isSignedIn;
+    cacheRef.current.clear();
+    loadPage(appliedFilters, 1);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isLoaded, isSignedIn]);
 
   // Fetch favorites once for authenticated users to show correct heart state.
   useEffect(() => {

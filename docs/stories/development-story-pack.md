@@ -281,7 +281,7 @@ A story is not complete until tests pass.
 #### Acceptance Criteria
 
 - [ ] Phase 1 (Quick Match) questionnaire implemented — 6 required questions
-- [ ] Phase 2 (Improve Accuracy) — 6 optional additional questions
+- [ ] Phase 2 (Improve Accuracy) — 8 optional additional questions
 - [ ] One question per screen on mobile
 - [ ] Progress bar visible ("Step 2 of 6")
 - [ ] Phase 1 completable without Phase 2

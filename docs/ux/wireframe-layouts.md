@@ -436,7 +436,7 @@ What's your dog ownership experience?
 │  └─────────────────────────────┘   │
 │                                     │
 │  Want even better matches?          │
-│  [Answer 6 more questions →]        │
+│  [Answer 8 more questions →]        │
 │                                     │
 │  You can update your profile        │
 │  at any time.                       │

@@ -152,4 +152,12 @@ describe("GET /api/dogs/search", () => {
     expect(typeof body.results[0].compatibility.compatibilityScore).toBe("number");
     expect(body.total).toBe(1);
   });
+
+  it("response is marked no-store so results are never cached across auth/profile state", async () => {
+    mockSearch.mockResolvedValueOnce({ dogs: [], hasMore: false, total: 0 });
+
+    const res = await GET(makeRequest(""));
+
+    expect(res.headers.get("Cache-Control")).toBe("no-store");
+  });
 });
