@@ -343,9 +343,11 @@ each result carries its full `CompatibilityResult`:
 }
 ```
 
-Default sort: `best_match` for profiled users (Compatibility → Confidence → Distance),
-`distance` for anonymous. The client adapts each result into DogCard's compatibility
-union via `toCardCompatibility`.
+Sort: `best_match` for profiled users **without** a zip (Compatibility → Confidence →
+Distance); **`distance` (nearest first, compatibility breaks ties) when a zip is set**;
+`distance` for anonymous. Profiled users are scored regardless of sort, so match
+badges show in either order. The client adapts each result into DogCard's
+compatibility union via `toCardCompatibility`.
 
 ---
 

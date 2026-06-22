@@ -28,8 +28,11 @@ export async function GET(req: NextRequest) {
     ? await prisma.adopterProfile.findUnique({ where: { userId: user.id } })
     : null;
 
-  const useCompatibilitySort = profile !== null && sortParam !== "distance";
-  const sort = useCompatibilitySort ? "best_match" : "distance";
+  const profiled = profile !== null;
+  // Profiled users get best-match order by default; setting a ZIP (a location
+  // search) switches to nearest-first. Anonymous users are always distance-sorted.
+  const distanceSort = !profiled || Boolean(zip) || sortParam === "distance";
+  const sort = distanceSort ? "distance" : "best_match";
 
   try {
     const { dogs, hasMore, total } = await searchRescueGroupsDogs({
@@ -42,17 +45,27 @@ export async function GET(req: NextRequest) {
       sizeGroup,
     });
 
-    let results: SearchResult[];
+    // Always score profiled users so cards show match info in either order.
+    const results: SearchResult[] = dogs.map(({ id, raw }) => {
+      const dog = normalizeRescueGroupsDog(raw, id, null);
+      const compatibility = profiled
+        ? calculateCompatibility(profile as unknown as AdopterProfile, dog)
+        : undefined;
+      return { dog, compatibility };
+    });
 
-    if (useCompatibilitySort) {
-      results = dogs.map(({ id, raw }) => {
-        const dog = normalizeRescueGroupsDog(raw, id, null);
-        const compatibility = calculateCompatibility(
-          profile as unknown as AdopterProfile,
-          dog,
+    if (distanceSort) {
+      // Nearest first; compatibility breaks ties when available.
+      results.sort((a, b) => {
+        const distDiff = (a.dog.distance ?? Infinity) - (b.dog.distance ?? Infinity);
+        if (distDiff !== 0) return distDiff;
+        return (
+          (b.compatibility?.compatibilityScore ?? -1) -
+          (a.compatibility?.compatibilityScore ?? -1)
         );
-        return { dog, compatibility };
       });
+    } else {
+      // Best match: compatibility → confidence → distance.
       results.sort((a, b) => {
         const scoreDiff =
           b.compatibility!.compatibilityScore - a.compatibility!.compatibilityScore;
@@ -62,10 +75,6 @@ export async function GET(req: NextRequest) {
         if (confDiff !== 0) return confDiff;
         return (a.dog.distance ?? Infinity) - (b.dog.distance ?? Infinity);
       });
-    } else {
-      results = dogs
-        .map(({ id, raw }) => ({ dog: normalizeRescueGroupsDog(raw, id, null) }))
-        .sort((a, b) => (a.dog.distance ?? Infinity) - (b.dog.distance ?? Infinity));
     }
 
     return NextResponse.json({

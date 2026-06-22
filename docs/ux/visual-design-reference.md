@@ -168,6 +168,7 @@ Each card shows:
 ### Sorting / Filtering
 - Sort and filter controls visible at top
 - Anonymous default sort: Distance
+- Profiled sort: best match by default; **setting a ZIP switches to nearest-first** (distance), with match scores still shown
 
 ---
 

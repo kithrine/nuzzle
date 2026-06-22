@@ -165,10 +165,18 @@ export function SearchPageClient() {
 
   if (source === "questionnaire" || isSignedIn) {
     heading = source === "questionnaire" ? "Your Best Matches" : "Best Matches For You";
-    subline =
-      state.status === "success"
-        ? `Ranked by your compatibility profile · ${total.toLocaleString()} dogs available`
-        : "Ranked by your compatibility profile.";
+    if (appliedFilters.zip) {
+      // A ZIP switches ordering to nearest-first (scores still shown).
+      subline =
+        state.status === "success"
+          ? `Nearest first · ${total.toLocaleString()} dogs within ${appliedFilters.radius} mi of ${appliedFilters.zip}`
+          : "Sorted by distance from your ZIP.";
+    } else {
+      subline =
+        state.status === "success"
+          ? `Ranked by your compatibility profile · ${total.toLocaleString()} dogs available`
+          : "Ranked by your compatibility profile.";
+    }
   } else {
     subline = (
       <>
