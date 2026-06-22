@@ -4,7 +4,7 @@ import { useState } from "react";
 import { createPortal } from "react-dom";
 import Link from "next/link";
 import { useUser } from "@clerk/nextjs";
-import { Heart, Mail, Lock, Eye, EyeOff, UserRoundPlus } from "lucide-react";
+import { Heart, UserRoundPlus } from "lucide-react";
 import { NuzzleLogo } from "@/components/layout/NuzzleLogo";
 
 // Filled-heart color (RULES Rule 13: pairs with aria-pressed, not color alone).
@@ -28,7 +28,6 @@ export function FavoriteButton({
   const { isSignedIn } = useUser();
   const [isFavorited, setIsFavorited] = useState(initialFavorited);
   const [showPrompt, setShowPrompt] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
   const [pop, setPop] = useState(false);
 
   async function handleClick() {
@@ -110,49 +109,10 @@ export function FavoriteButton({
                 Create a free account to save your matches and come back anytime.
               </p>
 
-              {/* Email (visual only) */}
-              <div className="relative">
-                <Mail
-                  size={18}
-                  aria-hidden="true"
-                  className="absolute left-4 top-1/2 -translate-y-1/2 text-text-secondary"
-                />
-                <input
-                  type="email"
-                  placeholder="Email address"
-                  className="border border-border rounded-button-inline px-4 py-3 pl-11 w-full text-text-primary placeholder:text-text-secondary focus:outline-none focus:ring-2 focus:ring-primary/40"
-                />
-              </div>
-
-              {/* Password (visual only) */}
-              <div className="relative mt-3">
-                <Lock
-                  size={18}
-                  aria-hidden="true"
-                  className="absolute left-4 top-1/2 -translate-y-1/2 text-text-secondary"
-                />
-                <input
-                  type={showPassword ? "text" : "password"}
-                  placeholder="Password"
-                  className="border border-border rounded-button-inline px-4 py-3 pl-11 pr-11 w-full text-text-primary placeholder:text-text-secondary focus:outline-none focus:ring-2 focus:ring-primary/40"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword((prev) => !prev)}
-                  aria-label={showPassword ? "Hide password" : "Show password"}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-text-secondary"
-                >
-                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                </button>
-              </div>
-              <p className="text-text-secondary text-xs mt-1">
-                Password must be at least 8 characters.
-              </p>
-
               {/* Create Account → /signup */}
               <Link
                 href="/signup"
-                className="bg-primary text-white rounded-button-full w-full py-3 font-semibold mt-4 flex items-center justify-center gap-2 hover:opacity-90 transition-opacity hover-press"
+                className="bg-primary text-white rounded-button-full w-full py-3 font-semibold flex items-center justify-center gap-2 hover:opacity-90 transition-opacity hover-press"
               >
                 <UserRoundPlus size={18} aria-hidden="true" />
                 Create Account
