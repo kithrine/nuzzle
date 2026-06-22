@@ -3,6 +3,7 @@ import { Lock, MapPin, Check } from "lucide-react";
 import type { NormalizedDog, CompatibilityResult } from "@/lib/compatibility/types";
 import { formatAgeGroup } from "@/lib/compatibility/display";
 import { FavoriteButton } from "@/components/FavoriteButton";
+import { DogImage } from "@/components/DogImage";
 
 type AnonymousCompatibility = {
   available: false;
@@ -38,13 +39,9 @@ export function DogCard({
   return (
     <article className="bg-surface rounded-card border border-border shadow-sm overflow-hidden flex flex-col">
       {/* Photo */}
-      <div className="relative aspect-[4/3] bg-primary-light">
-        <img
-          src={photo}
-          alt={dog.name}
-          className="absolute inset-0 w-full h-full object-cover"
-        />
-        <div className="absolute top-2 right-2 bg-surface/80 backdrop-blur-sm rounded-full w-9 h-9 flex items-center justify-center shadow-sm text-primary">
+      <div className="relative aspect-[4/3] overflow-hidden bg-primary-light">
+        <DogImage src={photo} alt={dog.name} />
+        <div className="absolute top-2 right-2 bg-surface/80 backdrop-blur-sm rounded-full w-9 h-9 flex items-center justify-center shadow-sm text-primary z-10">
           <FavoriteButton
             provider={dog.provider}
             externalId={dog.externalId}

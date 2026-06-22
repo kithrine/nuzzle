@@ -1,8 +1,11 @@
 "use client";
 
+import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import Link from "next/link";
 import {
   ChevronLeft,
+  ChevronRight,
   MapPin,
   Lock,
   Target,
@@ -13,10 +16,12 @@ import {
   Sparkles,
   ExternalLink,
   PawPrint,
+  X,
 } from "lucide-react";
 import type { CompatibilityResult, NormalizedDog } from "@/lib/compatibility/types";
 import { formatAgeGroup } from "@/lib/compatibility/display";
 import { FavoriteButton } from "@/components/FavoriteButton";
+import { DogImage } from "@/components/DogImage";
 
 type CompatibilityProp =
   | { available: false; teaser: string }
@@ -43,9 +48,33 @@ function matchTierText(score: number): string {
 
 export function DogDetailClient({ dog, compatibility, explanation, isFavorited }: Props) {
   const breed = dog.breed ?? "Mixed Breed";
-  const photo = dog.photos[0] ?? "";
-  const thumbnails = dog.photos.slice(1, 4);
-  const extraPhotos = dog.photos.length - 4;
+  const photos = dog.photos;
+  const thumbs = photos.slice(0, 4);
+  const extraPhotos = photos.length - 4;
+
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [lightboxIndex, setLightboxIndex] = useState(0);
+
+  function openLightbox(index: number) {
+    setLightboxIndex(index);
+    setLightboxOpen(true);
+  }
+  function step(delta: number) {
+    setLightboxIndex((i) => (i + delta + photos.length) % photos.length);
+  }
+
+  useEffect(() => {
+    if (!lightboxOpen) return;
+    function onKey(e: KeyboardEvent) {
+      if (e.key === "Escape") setLightboxOpen(false);
+      else if (e.key === "ArrowRight") step(1);
+      else if (e.key === "ArrowLeft") step(-1);
+    }
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [lightboxOpen, photos.length]);
 
   function handleShelterClick() {
     const anonId = typeof window !== "undefined"
@@ -84,31 +113,95 @@ export function DogDetailClient({ dog, compatibility, explanation, isFavorited }
           Back to results
         </Link>
 
-        {/* Hero + thumbnails */}
-        {photo && (
+        {/* Hero + thumbnails (interactive) */}
+        {photos.length > 0 && (
           <div className="flex gap-3">
             <div className="relative flex-1 aspect-[16/10] rounded-card overflow-hidden bg-primary-light">
-              <img src={photo} alt={dog.name} className="absolute inset-0 w-full h-full object-cover" />
+              <DogImage src={photos[activeIndex]} alt={dog.name} />
             </div>
-            {thumbnails.length > 0 && (
+            {photos.length > 1 && (
               <div className="hidden sm:flex flex-col gap-3 w-36">
-                {thumbnails.map((src, i) => (
-                  <div
-                    key={src}
-                    className="relative flex-1 rounded-card overflow-hidden bg-primary-light"
-                  >
-                    <img src={src} alt="" className="absolute inset-0 w-full h-full object-cover" />
-                    {i === thumbnails.length - 1 && extraPhotos > 0 && (
-                      <span className="absolute bottom-1.5 right-1.5 bg-text-primary/80 text-white text-xs font-semibold rounded-badge px-2 py-0.5 flex items-center gap-1">
-                        <PawPrint size={12} />+{extraPhotos}
-                      </span>
-                    )}
-                  </div>
-                ))}
+                {thumbs.map((src, i) => {
+                  const isViewAll = i === 3 && extraPhotos > 0;
+                  const active = i === activeIndex;
+                  return (
+                    <button
+                      key={src}
+                      type="button"
+                      aria-label={isViewAll ? "View all photos" : `View photo ${i + 1}`}
+                      onClick={() => (isViewAll ? openLightbox(activeIndex) : setActiveIndex(i))}
+                      className={`relative flex-1 rounded-card overflow-hidden bg-primary-light transition-shadow ${
+                        active ? "ring-2 ring-primary" : "hover:ring-2 hover:ring-primary/40"
+                      }`}
+                    >
+                      <DogImage src={src} alt="" />
+                      {isViewAll && (
+                        <span className="absolute inset-0 bg-text-primary/60 text-white text-sm font-semibold flex items-center justify-center gap-1">
+                          <PawPrint size={14} />+{extraPhotos}
+                        </span>
+                      )}
+                    </button>
+                  );
+                })}
               </div>
             )}
           </div>
         )}
+
+        {/* Lightbox / carousel */}
+        {lightboxOpen &&
+          createPortal(
+            <div
+              role="dialog"
+              aria-modal="true"
+              aria-label={`${dog.name} photos`}
+              className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center"
+              onClick={() => setLightboxOpen(false)}
+            >
+              <button
+                type="button"
+                aria-label="Close"
+                onClick={() => setLightboxOpen(false)}
+                className="absolute top-4 right-4 text-white/90 hover:text-white"
+              >
+                <X size={28} />
+              </button>
+              <button
+                type="button"
+                aria-label="Previous photo"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  step(-1);
+                }}
+                className="absolute left-2 sm:left-6 text-white/90 hover:text-white"
+              >
+                <ChevronLeft size={36} />
+              </button>
+              <div className="px-12 sm:px-16" onClick={(e) => e.stopPropagation()}>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={photos[lightboxIndex]}
+                  alt=""
+                  className="max-w-full max-h-[80vh] object-contain mx-auto select-none"
+                />
+                <p className="text-white text-center text-sm mt-3">
+                  {lightboxIndex + 1} / {photos.length}
+                </p>
+              </div>
+              <button
+                type="button"
+                aria-label="Next photo"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  step(1);
+                }}
+                className="absolute right-2 sm:right-6 text-white/90 hover:text-white"
+              >
+                <ChevronRight size={36} />
+              </button>
+            </div>,
+            document.body,
+          )}
 
         {/* Info card */}
         <section className="relative overflow-hidden bg-surface rounded-card border border-border p-5">

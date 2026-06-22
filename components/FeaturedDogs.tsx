@@ -3,6 +3,7 @@ import { searchRescueGroupsDogs } from "@/lib/rescuegroups/client";
 import { normalizeRescueGroupsDog } from "@/lib/compatibility/normalize";
 import { formatAgeGroup } from "@/lib/compatibility/display";
 import type { NormalizedDog } from "@/lib/compatibility/types";
+import { DogImage } from "@/components/DogImage";
 
 // A default location is used purely to surface a few real, adoptable dogs on
 // the marketing homepage. Each card links to that dog's real detail page.
@@ -44,16 +45,8 @@ export async function FeaturedDogs() {
           href={`/dogs/${dog.provider}/${dog.externalId}`}
           className="bg-surface rounded-card shadow-sm flex-shrink-0 w-48 overflow-hidden block hover:shadow-md transition-shadow"
         >
-          <div className="relative h-36 bg-primary-light">
-            {dog.photos[0] && (
-              // Native <img>: dog photos come from arbitrary remote hosts.
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
-                src={dog.photos[0]}
-                alt={dog.name}
-                className="absolute inset-0 w-full h-full object-cover"
-              />
-            )}
+          <div className="relative h-36 overflow-hidden bg-primary-light">
+            {dog.photos[0] && <DogImage src={dog.photos[0]} alt={dog.name} />}
           </div>
           <div className="p-3">
             <p className="font-semibold text-text-primary text-sm">{dog.name}</p>
