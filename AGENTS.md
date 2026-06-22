@@ -217,7 +217,8 @@ RULES.md                        ← Hard rules all agents must follow
 | Favorites | Require account; allow before questionnaire |
 | Score refresh | Immediate when user updates profile |
 | Unknown dog data | Never treat as false; award partial credit, reduce confidence |
-| Sort order (profiled) | Compatibility desc → Confidence desc → Distance asc |
+| Sort order (profiled, no ZIP) | Compatibility desc → Confidence desc → Distance asc |
+| Sort order (profiled, ZIP set) | Distance asc (nearest first) → Compatibility desc tiebreak (scores still shown) |
 | Sort order (anonymous) | Distance |
 | Confidence display | Human labels (High/Medium/Low) not raw numbers on cards |
 | Match display on card | Label + percentage + confidence label + 2–3 match reasons |
@@ -232,7 +233,7 @@ RULES.md                        ← Hard rules all agents must follow
 - Confidence and compatibility are separate concepts — never merged into one display score
 - Search results must never trigger AI generation
 - AI explanations are generated only on dog detail pages
-- Compatibility ranking order: Compatibility Score → Confidence Score → Distance
+- Compatibility ranking order: Compatibility Score → Confidence Score → Distance. **Exception:** when the user sets a ZIP (a location search), order by Distance first (nearest), with compatibility breaking ties — match scores are still shown.
 
 ---
 

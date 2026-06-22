@@ -126,7 +126,7 @@ describe("GET /api/dogs/search — Ranking", () => {
     mockGetOrCreateUser.mockResolvedValueOnce({ id: "u1" } as never);
     mockFindUnique.mockResolvedValueOnce(MOCK_PROFILE as never);
 
-    const res = await GET(makeRequest("?zip=10001"));
+    const res = await GET(makeRequest(""));
     const body = await res.json();
 
     expect(res.status).toBe(200);
@@ -152,7 +152,7 @@ describe("GET /api/dogs/search — Ranking", () => {
     mockGetOrCreateUser.mockResolvedValueOnce({ id: "u1" } as never);
     mockFindUnique.mockResolvedValueOnce(MOCK_PROFILE as never);
 
-    const res = await GET(makeRequest("?zip=10001"));
+    const res = await GET(makeRequest(""));
     const body = await res.json();
 
     expect(body.results[0].dog.name).toBe("Dog A");
@@ -176,10 +176,37 @@ describe("GET /api/dogs/search — Ranking", () => {
     mockGetOrCreateUser.mockResolvedValueOnce({ id: "u1" } as never);
     mockFindUnique.mockResolvedValueOnce(MOCK_PROFILE as never);
 
-    const res = await GET(makeRequest("?zip=10001"));
+    const res = await GET(makeRequest(""));
     const body = await res.json();
 
     expect(body.results[0].dog.name).toBe("Dog A");
     expect(body.results[1].dog.name).toBe("Dog B");
+  });
+
+  it("RANK-004: ZIP set → nearest first (distance), even over higher compatibility; scores still shown", async () => {
+    mockSearch.mockResolvedValueOnce({
+      dogs: [
+        { id: "dog-far", raw: MOCK_RAW },
+        { id: "dog-near", raw: MOCK_RAW },
+      ],
+      hasMore: false,
+    });
+    mockNormalize
+      .mockReturnValueOnce({ ...BASE_DOG, name: "Dog Far", distance: 50 })
+      .mockReturnValueOnce({ ...BASE_DOG, name: "Dog Near", distance: 5 });
+    mockCalculate
+      .mockReturnValueOnce({ ...BASE_COMPAT, compatibilityScore: 95 }) // Dog Far — higher compat
+      .mockReturnValueOnce({ ...BASE_COMPAT, compatibilityScore: 60 }); // Dog Near — lower compat
+    mockGetOrCreateUser.mockResolvedValueOnce({ id: "u1" } as never);
+    mockFindUnique.mockResolvedValueOnce(MOCK_PROFILE as never);
+
+    const res = await GET(makeRequest("?zip=90210"));
+    const body = await res.json();
+
+    expect(body.sort).toBe("distance");
+    expect(body.results[0].dog.name).toBe("Dog Near"); // nearest first despite lower compatibility
+    expect(body.results[1].dog.name).toBe("Dog Far");
+    // Profiled users still get their scores even when distance-sorted.
+    expect(body.results[0].compatibility.compatibilityScore).toBe(60);
   });
 });

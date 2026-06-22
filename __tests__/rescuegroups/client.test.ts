@@ -66,6 +66,38 @@ describe("searchRescueGroupsDogs — pagination & location", () => {
   });
 });
 
+describe("searchRescueGroupsDogs — filters", () => {
+  it("sends breed/age/size under data.filters (the key RescueGroups honors)", async () => {
+    const fetchMock = mockFetchOnce(200, { data: [], meta: { count: 0 } });
+
+    await searchRescueGroupsDogs({
+      breed: "Labrador",
+      ageGroup: "Senior",
+      sizeGroup: "Small",
+    });
+
+    const body = JSON.parse(fetchMock.mock.calls[0][1].body as string);
+    // RG ignores `filterFields`; the correct key is `filters`.
+    expect(body.data.filterFields).toBeUndefined();
+    expect(body.data.filters).toEqual(
+      expect.arrayContaining([
+        { fieldName: "animals.breedPrimary", operation: "contains", criteria: "Labrador" },
+        { fieldName: "animals.ageGroup", operation: "equals", criteria: "Senior" },
+        { fieldName: "animals.sizeGroup", operation: "equals", criteria: "Small" },
+      ]),
+    );
+  });
+
+  it("omits filters entirely when none are provided", async () => {
+    const fetchMock = mockFetchOnce(200, { data: [], meta: { count: 0 } });
+
+    await searchRescueGroupsDogs({ zip: "10001" });
+
+    const body = JSON.parse(fetchMock.mock.calls[0][1].body as string);
+    expect(body.data.filters).toBeUndefined();
+  });
+});
+
 describe("getRescueGroupsDog — pictures + orgs", () => {
   it("reads the array-shaped data and returns photos + shelter from included", async () => {
     // RG v5 returns `data` as an array even for a single-animal fetch.

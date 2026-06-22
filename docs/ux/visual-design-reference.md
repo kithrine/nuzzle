@@ -168,6 +168,7 @@ Each card shows:
 ### Sorting / Filtering
 - Sort and filter controls visible at top
 - Anonymous default sort: Distance
+- Profiled sort: best match by default; **setting a ZIP switches to nearest-first** (distance), with match scores still shown
 
 ---
 
@@ -565,6 +566,10 @@ Confidence always rendered as text label ("High Confidence", "Medium Confidence"
 - Subtle drop shadow
 - Match score badge overlaid top-right (on browse grid) or shown below (on list view)
 - **Image treatment (`DogImage`)**: every dog photo shows the **whole image** (`object-contain`) over a **blurred, zoomed copy of the same photo** as the backdrop. The frame stays full but the dog's face is **never cropped**. Used on browse/match cards, featured cards, favorites, and the detail hero/thumbnails.
+
+### Active Filter Chips (Search / Matches)
+- When breed/age/size/location filters are applied, each appears as a small teal chip (`bg-primary-light text-primary`, `rounded-badge`) with an ✕ to remove just that filter, plus a "Clear all filters" text button.
+- Sits between the filter bar and the results. Removing a chip or clearing re-runs the search and returns the user to their overall list (a profiled user's full compatibility-ranked matches; an anonymous user's nationwide list).
 
 ---
 

@@ -302,6 +302,11 @@ sort?:      "distance" | "best_match"
 `total` (from RescueGroups `meta.count`) is returned so the UI can show how many
 dogs are available; pagination is lazy (one provider call per page) — see RG client.
 
+`breed`/`ageGroup`/`sizeGroup` narrow the result set for **both anonymous and
+profiled users** (sent to RescueGroups as `data.filters`). Profiled results stay
+compatibility-sorted *within* the filtered set, so a user can search a breed and
+still see it ranked by fit (including lower-scoring dogs).
+
 **Anonymous response**:
 ```json
 {
@@ -338,9 +343,11 @@ each result carries its full `CompatibilityResult`:
 }
 ```
 
-Default sort: `best_match` for profiled users (Compatibility → Confidence → Distance),
-`distance` for anonymous. The client adapts each result into DogCard's compatibility
-union via `toCardCompatibility`.
+Sort: `best_match` for profiled users **without** a zip (Compatibility → Confidence →
+Distance); **`distance` (nearest first, compatibility breaks ties) when a zip is set**;
+`distance` for anonymous. Profiled users are scored regardless of sort, so match
+badges show in either order. The client adapts each result into DogCard's
+compatibility union via `toCardCompatibility`.
 
 ---
 
