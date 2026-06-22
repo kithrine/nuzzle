@@ -103,36 +103,52 @@ All tests are in the scoring engine's test suite. The engine is a pure function 
 
 | Test ID | Description |
 |---------|-------------|
-| SCORE-001 | Exact energy match returns 16 pts for energy category |
-| SCORE-002 | Adjacent energy match returns 10 pts |
+> Point values reflect the **v1.1 rebalance** (see `compatibility-engine-spec.md`): Age, Grooming, and Sex were added as scored categories and the original eight reduced to keep the total at 100.
+
+| SCORE-001 | Exact energy match returns 14 pts for energy category |
+| SCORE-002 | Adjacent energy match returns 9 pts |
 | SCORE-003 | Opposite energy match returns 2 pts |
-| SCORE-004 | Unknown dog energy returns 8 pts |
-| SCORE-005 | User has kids, dog isKidsOk=true → 18 pts |
+| SCORE-004 | Unknown dog energy returns 7 pts |
+| SCORE-005 | User has kids, dog isKidsOk=true → 16 pts |
 | SCORE-006 | User has kids, dog isKidsOk=false → 0 pts + concern generated |
-| SCORE-007 | User has kids, dog isKidsOk=unknown → 9 pts + shelter question generated |
-| SCORE-008 | User has no kids → 18 pts regardless of isKidsOk value |
-| SCORE-009 | User has cats, dog isCatsOk=true → 18 pts |
+| SCORE-007 | User has kids, dog isKidsOk=unknown → 8 pts + shelter question generated |
+| SCORE-008 | User has no kids → 16 pts regardless of isKidsOk value |
+| SCORE-009 | User has cats, dog isCatsOk=true → 16 pts |
 | SCORE-010 | User has cats, dog isCatsOk=false → 0 pts + concern generated |
-| SCORE-011 | User has cats, dog isCatsOk=unknown → 9 pts + shelter question generated |
-| SCORE-012 | User has no cats → 18 pts regardless of isCatsOk value |
-| SCORE-013 | User has dogs, dog isDogsOk=true → 14 pts |
+| SCORE-011 | User has cats, dog isCatsOk=unknown → 8 pts + shelter question generated |
+| SCORE-012 | User has no cats → 16 pts regardless of isCatsOk value |
+| SCORE-013 | User has dogs, dog isDogsOk=true → 12 pts |
 | SCORE-014 | User has dogs, dog isDogsOk=false → 0 pts + concern generated |
-| SCORE-015 | User has dogs, dog isDogsOk=unknown → 7 pts + shelter question generated |
-| SCORE-016 | User has no dogs → 14 pts regardless of isDogsOk value |
-| SCORE-017 | Yard required, user has yard → 6 pts for yard category |
-| SCORE-018 | Yard required, user has no yard → 0 pts + concern generated |
-| SCORE-019 | Yard not required → 6 pts |
-| SCORE-020 | Yard required unknown → 3 pts |
-| SCORE-021 | Fence required, user has fence → 6 pts |
-| SCORE-022 | Fence required, user has no fence → 0 pts + concern generated |
-| SCORE-023 | Dog requires breed experience, user has none → 2 pts + concern |
-| SCORE-024 | Dog requires breed experience, user has species → 6 pts |
-| SCORE-025 | Dog requires breed experience, user has breed → 10 pts |
-| SCORE-026 | Dog requires no experience → 10 pts for any user |
-| SCORE-027 | Exact size match → 8 pts |
-| SCORE-028 | Adjacent size → 5 pts |
+| SCORE-015 | User has dogs, dog isDogsOk=unknown → 6 pts + shelter question generated |
+| SCORE-016 | User has no dogs → 12 pts regardless of isDogsOk value |
+| SCORE-017 | Yard required, user has yard → 10 pts (yard 5 + fence 5) |
+| SCORE-018 | Yard required, user has no yard → 5 pts + concern generated |
+| SCORE-019 | Yard not required → 10 pts |
+| SCORE-020 | Yard required unknown → 8 pts |
+| SCORE-021 | Fence required, user has fence → 10 pts |
+| SCORE-022 | Fence required, user has no fence → 5 pts + concern generated |
+| SCORE-023 | Dog requires breed experience, user has none → 1 pt + concern |
+| SCORE-024 | Dog requires breed experience, user has species → 5 pts |
+| SCORE-025 | Dog requires breed experience, user has breed → 8 pts |
+| SCORE-026 | Dog requires no experience → 8 pts for any user |
+| SCORE-027 | Exact size match → 7 pts |
+| SCORE-028 | Adjacent size → 4 pts |
 | SCORE-029 | Non-matching size → 2 pts |
-| SCORE-030 | Unknown size → 4 pts |
+| SCORE-030 | Unknown size → 3 pts |
+| SCORE-AGE-001 | Exact age match → 7 pts + positive factor |
+| SCORE-AGE-002 | No age preference → 7 pts |
+| SCORE-AGE-003 | Adjacent age → 4 pts |
+| SCORE-AGE-004 | Two+ steps apart → 2 pts |
+| SCORE-AGE-005 | Unknown dog age → 3 pts |
+| SCORE-SEX-001 | Sex match → 2 pts |
+| SCORE-SEX-002 | No sex preference → 2 pts |
+| SCORE-SEX-003 | Sex mismatch → 0 pts |
+| SCORE-SEX-004 | Unknown dog gender (preference set) → 1 pt |
+| SCORE-GROOM-001 | Tolerance ≥ grooming need → 4 pts |
+| SCORE-GROOM-002 | Tolerance one step below need → 2 pts |
+| SCORE-GROOM-003 | Tolerance two steps below need → 0 pts + concern |
+| SCORE-GROOM-004 | Unknown grooming need → 2 pts + shelter question |
+| SCORE-GROOM-005 | No grooming tolerance specified → 4 pts |
 | SCORE-031 | Dog is special needs, user willing → 4 pts |
 | SCORE-032 | Dog is special needs, user not willing → 0 pts + concern |
 | SCORE-033 | Dog is not special needs → 4 pts |
@@ -152,6 +168,9 @@ All tests are in the scoring engine's test suite. The engine is a pure function 
 | CONF-008 | ownerExperience missing → confidence reduced by 8 |
 | CONF-009 | sizeGroup missing → confidence reduced by 6 |
 | CONF-010 | isSpecialNeeds missing → confidence reduced by 5 |
+| CONF-013 | groomingNeeds missing → confidence reduced by 6 |
+| CONF-014 | ageGroup missing → confidence reduced by 4 |
+| CONF-015 | gender missing → confidence reduced by 2 |
 | CONF-011 | Confidence never goes below 0 |
 | CONF-012 | Confidence never goes above 100 |
 
