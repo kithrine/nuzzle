@@ -36,12 +36,21 @@ export function SearchResults({
     );
   }
 
+  // "Your Matches" only once results are actually scored (profiled user);
+  // otherwise anonymous/unprofiled visitors see a neutral label.
+  const scored = results.some((r) => r.compatibility.available);
+  const label = zip
+    ? "Showing Nearby Dogs"
+    : scored
+      ? "Showing Your Matches"
+      : "Showing Available Dogs";
+
   return (
     <div className="mt-6">
       <div className="mb-4">
         <p className="text-text-secondary text-sm flex items-center gap-1.5">
           <Sparkles size={14} className="text-primary" />
-          {zip ? "Showing Nearby Dogs" : "Showing Your Matches"}
+          {label}
         </p>
         <p className="text-text-primary font-semibold text-lg">
           {results.length} dogs found

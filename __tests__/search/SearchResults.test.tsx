@@ -89,8 +89,31 @@ describe("SearchResults", () => {
     expect(screen.getByText(/91%/)).toBeInTheDocument();
   });
 
-  it("uses a nationwide header when no zip is provided", () => {
+  it("no-zip + unscored (anonymous) results → 'Showing Available Dogs'", () => {
     render(<SearchResults results={THREE_RESULTS} zip="" />);
+    expect(screen.getByText(/showing available dogs/i)).toBeInTheDocument();
+  });
+
+  it("no-zip + scored results → 'Showing Your Matches'", () => {
+    const AUTH_COMPAT = {
+      available: true as const,
+      result: {
+        compatibilityScore: 88,
+        matchLabel: "Strong Match" as const,
+        confidenceScore: 70,
+        confidenceLabel: "High" as const,
+        breakdown: [],
+        positiveFactors: [],
+        concerns: [],
+        shelterQuestions: [],
+      },
+    };
+    render(
+      <SearchResults
+        results={[{ dog: makeDog("rg-9", "Scout"), compatibility: AUTH_COMPAT }]}
+        zip=""
+      />,
+    );
     expect(screen.getByText(/showing your matches/i)).toBeInTheDocument();
   });
 });
