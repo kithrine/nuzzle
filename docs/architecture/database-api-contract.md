@@ -302,6 +302,11 @@ sort?:      "distance" | "best_match"
 `total` (from RescueGroups `meta.count`) is returned so the UI can show how many
 dogs are available; pagination is lazy (one provider call per page) — see RG client.
 
+`breed`/`ageGroup`/`sizeGroup` narrow the result set for **both anonymous and
+profiled users** (sent to RescueGroups as `data.filters`). Profiled results stay
+compatibility-sorted *within* the filtered set, so a user can search a breed and
+still see it ranked by fit (including lower-scoring dogs).
+
 **Anonymous response**:
 ```json
 {

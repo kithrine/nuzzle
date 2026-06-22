@@ -37,7 +37,8 @@ export async function searchRescueGroupsDogs(
   // Location filter only when a zip is supplied; otherwise search nationwide.
   const requestData: Record<string, unknown> = {};
   if (zip) requestData.filterRadius = { miles: radius, postalcode: zip };
-  if (filterFields.length > 0) requestData.filterFields = filterFields;
+  // RG v5 honors `data.filters` (it silently ignores `filterFields`).
+  if (filterFields.length > 0) requestData.filters = filterFields;
 
   // RG v5 paginates via query params (limit/page), not the request body.
   const res = await fetch(
