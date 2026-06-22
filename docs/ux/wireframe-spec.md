@@ -163,7 +163,7 @@ Avoid:
 
 **Layout order (scroll)**:
 
-1. Photo gallery (large, full-width)
+1. Photo gallery — large hero + interactive thumbnails (click to swap the hero). Images never crop the dog (object-contain over a blurred backdrop). >4 photos → "View all" opens a lightbox carousel (Prev/Next/counter/close, Escape + arrow keys).
 2. Dog overview (name, age, breed, shelter name, distance)
 3. Compatibility teaser card:
    - "Compatibility Analysis Available"
@@ -180,7 +180,7 @@ Avoid:
 
 **Layout order (scroll)**:
 
-1. Photo gallery (large, full-width)
+1. Photo gallery — large hero + interactive thumbnails (click to swap the hero); same no-crop image treatment and >4-photo lightbox carousel as Screen 4.
 2. Dog overview (name, age, breed, shelter name, distance)
 3. Compatibility Card (see below)
 4. About Dog (shelter description)

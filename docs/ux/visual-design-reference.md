@@ -206,9 +206,9 @@ Each card shows:
 - Logo and nav top-right (Browse Dogs, Log In)
 
 ### Photo Section
-- Large full-width hero image of the dog (dominant, high quality)
-- Thumbnail gallery stacked vertically on right side (3–4 thumbnails + "+ N more" indicator)
-- Photo pagination dots below main image
+- Large hero image of the dog (dominant, high quality). Like all dog images, it uses the `DogImage` treatment — `object-contain` over a blurred backdrop of the same photo so the **whole dog/face is always visible (never cropped)**.
+- Thumbnail gallery stacked vertically on the right (up to 4 thumbnails). **Interactive**: clicking a thumbnail makes it the hero (active thumbnail highlighted with a teal ring).
+- When a dog has **more than 4 photos**, the 4th thumbnail becomes a **"View all (+N)"** button that opens a **lightbox/carousel** modal — full-screen dark overlay, `object-contain` image, Prev/Next, a "current / total" counter, and a close button; dismissed via the X, click-outside, or Escape (← / → navigate).
 
 ### Dog Info
 - Dog name (large bold) with heart icon outline (unauthenticated — cannot save)
@@ -564,6 +564,7 @@ Confidence always rendered as text label ("High Confidence", "Medium Confidence"
 - Rounded corners (~12px)
 - Subtle drop shadow
 - Match score badge overlaid top-right (on browse grid) or shown below (on list view)
+- **Image treatment (`DogImage`)**: every dog photo shows the **whole image** (`object-contain`) over a **blurred, zoomed copy of the same photo** as the backdrop. The frame stays full but the dog's face is **never cropped**. Used on browse/match cards, featured cards, favorites, and the detail hero/thumbnails.
 
 ---
 
