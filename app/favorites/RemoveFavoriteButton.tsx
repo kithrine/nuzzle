@@ -32,7 +32,7 @@ export function RemoveFavoriteButton({
   }
 
   return (
-    <span className={`group relative inline-flex ${className ?? ""}`}>
+    <span className={`group inline-flex ${className ?? ""}`}>
       <button
         type="button"
         onClick={handleRemove}
