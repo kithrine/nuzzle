@@ -4,23 +4,21 @@ import Image from "next/image";
 import Link from "next/link";
 import { Sparkles, MessageCircleHeart, ShieldCheck, PawPrint, Heart } from "lucide-react";
 import { FeaturedDogs } from "@/components/FeaturedDogs";
+import { FeaturedCarousel } from "@/components/FeaturedCarousel";
 
-// ─── Icons ────────────────────────────────────────────────────────────────────
-
-function HeartIcon() {
-  return (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-      <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
-    </svg>
-  );
-}
+// Regenerate the homepage every 5 hours (complementary full-route cache). The
+// real guarantee that the RescueGroups call runs at most once per window is the
+// data-layer cache in lib/homepage/featured-data.ts (unstable_cache), which
+// holds regardless of whether this route renders statically or dynamically.
+// (Must stay a literal — Next reads `revalidate` statically.)
+export const revalidate = 18000;
 
 // ─── Sub-components ───────────────────────────────────────────────────────────
 
 function FeaturedDogsSkeleton() {
   return (
     <div className="flex gap-4 w-max">
-      {Array.from({ length: 5 }).map((_, i) => (
+      {Array.from({ length: 8 }).map((_, i) => (
         <div
           key={i}
           className="bg-surface rounded-card shadow-sm flex-shrink-0 w-48 overflow-hidden"
@@ -224,25 +222,11 @@ export default function Home() {
             View All →
           </Link>
         </div>
-        <div className="max-w-5xl mx-auto px-4 flex items-center gap-2">
-          <button
-            className="flex-shrink-0 w-8 h-8 rounded-full bg-surface border border-border flex items-center justify-center text-text-secondary hover:text-text-primary shadow-sm text-xl leading-none"
-            aria-label="Scroll left"
-          >
-            ‹
-          </button>
-          <div className="overflow-x-auto pb-2 flex-1">
-            <Suspense fallback={<FeaturedDogsSkeleton />}>
-              <FeaturedDogs />
-            </Suspense>
-          </div>
-          <button
-            className="flex-shrink-0 w-8 h-8 rounded-full bg-surface border border-border flex items-center justify-center text-text-secondary hover:text-text-primary shadow-sm text-xl leading-none"
-            aria-label="Scroll right"
-          >
-            ›
-          </button>
-        </div>
+        <FeaturedCarousel>
+          <Suspense fallback={<FeaturedDogsSkeleton />}>
+            <FeaturedDogs />
+          </Suspense>
+        </FeaturedCarousel>
       </section>
 
       {/* ── Profile Prompt Banner ─────────────────────────────────────── */}

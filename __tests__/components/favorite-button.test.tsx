@@ -69,4 +69,28 @@ describe("FavoriteButton", () => {
       expect.objectContaining({ method: "DELETE" }),
     );
   });
+
+  it("FAVOR-014: favoriting fills the heart red and plays the pop animation", async () => {
+    mockUseUser.mockReturnValue(SIGNED_IN);
+    render(<FavoriteButton provider="rescuegroups" externalId="rg-123" initialFavorited={false} />);
+
+    const btn = screen.getByTestId("favorite-btn");
+    // Outline (unfavorited) heart is not filled.
+    expect(btn.querySelector("svg")?.getAttribute("fill")).toBe("none");
+
+    fireEvent.click(btn);
+
+    await waitFor(() => {
+      expect(btn.querySelector("svg")?.getAttribute("fill")).toBe("#EF4444");
+    });
+    expect(btn.querySelector("svg")?.getAttribute("class") ?? "").toContain("animate-heart-pop");
+  });
+
+  it("FAVOR-015: renders a red filled heart when initialFavorited is true", () => {
+    mockUseUser.mockReturnValue(SIGNED_IN);
+    render(<FavoriteButton provider="rescuegroups" externalId="rg-123" initialFavorited={true} />);
+
+    const svg = screen.getByTestId("favorite-btn").querySelector("svg");
+    expect(svg?.getAttribute("fill")).toBe("#EF4444");
+  });
 });

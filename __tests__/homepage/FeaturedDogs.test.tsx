@@ -5,6 +5,12 @@ import { FeaturedDogs } from "@/components/FeaturedDogs";
 import { searchRescueGroupsDogs } from "@/lib/rescuegroups/client";
 import type { RescueGroupsRawDog } from "@/lib/rescuegroups/types";
 
+// getFeaturedPool wraps the fetch in unstable_cache, which needs Next's runtime
+// context — mock it as a passthrough so the loader runs the (mocked) client.
+vi.mock("next/cache", () => ({
+  unstable_cache: (fn: unknown) => fn,
+}));
+
 vi.mock("@/lib/rescuegroups/client", () => ({
   searchRescueGroupsDogs: vi.fn(),
 }));

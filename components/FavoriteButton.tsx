@@ -4,14 +4,18 @@ import { useState } from "react";
 import { createPortal } from "react-dom";
 import Link from "next/link";
 import { useUser } from "@clerk/nextjs";
-import { Mail, Lock, Eye, EyeOff, UserRoundPlus } from "lucide-react";
+import { Heart, Mail, Lock, Eye, EyeOff, UserRoundPlus } from "lucide-react";
 import { NuzzleLogo } from "@/components/layout/NuzzleLogo";
+
+// Filled-heart color (RULES Rule 13: pairs with aria-pressed, not color alone).
+const FAVORITE_RED = "#EF4444";
 
 interface FavoriteButtonProps {
   provider: string;
   externalId: string;
   initialFavorited?: boolean;
   dogName?: string;
+  size?: number;
 }
 
 export function FavoriteButton({
@@ -19,11 +23,13 @@ export function FavoriteButton({
   externalId,
   initialFavorited = false,
   dogName,
+  size = 22,
 }: FavoriteButtonProps) {
   const { isSignedIn } = useUser();
   const [isFavorited, setIsFavorited] = useState(initialFavorited);
   const [showPrompt, setShowPrompt] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [pop, setPop] = useState(false);
 
   async function handleClick() {
     if (!isSignedIn) {
@@ -31,7 +37,9 @@ export function FavoriteButton({
       return;
     }
 
-    setIsFavorited((prev) => !prev);
+    const nowFavorited = !isFavorited;
+    setIsFavorited(nowFavorited);
+    if (nowFavorited) setPop(true); // play the pop only when favoriting
 
     if (!isFavorited) {
       await fetch("/api/favorites", {
@@ -54,8 +62,15 @@ export function FavoriteButton({
         aria-pressed={isFavorited}
         aria-label={isFavorited ? "Remove from favorites" : "Add to favorites"}
         onClick={handleClick}
+        className="inline-flex items-center justify-center transition-colors hover:opacity-80"
       >
-        {isFavorited ? "♥" : "♡"}
+        <Heart
+          size={size}
+          fill={isFavorited ? FAVORITE_RED : "none"}
+          color={isFavorited ? FAVORITE_RED : "currentColor"}
+          className={pop ? "animate-heart-pop" : undefined}
+          onAnimationEnd={() => setPop(false)}
+        />
       </button>
 
       {showPrompt &&
