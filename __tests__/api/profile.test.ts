@@ -12,6 +12,9 @@ vi.mock("@/lib/db/prisma", () => ({
       create: vi.fn(),
       update: vi.fn(),
     },
+    user: {
+      update: vi.fn(),
+    },
   },
 }));
 
@@ -23,6 +26,7 @@ const mockGetOrCreateUser = vi.mocked(getOrCreateUser);
 const mockFindUnique = vi.mocked(prisma.adopterProfile.findUnique);
 const mockCreate = vi.mocked(prisma.adopterProfile.create);
 const mockUpdate = vi.mocked(prisma.adopterProfile.update);
+const mockUserUpdate = vi.mocked(prisma.user.update);
 
 const FAKE_USER = {
   id: "db_user_1",
@@ -123,6 +127,51 @@ describe("/api/profile", () => {
     expect(res.status).toBe(200);
     expect(body.homeType).toBe("Apartment");
     expect(body.profileVersion).toBe(1);
+  });
+
+  it("QUEST-006: POST with name writes firstName/lastName to the User and new Phase-2 fields to the profile", async () => {
+    mockGetOrCreateUser.mockResolvedValue(FAKE_USER as never);
+    mockUserUpdate.mockResolvedValue(FAKE_USER as never);
+    mockCreate.mockResolvedValue({ profileVersion: 1 } as never);
+
+    await POST(
+      makeRequest({
+        ...VALID_PHASE1,
+        firstName: "Ada",
+        lastName: "Lovelace",
+        agePreference: "Young",
+        sexPreference: "Female",
+      }),
+    );
+
+    expect(mockUserUpdate).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: { id: "db_user_1" },
+        data: expect.objectContaining({ firstName: "Ada", lastName: "Lovelace" }),
+      }),
+    );
+    expect(mockCreate).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({ agePreference: "Young", sexPreference: "Female" }),
+      }),
+    );
+  });
+
+  it("QUEST-007: PUT with name updates the User and keeps name out of the profile update", async () => {
+    mockGetOrCreateUser.mockResolvedValue(FAKE_USER as never);
+    mockUserUpdate.mockResolvedValue(FAKE_USER as never);
+    mockUpdate.mockResolvedValue({ profileVersion: 3 } as never);
+
+    await PUT(makeRequest({ firstName: "Ada", sizePreference: "Small" }, "PUT"));
+
+    expect(mockUserUpdate).toHaveBeenCalledWith(
+      expect.objectContaining({ data: expect.objectContaining({ firstName: "Ada" }) }),
+    );
+    const profileData = mockUpdate.mock.calls[0][0].data;
+    expect(profileData).toEqual(
+      expect.objectContaining({ sizePreference: "Small", profileVersion: { increment: 1 } }),
+    );
+    expect(profileData).not.toHaveProperty("firstName");
   });
 
   it("QUEST-005: all handlers return 401 when not authenticated", async () => {

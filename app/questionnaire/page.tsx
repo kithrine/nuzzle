@@ -36,7 +36,7 @@ export default async function QuestionnairePage() {
     <Suspense>
       <QuestionnaireClient
         initialProfile={initialProfile}
-        firstName={clerkUser?.firstName ?? "there"}
+        firstName={user?.firstName ?? clerkUser?.firstName ?? "there"}
       />
     </Suspense>
   );
