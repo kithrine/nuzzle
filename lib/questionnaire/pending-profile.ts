@@ -1,6 +1,8 @@
 // Holds an anonymous user's Phase-1 answers across the sign-up redirect so the
 // profile can be created once they have an account (questionnaire-first flow).
 export type PendingProfile = {
+  firstName?: string;
+  lastName?: string;
   homeType: string;
   hasChildren: boolean;
   hasCats: boolean;

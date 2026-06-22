@@ -54,6 +54,11 @@ export type EditProfileData = {
   specialNeedsWilling: boolean | null;
   maxDistance: number | null;
   sizePreference: string | null;
+  agePreference: string | null;
+  sexPreference: string | null;
+  hoursAlone: string | null;
+  firstName: string | null;
+  lastName: string | null;
   profileVersion: number;
   updatedAt: string;
 };
@@ -72,11 +77,18 @@ type Phase2Answers = {
   hasFence: boolean | null;
   groomingTolerance: "Low" | "Moderate" | "High" | "";
   sizePreference: "Small" | "Medium" | "Large" | "X-Large" | "No Preference" | "";
+  agePreference: "Baby" | "Young" | "Adult" | "Senior" | "No Preference" | "";
+  sexPreference: "Male" | "Female" | "No Preference" | "";
   specialNeedsWilling: boolean | null;
+  hoursAlone: "Under 4h" | "4-8h" | "8h+" | "";
   maxDistance: string;
 };
 
-type UIPhase = 0 | 1 | 2 | 3 | 4 | 5 | "phase1-done" | "phase2" | "done";
+// Allowed search-radius values for the distance slider (the slider snaps to
+// these; an index-based range avoids the old "shows 10mi for any in-between" bug).
+const DISTANCE_OPTIONS = [5, 10, 25, 50, 100] as const;
+
+type UIPhase = "name" | 0 | 1 | 2 | 3 | 4 | 5 | "phase1-done" | "phase2" | "done";
 
 export function QuestionnaireClient({
   initialProfile = null,
@@ -87,12 +99,16 @@ export function QuestionnaireClient({
 } = {}) {
   const router = useRouter();
   const { isSignedIn, isLoaded } = useUser();
-  const [step, setStep] = useState<UIPhase>(0);
+  // Creation flow starts by asking the user's name (onboarding), then Phase 1.
+  const [step, setStep] = useState<UIPhase>("name");
   const [p2step, setP2step] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const [resuming, setResuming] = useState(false);
   const resumedRef = useRef(false);
   const [errorMsg, setErrorMsg] = useState("");
+
+  const [firstNameInput, setFirstNameInput] = useState("");
+  const [lastNameInput, setLastNameInput] = useState("");
 
   const [p1, setP1] = useState<Phase1Answers>({
     homeType: "",
@@ -108,10 +124,13 @@ export function QuestionnaireClient({
     hasFence: null,
     groomingTolerance: "",
     sizePreference: "",
+    agePreference: "",
+    sexPreference: "",
     specialNeedsWilling: null,
+    hoursAlone: "",
     maxDistance: "25",
   });
-  const [specialNeedsChoice, setSpecialNeedsChoice] = useState<"" | "Yes" | "No" | "Open">("");
+  const [specialNeedsChoice, setSpecialNeedsChoice] = useState<"" | "Yes" | "No" | "Maybe">("");
 
   // Questionnaire-first flow: a user who answered while anonymous, then created
   // an account, returns here signed-in with their answers in localStorage.
@@ -166,9 +185,15 @@ export function QuestionnaireClient({
   const skipToBrowse = () => router.push("/search");
 
   async function submitPhase1() {
-    // Anonymous: stash the answers and send them to create an account first.
+    const name = {
+      firstName: firstNameInput.trim() || undefined,
+      lastName: lastNameInput.trim() || undefined,
+    };
+    // Anonymous: stash the answers (incl. name) and send them to create an
+    // account first; the resume flow POSTs this once they're signed in.
     if (!isSignedIn) {
       savePendingProfile({
+        ...name,
         homeType: p1.homeType as string,
         hasChildren: p1.hasChildren as boolean,
         hasCats: p1.hasCats as boolean,
@@ -187,6 +212,7 @@ export function QuestionnaireClient({
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
+          ...name,
           homeType: p1.homeType,
           hasChildren: p1.hasChildren,
           hasCats: p1.hasCats,
@@ -218,7 +244,10 @@ export function QuestionnaireClient({
       if (p2.hasFence !== null) body.hasFence = p2.hasFence;
       if (p2.groomingTolerance) body.groomingTolerance = p2.groomingTolerance;
       if (p2.sizePreference) body.sizePreference = p2.sizePreference;
+      if (p2.agePreference) body.agePreference = p2.agePreference;
+      if (p2.sexPreference) body.sexPreference = p2.sexPreference;
       if (p2.specialNeedsWilling !== null) body.specialNeedsWilling = p2.specialNeedsWilling;
+      if (p2.hoursAlone) body.hoursAlone = p2.hoursAlone;
       if (p2.maxDistance) body.maxDistance = Number(p2.maxDistance);
 
       const res = await fetch("/api/profile", {
@@ -237,6 +266,61 @@ export function QuestionnaireClient({
   }
 
   // ─── Phase 1: step 0 — Home Type ─────────────────────────────────────────
+  // ─── Onboarding: name ────────────────────────────────────────────────────
+  if (step === "name") {
+    return (
+      <Shell>
+        <div className="w-full">
+          <div className="bg-surface rounded-card shadow-sm w-full p-6">
+            <h1 className="text-2xl font-bold text-text-primary text-center">
+              Welcome! What should we call you?
+            </h1>
+            <p className="text-text-secondary text-sm text-center mt-2">
+              We&apos;ll use your name to personalize your dashboard. You can change it anytime.
+            </p>
+            <div className="mt-6 flex flex-col gap-3">
+              <label className="flex flex-col gap-1 text-sm text-text-secondary">
+                First name
+                <input
+                  type="text"
+                  value={firstNameInput}
+                  onChange={(e) => setFirstNameInput(e.target.value)}
+                  placeholder="First name"
+                  className="border border-border rounded-button-inline px-3 py-2 text-text-primary focus:outline-none focus:ring-2 focus:ring-primary/40"
+                />
+              </label>
+              <label className="flex flex-col gap-1 text-sm text-text-secondary">
+                Last name
+                <input
+                  type="text"
+                  value={lastNameInput}
+                  onChange={(e) => setLastNameInput(e.target.value)}
+                  placeholder="Last name"
+                  className="border border-border rounded-button-inline px-3 py-2 text-text-primary focus:outline-none focus:ring-2 focus:ring-primary/40"
+                />
+              </label>
+            </div>
+            <button
+              type="button"
+              onClick={() => setStep(0)}
+              className="mt-6 w-full bg-primary text-white rounded-button-full py-3 font-semibold inline-flex items-center justify-center gap-2 hover:opacity-90 transition-opacity"
+            >
+              Continue
+              <ChevronRight size={18} />
+            </button>
+            <button
+              type="button"
+              onClick={skipToBrowse}
+              className="block mx-auto mt-3 text-primary text-sm underline underline-offset-2 hover:opacity-75"
+            >
+              Skip for now
+            </button>
+          </div>
+        </div>
+      </Shell>
+    );
+  }
+
   if (step === 0) {
     return (
       <Shell>
@@ -244,6 +328,7 @@ export function QuestionnaireClient({
           current={1}
           title="What's your home like?"
           subtitle="This helps us understand the best environment for your future dog."
+          onBack={() => setStep("name")}
           onNext={() => setStep(1)}
           nextDisabled={!p1.homeType}
           onSkip={skipToBrowse}
@@ -384,7 +469,7 @@ export function QuestionnaireClient({
               className="w-full border-2 border-primary text-primary rounded-button-full py-3 font-semibold inline-flex items-center justify-center gap-2 hover:bg-primary-light transition-colors"
             >
               <Sparkles size={18} />
-              Answer 6 more questions to improve accuracy
+              Answer 8 more questions to improve accuracy
             </button>
           </div>
           <p className="text-text-secondary text-sm mt-4">You can always update your profile later.</p>
@@ -393,82 +478,81 @@ export function QuestionnaireClient({
     );
   }
 
-  // ─── Phase 2: Improve Accuracy (6 stepped cards) ─────────────────────────
+  // ─── Phase 2: Improve Accuracy (8 stepped cards) ─────────────────────────
   if (step === "phase2") {
+    const LAST = 7;
     const back = p2step === 0 ? () => setStep("phase1-done") : () => setP2step((s) => s - 1);
-    const skip = p2step === 5 ? submitPhase2 : () => setP2step((s) => s + 1);
-    const next = p2step === 5 ? submitPhase2 : () => setP2step((s) => s + 1);
+    const advance = p2step === LAST ? submitPhase2 : () => setP2step((s) => s + 1);
 
     let body: ReactNode = null;
     let title = "";
     let subtitle = "";
 
     if (p2step === 0) {
-      title = "What's your grooming tolerance?";
-      subtitle = "This helps us match you with a dog whose grooming needs fit your lifestyle.";
+      title = "What's your grooming commitment?";
+      subtitle = "We'll match you with a dog whose coat-care needs fit your lifestyle.";
       body = (
         <>
-          <OptionButton icon={<Sparkles size={20} />} label="Low" description="Minimal grooming preference" selected={p2.groomingTolerance === "Low"} onClick={() => setP2((p) => ({ ...p, groomingTolerance: "Low" }))} />
-          <OptionButton icon={<Brush size={20} />} label="Moderate" description="Regular brushing and upkeep" selected={p2.groomingTolerance === "Moderate"} onClick={() => setP2((p) => ({ ...p, groomingTolerance: "Moderate" }))} />
-          <OptionButton icon={<Scissors size={20} />} label="High" description="I don't mind frequent grooming" selected={p2.groomingTolerance === "High"} onClick={() => setP2((p) => ({ ...p, groomingTolerance: "High" }))} />
+          <OptionButton icon={<Sparkles size={20} />} label="Low" description="I'd prefer a low-maintenance coat." selected={p2.groomingTolerance === "Low"} onClick={() => setP2((p) => ({ ...p, groomingTolerance: "Low" }))} />
+          <OptionButton icon={<Brush size={20} />} label="Moderate" description="Regular brushing and upkeep is fine." selected={p2.groomingTolerance === "Moderate"} onClick={() => setP2((p) => ({ ...p, groomingTolerance: "Moderate" }))} />
+          <OptionButton icon={<Scissors size={20} />} label="High" description="I don't mind frequent grooming." selected={p2.groomingTolerance === "High"} onClick={() => setP2((p) => ({ ...p, groomingTolerance: "High" }))} />
         </>
       );
     } else if (p2step === 1) {
-      title = "Do you have a fenced yard?";
-      subtitle = "A secure yard can be important for some dogs to feel safe.";
-      body = <YesNo icon={<Fence size={20} />} value={p2.hasFence} onChange={(v) => setP2((p) => ({ ...p, hasFence: v }))} />;
-    } else if (p2step === 2) {
       title = "Do you have a yard?";
-      subtitle = "An unfenced yard is okay! This just helps us understand your space.";
-      body = <YesNo icon={<Trees size={20} />} value={p2.hasYard} onChange={(v) => setP2((p) => ({ ...p, hasYard: v }))} />;
-    } else if (p2step === 3) {
+      subtitle = "This helps us match dogs whose space and fencing needs fit your home.";
+      const yardSel = (yard: boolean, fence: boolean) =>
+        p2.hasYard === yard && p2.hasFence === fence;
+      body = (
+        <>
+          <OptionButton icon={<Fence size={20} />} label="Fenced yard" selected={yardSel(true, true)} onClick={() => setP2((p) => ({ ...p, hasYard: true, hasFence: true }))} />
+          <OptionButton icon={<Trees size={20} />} label="Unfenced yard" selected={yardSel(true, false)} onClick={() => setP2((p) => ({ ...p, hasYard: true, hasFence: false }))} />
+          <OptionButton icon={<Building2 size={20} />} label="No yard" selected={yardSel(false, false)} onClick={() => setP2((p) => ({ ...p, hasYard: false, hasFence: false }))} />
+        </>
+      );
+    } else if (p2step === 2) {
       title = "Are you open to a dog with special needs?";
       subtitle = "Some dogs may need extra care, training, or ongoing support.";
       body = (
         <>
           <OptionButton icon={<Heart size={20} />} label="Yes" selected={specialNeedsChoice === "Yes"} onClick={() => { setSpecialNeedsChoice("Yes"); setP2((p) => ({ ...p, specialNeedsWilling: true })); }} />
+          <OptionButton icon={<CircleHelp size={20} />} label="Maybe" selected={specialNeedsChoice === "Maybe"} onClick={() => { setSpecialNeedsChoice("Maybe"); setP2((p) => ({ ...p, specialNeedsWilling: true })); }} />
           <OptionButton icon={<X size={20} />} label="No" selected={specialNeedsChoice === "No"} onClick={() => { setSpecialNeedsChoice("No"); setP2((p) => ({ ...p, specialNeedsWilling: false })); }} />
-          <OptionButton icon={<CircleHelp size={20} />} label="Open to it" selected={specialNeedsChoice === "Open"} onClick={() => { setSpecialNeedsChoice("Open"); setP2((p) => ({ ...p, specialNeedsWilling: true })); }} />
+        </>
+      );
+    } else if (p2step === 3) {
+      title = "Any age preference?";
+      subtitle = "We'll prioritize dogs in the life stage you're looking for.";
+      const ages: Array<{ v: Phase2Answers["agePreference"]; label: string }> = [
+        { v: "Baby", label: "Puppy" },
+        { v: "Young", label: "Young" },
+        { v: "Adult", label: "Adult" },
+        { v: "Senior", label: "Senior" },
+        { v: "No Preference", label: "No preference" },
+      ];
+      body = (
+        <>
+          {ages.map(({ v, label }) => (
+            <OptionButton key={v} icon={<PawPrint size={20} />} label={label} selected={p2.agePreference === v} onClick={() => setP2((p) => ({ ...p, agePreference: v }))} />
+          ))}
         </>
       );
     } else if (p2step === 4) {
-      title = "What's your preferred adoption distance?";
-      subtitle = "We'll prioritize dogs within this range from your location.";
+      title = "Any sex preference?";
+      subtitle = "Totally optional — pick “No preference” if it doesn't matter to you.";
+      const sexes: Array<{ v: Phase2Answers["sexPreference"]; label: string }> = [
+        { v: "Male", label: "Male" },
+        { v: "Female", label: "Female" },
+        { v: "No Preference", label: "No preference" },
+      ];
       body = (
-        <div className="flex flex-col gap-4">
-          <div>
-            <label htmlFor="maxDistance" className="block text-sm text-text-secondary mb-1">Maximum distance</label>
-            <select
-              id="maxDistance"
-              value={p2.maxDistance}
-              onChange={(e) => setP2((p) => ({ ...p, maxDistance: e.target.value }))}
-              className="w-full border border-border rounded-button-inline px-3 py-2 text-sm bg-surface text-text-primary focus:outline-none focus:ring-2 focus:ring-primary/40"
-            >
-              <option value="10">10 miles</option>
-              <option value="25">25 miles</option>
-              <option value="50">50 miles</option>
-              <option value="100">100 miles</option>
-            </select>
-          </div>
-          <div>
-            <input
-              type="range"
-              min={5}
-              max={100}
-              step={5}
-              value={p2.maxDistance}
-              onChange={(e) => setP2((p) => ({ ...p, maxDistance: e.target.value }))}
-              className="w-full accent-primary"
-              aria-label="Maximum distance in miles"
-            />
-            <div className="flex justify-between text-text-secondary text-xs mt-1">
-              <span>5 mi</span>
-              <span>100 mi</span>
-            </div>
-          </div>
-        </div>
+        <>
+          {sexes.map(({ v, label }) => (
+            <OptionButton key={v} icon={v === "No Preference" ? <Heart size={20} /> : <Dog size={20} />} label={label} selected={p2.sexPreference === v} onClick={() => setP2((p) => ({ ...p, sexPreference: v }))} />
+          ))}
+        </>
       );
-    } else {
+    } else if (p2step === 5) {
       title = "What size dog do you prefer?";
       subtitle = "Choose the size you're most open to welcoming into your home.";
       const sizes: Array<{ v: Phase2Answers["sizePreference"]; label: string }> = [
@@ -491,20 +575,45 @@ export function QuestionnaireClient({
           ))}
         </>
       );
+    } else if (p2step === 6) {
+      title = "How long is your dog alone on a typical day?";
+      subtitle = "This helps us flag dogs who may need more company or training.";
+      const hours: Array<{ v: Phase2Answers["hoursAlone"]; label: string }> = [
+        { v: "Under 4h", label: "Under 4 hours" },
+        { v: "4-8h", label: "4–8 hours" },
+        { v: "8h+", label: "8+ hours" },
+      ];
+      body = (
+        <>
+          {hours.map(({ v, label }) => (
+            <OptionButton key={v} icon={<Footprints size={20} />} label={label} selected={p2.hoursAlone === v} onClick={() => setP2((p) => ({ ...p, hoursAlone: v }))} />
+          ))}
+        </>
+      );
+    } else {
+      title = "What's your preferred adoption distance?";
+      subtitle = "We'll prioritize dogs within this range from your location.";
+      body = (
+        <DistanceSlider
+          value={p2.maxDistance}
+          onChange={(v) => setP2((p) => ({ ...p, maxDistance: v }))}
+        />
+      );
     }
 
     return (
       <Shell>
         <QuestionCard
           current={p2step + 1}
+          total={8}
           title={title}
           subtitle={subtitle}
           onBack={back}
-          onNext={next}
-          nextLabel={p2step === 5 ? (isLoading ? "Saving..." : "Improve My Matches") : "Next"}
-          nextIcon={p2step === 5 ? <Sparkles size={18} /> : undefined}
+          onNext={advance}
+          nextLabel={p2step === LAST ? (isLoading ? "Saving..." : "Improve My Matches") : "Next"}
+          nextIcon={p2step === LAST ? <Sparkles size={18} /> : undefined}
           nextDisabled={isLoading}
-          onSkip={skip}
+          onSkip={advance}
           error={errorMsg}
         >
           {body}
@@ -514,6 +623,35 @@ export function QuestionnaireClient({
   }
 
   return null;
+}
+
+// Discrete distance slider that snaps to the allowed radius values with a live
+// readout (replaces the old select+range that showed "10 mi" for any in-between).
+function DistanceSlider({ value, onChange }: { value: string; onChange: (v: string) => void }) {
+  const found = DISTANCE_OPTIONS.indexOf(Number(value) as (typeof DISTANCE_OPTIONS)[number]);
+  const idx = found >= 0 ? found : 1;
+  return (
+    <div className="flex flex-col gap-3">
+      <p className="text-center text-2xl font-bold text-primary">
+        {DISTANCE_OPTIONS[idx]} miles
+      </p>
+      <input
+        type="range"
+        min={0}
+        max={DISTANCE_OPTIONS.length - 1}
+        step={1}
+        value={idx}
+        onChange={(e) => onChange(String(DISTANCE_OPTIONS[Number(e.target.value)]))}
+        className="w-full accent-primary"
+        aria-label="Maximum distance in miles"
+      />
+      <div className="flex justify-between text-text-secondary text-xs">
+        {DISTANCE_OPTIONS.map((d) => (
+          <span key={d}>{d}</span>
+        ))}
+      </div>
+    </div>
+  );
 }
 
 // ─── Shared sub-components ────────────────────────────────────────────────────
@@ -611,6 +749,7 @@ function YesNo({
 
 function QuestionCard({
   current,
+  total = 6,
   title,
   subtitle,
   children,
@@ -623,6 +762,7 @@ function QuestionCard({
   error,
 }: {
   current: number;
+  total?: number;
   title: string;
   subtitle?: string;
   children: ReactNode;
@@ -647,7 +787,7 @@ function QuestionCard({
         </button>
       )}
 
-      <Stepper current={current} />
+      <Stepper current={current} total={total} />
 
       <div className="bg-surface rounded-card shadow-sm w-full p-6">
         <h1 className="text-2xl font-bold text-text-primary text-center">{title}</h1>
@@ -722,6 +862,9 @@ function EditProfileView({
   const [errorMsg, setErrorMsg] = useState("");
   const [version, setVersion] = useState(initialProfile.profileVersion);
 
+  const [firstNameInput, setFirstNameInput] = useState(initialProfile.firstName ?? "");
+  const [lastNameInput, setLastNameInput] = useState(initialProfile.lastName ?? "");
+
   const [p1, setP1] = useState<Phase1Answers>({
     homeType: initialProfile.homeType as Phase1Answers["homeType"],
     hasChildren: initialProfile.hasChildren,
@@ -735,7 +878,10 @@ function EditProfileView({
     hasFence: initialProfile.hasFence,
     groomingTolerance: (initialProfile.groomingTolerance ?? "") as Phase2Answers["groomingTolerance"],
     sizePreference: (initialProfile.sizePreference ?? "") as Phase2Answers["sizePreference"],
+    agePreference: (initialProfile.agePreference ?? "") as Phase2Answers["agePreference"],
+    sexPreference: (initialProfile.sexPreference ?? "") as Phase2Answers["sexPreference"],
     specialNeedsWilling: initialProfile.specialNeedsWilling,
+    hoursAlone: (initialProfile.hoursAlone ?? "") as Phase2Answers["hoursAlone"],
     maxDistance: initialProfile.maxDistance != null ? String(initialProfile.maxDistance) : "25",
   });
 
@@ -770,6 +916,8 @@ function EditProfileView({
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
+          firstName: firstNameInput.trim() || null,
+          lastName: lastNameInput.trim() || null,
           homeType: p1.homeType,
           hasChildren: p1.hasChildren,
           hasCats: p1.hasCats,
@@ -780,8 +928,11 @@ function EditProfileView({
           hasFence: p2.hasFence,
           hasYard: p2.hasYard,
           specialNeedsWilling: p2.specialNeedsWilling,
+          hoursAlone: p2.hoursAlone || null,
           maxDistance: p2.maxDistance ? Number(p2.maxDistance) : null,
           sizePreference: p2.sizePreference || null,
+          agePreference: p2.agePreference || null,
+          sexPreference: p2.sexPreference || null,
         }),
       });
       if (!res.ok) {
@@ -827,6 +978,10 @@ function EditProfileView({
             />
           ) : (
             <EditForm
+              firstNameInput={firstNameInput}
+              setFirstNameInput={setFirstNameInput}
+              lastNameInput={lastNameInput}
+              setLastNameInput={setLastNameInput}
               p1={p1}
               setP1={setP1}
               p2={p2}
@@ -928,13 +1083,24 @@ function ProfileSummary({
           description={exp?.desc}
         />
         {p2.groomingTolerance && (
-          <SummaryRow icon={<Brush size={18} />} label="Grooming Tolerance" value={p2.groomingTolerance} />
-        )}
-        {p2.hasFence !== null && (
-          <SummaryRow icon={<Fence size={18} />} label="Fenced Yard" value={yesNo(p2.hasFence)} />
+          <SummaryRow icon={<Brush size={18} />} label="Grooming Commitment" value={p2.groomingTolerance} />
         )}
         {p2.hasYard !== null && (
-          <SummaryRow icon={<Trees size={18} />} label="Yard" value={yesNo(p2.hasYard)} />
+          <SummaryRow
+            icon={<Fence size={18} />}
+            label="Yard"
+            value={p2.hasYard ? (p2.hasFence ? "Fenced yard" : "Unfenced yard") : "No yard"}
+          />
+        )}
+        {p2.agePreference && (
+          <SummaryRow
+            icon={<PawPrint size={18} />}
+            label="Age Preference"
+            value={p2.agePreference === "Baby" ? "Puppy" : p2.agePreference}
+          />
+        )}
+        {p2.sexPreference && (
+          <SummaryRow icon={<Dog size={18} />} label="Sex Preference" value={p2.sexPreference} />
         )}
         {p2.specialNeedsWilling !== null && (
           <SummaryRow
@@ -942,6 +1108,9 @@ function ProfileSummary({
             label="Open to Special Needs"
             value={yesNo(p2.specialNeedsWilling)}
           />
+        )}
+        {p2.hoursAlone && (
+          <SummaryRow icon={<Footprints size={18} />} label="Hours Alone / Day" value={p2.hoursAlone} />
         )}
         {p2.maxDistance && (
           <SummaryRow icon={<MapPin size={18} />} label="Max Distance" value={`${p2.maxDistance} miles`} />
@@ -1031,6 +1200,10 @@ function ProfileSummary({
 }
 
 function EditForm({
+  firstNameInput,
+  setFirstNameInput,
+  lastNameInput,
+  setLastNameInput,
   p1,
   setP1,
   p2,
@@ -1043,6 +1216,10 @@ function EditForm({
   onSave,
   onCancel,
 }: {
+  firstNameInput: string;
+  setFirstNameInput: Dispatch<SetStateAction<string>>;
+  lastNameInput: string;
+  setLastNameInput: Dispatch<SetStateAction<string>>;
   p1: Phase1Answers;
   setP1: Dispatch<SetStateAction<Phase1Answers>>;
   p2: Phase2Answers;
@@ -1056,7 +1233,7 @@ function EditForm({
   onCancel: () => void;
 }) {
   const [snChoice, setSnChoice] = useState<string>(
-    p2.specialNeedsWilling === true ? "Open to it" : p2.specialNeedsWilling === false ? "No" : "",
+    p2.specialNeedsWilling === true ? "Yes" : p2.specialNeedsWilling === false ? "No" : "",
   );
 
   return (
@@ -1075,7 +1252,31 @@ function EditForm({
       <div className="flex items-center gap-3 mb-8">
         <StepBadge n={1} label="Phase 1" sub="Quick Match (6)" />
         <div className="h-0.5 flex-1 bg-primary/40" />
-        <StepBadge n={2} label="Additional" sub="(6)" />
+        <StepBadge n={2} label="Additional" sub="(8)" />
+      </div>
+
+      {/* Your name */}
+      <div className="bg-surface border border-border rounded-card p-6 mb-6">
+        <h2 className="text-lg font-bold text-text-primary mb-1">Your Name</h2>
+        <p className="text-text-secondary text-sm mb-4">Shown on your dashboard.</p>
+        <div className="flex flex-col sm:flex-row gap-3">
+          <input
+            type="text"
+            aria-label="First name"
+            placeholder="First name"
+            value={firstNameInput}
+            onChange={(e) => setFirstNameInput(e.target.value)}
+            className="flex-1 border border-border rounded-button-inline px-3 py-2 text-sm text-text-primary focus:outline-none focus:ring-2 focus:ring-primary/40"
+          />
+          <input
+            type="text"
+            aria-label="Last name"
+            placeholder="Last name"
+            value={lastNameInput}
+            onChange={(e) => setLastNameInput(e.target.value)}
+            className="flex-1 border border-border rounded-button-inline px-3 py-2 text-sm text-text-primary focus:outline-none focus:ring-2 focus:ring-primary/40"
+          />
+        </div>
       </div>
 
       {/* Section 1 */}
@@ -1179,7 +1380,7 @@ function EditForm({
         </div>
         <p className="text-text-secondary text-sm mb-4">These help us improve accuracy and confidence.</p>
         <div className="flex flex-col gap-3">
-          <FieldRow icon={<Brush size={18} />} label="Grooming Tolerance">
+          <FieldRow icon={<Brush size={18} />} label="Grooming Commitment">
             <select
               className={SELECT_CLS}
               value={p2.groomingTolerance}
@@ -1198,11 +1399,26 @@ function EditForm({
               <option value="High">High</option>
             </select>
           </FieldRow>
-          <FieldRow icon={<Fence size={18} />} label="Fenced Yard">
-            <BoolSelect value={p2.hasFence} onChange={(v) => setP2((p) => ({ ...p, hasFence: v }))} />
-          </FieldRow>
-          <FieldRow icon={<Trees size={18} />} label="Yard (unfenced ok)">
-            <BoolSelect value={p2.hasYard} onChange={(v) => setP2((p) => ({ ...p, hasYard: v }))} />
+          <FieldRow icon={<Fence size={18} />} label="Yard">
+            <select
+              className={SELECT_CLS}
+              value={p2.hasYard === null ? "" : p2.hasYard ? (p2.hasFence ? "Fenced" : "Unfenced") : "None"}
+              onChange={(e) => {
+                const v = e.target.value;
+                setP2((p) => ({
+                  ...p,
+                  hasYard: v === "" ? null : v !== "None",
+                  hasFence: v === "Fenced" ? true : v === "" ? null : false,
+                }));
+              }}
+            >
+              <option value="" disabled>
+                Select…
+              </option>
+              <option value="Fenced">Fenced yard</option>
+              <option value="Unfenced">Unfenced yard</option>
+              <option value="None">No yard</option>
+            </select>
           </FieldRow>
           <FieldRow icon={<Heart size={18} />} label="Open to a dog with special needs?">
             <select
@@ -1221,47 +1437,44 @@ function EditForm({
                 Select…
               </option>
               <option value="Yes">Yes</option>
+              <option value="Maybe">Maybe</option>
               <option value="No">No</option>
-              <option value="Open to it">Open to it</option>
             </select>
           </FieldRow>
-
-          {/* Distance — select + range */}
-          <div className="bg-surface border border-border rounded-card px-4 py-3">
-            <div className="flex items-center justify-between gap-3">
-              <span className="flex items-center gap-2 text-sm text-text-primary font-medium">
-                <span className="text-primary flex-shrink-0">
-                  <MapPin size={18} />
-                </span>{" "}
-                Preferred Adoption Distance
-              </span>
-              <select
-                className={SELECT_CLS}
-                value={p2.maxDistance}
-                onChange={(e) => setP2((p) => ({ ...p, maxDistance: e.target.value }))}
-              >
-                <option value="10">10 miles</option>
-                <option value="25">25 miles</option>
-                <option value="50">50 miles</option>
-                <option value="100">100 miles</option>
-              </select>
-            </div>
-            <input
-              type="range"
-              min={5}
-              max={100}
-              step={5}
-              value={p2.maxDistance}
-              onChange={(e) => setP2((p) => ({ ...p, maxDistance: e.target.value }))}
-              className="w-full accent-primary mt-3"
-              aria-label="Maximum distance in miles"
-            />
-            <div className="flex justify-between text-text-secondary text-xs mt-1">
-              <span>5 mi</span>
-              <span>100 mi</span>
-            </div>
-          </div>
-
+          <FieldRow icon={<PawPrint size={18} />} label="Age Preference">
+            <select
+              className={SELECT_CLS}
+              value={p2.agePreference}
+              onChange={(e) =>
+                setP2((p) => ({ ...p, agePreference: e.target.value as Phase2Answers["agePreference"] }))
+              }
+            >
+              <option value="" disabled>
+                Select…
+              </option>
+              <option value="Baby">Puppy</option>
+              <option value="Young">Young</option>
+              <option value="Adult">Adult</option>
+              <option value="Senior">Senior</option>
+              <option value="No Preference">No Preference</option>
+            </select>
+          </FieldRow>
+          <FieldRow icon={<Dog size={18} />} label="Sex Preference">
+            <select
+              className={SELECT_CLS}
+              value={p2.sexPreference}
+              onChange={(e) =>
+                setP2((p) => ({ ...p, sexPreference: e.target.value as Phase2Answers["sexPreference"] }))
+              }
+            >
+              <option value="" disabled>
+                Select…
+              </option>
+              <option value="Male">Male</option>
+              <option value="Female">Female</option>
+              <option value="No Preference">No Preference</option>
+            </select>
+          </FieldRow>
           <FieldRow icon={<Dog size={18} />} label="Size Preference">
             <select
               className={SELECT_CLS}
@@ -1280,6 +1493,36 @@ function EditForm({
               <option value="No Preference">No Preference</option>
             </select>
           </FieldRow>
+          <FieldRow icon={<Footprints size={18} />} label="Hours Alone / Day">
+            <select
+              className={SELECT_CLS}
+              value={p2.hoursAlone}
+              onChange={(e) =>
+                setP2((p) => ({ ...p, hoursAlone: e.target.value as Phase2Answers["hoursAlone"] }))
+              }
+            >
+              <option value="" disabled>
+                Select…
+              </option>
+              <option value="Under 4h">Under 4 hours</option>
+              <option value="4-8h">4–8 hours</option>
+              <option value="8h+">8+ hours</option>
+            </select>
+          </FieldRow>
+
+          {/* Distance — discrete snapping slider */}
+          <div className="bg-surface border border-border rounded-card px-4 py-3">
+            <span className="flex items-center gap-2 text-sm text-text-primary font-medium mb-2">
+              <span className="text-primary flex-shrink-0">
+                <MapPin size={18} />
+              </span>{" "}
+              Preferred Adoption Distance
+            </span>
+            <DistanceSlider
+              value={p2.maxDistance}
+              onChange={(v) => setP2((p) => ({ ...p, maxDistance: v }))}
+            />
+          </div>
         </div>
       </div>
 
