@@ -284,8 +284,8 @@ export default async function FavoritesPage({
                         )}
                       </div>
 
-                      {/* Match + actions */}
-                      <div className="flex flex-row sm:flex-col items-start sm:items-end justify-between gap-2 flex-shrink-0 sm:text-right">
+                      {/* Match + actions (sm:pr-7 reserves a corner lane for the × remove button) */}
+                      <div className="flex flex-row sm:flex-col items-start sm:items-end justify-between gap-2 flex-shrink-0 sm:text-right sm:pr-7">
                         <div className="sm:mb-2">
                           {compatibility ? (
                             <>
