@@ -106,9 +106,11 @@ Avoid:
 
 **Goal**: Allow browsing while encouraging profile creation.
 
+**Scope**: Nationwide by default — dogs load on page open with **no zip required**. ZIP/Radius is an optional filter to narrow by distance. 12 per page, lazy pagination (cached pages).
+
 **Layout order**:
 
-1. Search controls (Zip Code, Radius, Filters, Sort)
+1. Search controls (ZIP — optional, Radius, Filters, Sort)
 2. Results count (e.g., "247 Dogs Found")
 3. Dog cards (see below)
 4. Pagination (Previous / Next)

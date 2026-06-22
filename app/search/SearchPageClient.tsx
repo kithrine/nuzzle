@@ -46,7 +46,7 @@ function buildPageUrl(filters: FilterValues, page: number, source: string | null
 export function SearchPageClient() {
   const searchParams = useSearchParams();
   const router = useRouter();
-  const { isSignedIn, isLoaded } = useUser();
+  const { isSignedIn } = useUser();
 
   const source = searchParams.get("source");
 
@@ -61,7 +61,6 @@ export function SearchPageClient() {
 
   const [state, setState] = useState<SearchState>({ status: "idle" });
   const [favoriteIds, setFavoriteIds] = useState<Set<string>>(new Set());
-  const didAutoSearch = useRef(false);
   // Cache fetched pages so paging back doesn't re-hit RescueGroups (rate limits).
   const cacheRef = useRef<Map<number, PageData>>(new Map());
   const activeFilters = useRef<FilterValues>(initialFilters);
@@ -109,26 +108,14 @@ export function SearchPageClient() {
     loadPage(filters, page);
   }
 
-  // Auto-search: URL already carries a zip/page (refresh/direct link) or the
-  // user just finished the questionnaire (nationwide matches).
+  // Everyone gets dogs on load — nationwide when there's no zip, zip-filtered
+  // when the URL carries one. One provider call per page (rate-limit friendly).
+  // The server scores results from the session, so this works for anonymous
+  // and profiled users alike.
   useEffect(() => {
-    if (didAutoSearch.current) return;
-    if (initialFilters.zip || source === "questionnaire") {
-      didAutoSearch.current = true;
-      loadPage(initialFilters, initialPage);
-    }
+    loadPage(initialFilters, initialPage);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  // Signed-in users with no zip get their nationwide matches by default.
-  useEffect(() => {
-    if (didAutoSearch.current) return;
-    if (isLoaded && isSignedIn && !initialFilters.zip && source !== "questionnaire") {
-      didAutoSearch.current = true;
-      loadPage(initialFilters, initialPage);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isLoaded, isSignedIn]);
 
   // Fetch favorites once for authenticated users to show correct heart state.
   useEffect(() => {
@@ -143,7 +130,6 @@ export function SearchPageClient() {
 
   function handleSubmit(filters: FilterValues) {
     cacheRef.current.clear();
-    didAutoSearch.current = true;
     router.push(buildPageUrl(filters, 1, source));
     loadPage(filters, 1);
   }
