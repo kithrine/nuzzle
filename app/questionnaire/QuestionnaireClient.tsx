@@ -78,8 +78,6 @@ type Phase2Answers = {
 
 type UIPhase = 0 | 1 | 2 | 3 | 4 | 5 | "phase1-done" | "phase2" | "done";
 
-const PHASE1_TOTAL = 6;
-
 export function QuestionnaireClient({
   initialProfile = null,
   firstName = "there",
@@ -124,8 +122,10 @@ export function QuestionnaireClient({
     const pending = loadPendingProfile();
     if (!pending) return;
     resumedRef.current = true;
-    setResuming(true);
+    // setState lives inside the async task (not the synchronous effect body) so
+    // it doesn't trigger a cascading render on mount — react-hooks/set-state-in-effect.
     (async () => {
+      setResuming(true);
       try {
         const res = await fetch("/api/profile", {
           method: "POST",

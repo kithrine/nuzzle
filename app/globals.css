@@ -124,12 +124,21 @@
       animation-timeline: scroll(root);
     }
   }
+
+  /* ── Favorite heart pop ────────────────────────────────── */
+  .animate-heart-pop  { animation: heart-pop 0.3s ease-out; }
 }
 
 /* Baseline scale over-covers the frame so the ±4% drift never reveals an edge. */
 @keyframes hero-parallax {
   from { transform: translateY(-4%) scale(1.08); }
   to   { transform: translateY(4%) scale(1.08); }
+}
+
+@keyframes heart-pop {
+  0%   { transform: scale(1); }
+  40%  { transform: scale(1.35); }
+  100% { transform: scale(1); }
 }
 
 /* Honor users who prefer reduced motion (Rule 13). */
@@ -150,6 +159,9 @@
     transition: none;
   }
   .hero-parallax {
+    animation: none;
+  }
+  .animate-heart-pop {
     animation: none;
   }
 }

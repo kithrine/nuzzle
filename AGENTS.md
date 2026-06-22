@@ -224,6 +224,8 @@ RULES.md                        ← Hard rules all agents must follow
 | Match display on card | Label + percentage + confidence label + 2–3 match reasons |
 | Brand logo | Image asset `public/images/logo.png` (also the favicon via `app/icon.png`), shown beside the "Nuzzle" wordmark |
 | Motion | Hover micro-interactions (`.hover-press`/`.hover-lift`) site-wide + homepage scroll reveals (`Reveal`, both directions) + subtle hero parallax — all `prefers-reduced-motion` safe |
+| Favorited heart | Filled **red** (`#EF4444`) persistent state + pop animation (paired with `aria-pressed`, reduced-motion safe) |
+| Featured Dogs (homepage) | 8 nationwide dogs, rotate every ~5h (window-seeded pick). Pool cached at the data layer via `unstable_cache` (5h, seed-keyed) so the RG POST runs ≤1×/window regardless of render mode; homepage ISR `revalidate` is a complementary full-route cache. |
 | V2 features | Documented separately; do not build in V1 |
 
 ---

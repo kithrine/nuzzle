@@ -190,7 +190,7 @@ Three-step explanation (below the hero):
 
 ### Featured Dogs Section
 
-Display a selection of adoptable dogs with compatibility teasers. Encourages browsing and demonstrates the product before signup.
+Display 8 real, adoptable dogs drawn nationwide. The set rotates every ~5 hours (window-seeded selection). The nationwide pool is cached at the data layer (`unstable_cache`, 5h, seed-keyed), so the RescueGroups call runs at most once per window regardless of render mode — repeat visitors see fresh dogs without per-request API churn. A horizontal carousel with functional left/right arrows. Encourages browsing and demonstrates the product before signup.
 
 ---
 

@@ -219,6 +219,7 @@ export function DogDetailClient({ dog, compatibility, explanation, isFavorited }
                 externalId={dog.externalId}
                 initialFavorited={isFavorited}
                 dogName={dog.name}
+                size={26}
               />
             </div>
             <p className="text-text-secondary text-sm mt-1">

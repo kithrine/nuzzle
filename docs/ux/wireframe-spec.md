@@ -87,7 +87,7 @@ Avoid:
 
 **Layout order (top to bottom)**:
 
-1. Header (logo, Browse Dogs, Login)
+1. Header (logo, Home, Browse Dogs, Dashboard [authenticated], Login / user avatar)
 2. Hero section
    - Headline: "Find a dog that fits your lifestyle."
    - Subheadline: "Browse adoptable dogs and receive personalized compatibility matching."
@@ -95,7 +95,7 @@ Avoid:
    - Secondary CTA: "Create Compatibility Profile" → Questionnaire
 3. Value proposition callouts (3 short items: Better Matches · Honest Insights · Fewer Returns)
 4. How It Works (3 cards: Create Profile → Get Match Scores → Find Your Dog)
-5. Featured Dogs — scrollable dog cards (Photo, Name, Breed, Age, View Details). Shows compatibility teasers to encourage profile creation.
+5. Featured Dogs — 8 real, adoptable dogs drawn nationwide (Photo, Name, Breed · Age, View Details), rotating every ~5 hours. Window-seeded selection; the pool is cached at the data layer (`unstable_cache`, 5h, seed-keyed) so the RescueGroups call runs ≤1×/window regardless of render mode. Horizontal scroll with functional `< >` arrow buttons. Encourages browsing / profile creation.
 6. Footer (About · Contact · Privacy · Terms)
 
 **Key design decision**: Primary CTA is Browse, not the questionnaire. Prove value before asking for commitment.
@@ -156,7 +156,7 @@ Filters (breed/age/size) narrow the result set; they apply for both anonymous an
 
 **Interactions**:
 - Full card is tappable → Dog Detail Page
-- Tap favorite icon → saves immediately
+- Tap favorite icon (lucide heart) → saves immediately; the heart pops and fills **red** as the persistent favorited state (reduced-motion safe). Anonymous tap opens the account-creation prompt instead.
 - Sort: best match by default; **setting a ZIP switches to nearest-first** (distance), with match scores still shown. Header reflects this ("Showing Nearby Dogs" / "Nearest first…" when a ZIP is set).
 
 ---
@@ -406,6 +406,7 @@ Filters (breed/age/size) narrow the result set; they apply for both anonymous an
 
 | State | Treatment |
 |-------|-----------|
+| Loading dog lists | Animated card skeletons (`DogCardSkeleton`) in the results grid, plus a screen-reader "Loading dogs" status. Used on Search/Matches (in-page) and as route loaders on Favorites + Dog Detail. |
 | No search results | "No dogs found near [location]. Try expanding your search radius." |
 | No strong matches | "We couldn't find strong matches using your current profile. Try adjusting your preferences." |
 | RescueGroups API error | "Unable to load dogs at this time. Please try again later." |

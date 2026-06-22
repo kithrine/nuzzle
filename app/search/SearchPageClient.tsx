@@ -10,6 +10,7 @@ import { toCardCompatibility, type CardCompatibility } from "@/lib/search/card-c
 import { SearchFilters, type FilterValues } from "@/components/SearchFilters";
 import { SearchResults } from "@/components/SearchResults";
 import { ActiveFilters } from "@/components/ActiveFilters";
+import { DogCardSkeletonGrid } from "@/components/DogCardSkeleton";
 
 const EMPTY_FILTERS: FilterValues = {
   zip: "",
@@ -219,9 +220,7 @@ export function SearchPageClient() {
 
         <ActiveFilters filters={appliedFilters} onRemove={removeFilter} onClear={clearFilters} />
 
-        {state.status === "loading" && (
-          <p className="text-text-secondary mt-6">Loading dogs…</p>
-        )}
+        {state.status === "loading" && <DogCardSkeletonGrid count={12} />}
 
         {state.status === "error" && (
           <p className="text-text-secondary mt-6">

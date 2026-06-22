@@ -125,14 +125,15 @@ Values are inferred from mockup analysis. Confirm exact hex values against rende
   3. Fewer Returns
 
 ### Featured Dogs Section
-- Heading "Featured Dogs" with carousel navigation arrows (< >)
-- Horizontal scrollable row of dog cards, each showing:
-  - Square dog photo
-  - Compatibility percentage badge (top-right overlay, e.g., "91%")
+- Heading "Featured Dogs" + "View All →" link to `/search`
+- **8 real, adoptable dogs drawn nationwide** (live RescueGroups data), shown in a horizontal scrollable row. Each card shows:
+  - Dog photo (`DogImage`, face never cropped)
   - Dog name bold
-  - Breed, age, size in secondary text
-  - "View Details" link
-- Dogs shown: Charlie, Bella, Luna, Milo, Daisy (example names)
+  - Breed · age in secondary text
+  - "View Details" link → that dog's real detail page
+  - (No compatibility percentage — the homepage is anonymous/marketing context.)
+- **Functional carousel arrows** (`< >`) flank the row and scroll it left/right (`FeaturedCarousel` client wrapper owns the scroll ref).
+- **Rotation + caching:** the featured set rotates every ~5 hours. A time-window seed (`featuredWindowSeed`) both varies which page is fetched and shuffles the picks (`pickFeatured`). The nationwide pool is cached at the **data layer** in `getFeaturedPool` (`unstable_cache`, `revalidate 18000`, seed-keyed cache key), so the RescueGroups call runs **at most once per 5-hour window regardless of render mode** (the RG search is a POST, which Next's fetch cache won't cache). The homepage also sets `revalidate = 18000` as a complementary full-route cache. The same 8 dogs are shown to everyone within a window.
 
 ### Profile Prompt Banner
 - Teal background banner below featured dogs
@@ -571,6 +572,18 @@ Confidence always rendered as text label ("High Confidence", "Medium Confidence"
 - When breed/age/size/location filters are applied, each appears as a small teal chip (`bg-primary-light text-primary`, `rounded-badge`) with an ✕ to remove just that filter, plus a "Clear all filters" text button.
 - Sits between the filter bar and the results. Removing a chip or clearing re-runs the search and returns the user to their overall list (a profiled user's full compatibility-ranked matches; an anonymous user's nationwide list).
 
+### Loading Skeletons (dog lists)
+- While dog cards load, the UI shows animated placeholder cards (`DogCardSkeleton` — `animate-pulse`, mirrors the DogCard photo + text shell) instead of a blank area or a plain "Loading…" line.
+- `DogCardSkeletonGrid` renders these in the same responsive grid as results (`grid-cols-1 sm:grid-cols-2 lg:grid-cols-3`) and carries a screen-reader loading status (`role="status"`, accessible name "Loading dogs"). Individual skeletons are `aria-hidden`.
+- Used on **Search / Matches** (in-page loading state) and as route-level loaders on **Favorites** (`favorites/loading.tsx`, dashboard shell) and **Dog Detail** (`loading.tsx`, hero + info + compatibility shell).
+
+### Favorite Heart (`FavoriteButton`)
+- A lucide `Heart` icon — `size 22` on dog cards (in a `w-10 h-10` chip), `size 26` next to the name on the Dog Detail page.
+- **Unfavorited:** outline heart (`fill="none"`, stroke inherits `currentColor` — teal in the card chip).
+- **Favorited:** **filled red** (`#EF4444`) and stays red as the persistent favorited state, paired with `aria-pressed` (never color-only — Rule 13).
+- Clicking to favorite plays a brief **pop** animation (`animate-heart-pop`, scale 1 → 1.35 → 1), disabled under `prefers-reduced-motion`.
+- Anonymous click still opens the Screen 9 account-creation sheet (`login-prompt`) and performs no fetch.
+
 ---
 
 ## Motion & Interaction
@@ -629,9 +642,13 @@ Active tab: Teal fill on icon. Inactive tabs: Gray outline icon.
 | Element | Anonymous | Authenticated |
 |---------|-----------|--------------|
 | Nuzzle logo image (`public/images/logo.png`) | Visible | Visible |
-| "Browse Dogs" link | Visible | Visible |
+| "Home" link (→ `/`) | Visible | Visible |
+| "Browse Dogs" link (→ `/search`) | Visible | Visible |
+| "Dashboard" link (→ `/favorites`) | Hidden | Visible |
 | "Log In" pill button (teal) | Visible | Hidden |
 | User avatar (circular) | Hidden | Visible — top right |
+
+Desktop links (`md+`) highlight the active route (teal) via `usePathname()`; on mobile the `BottomTabBar` provides Home / Browse / Favorites / Profile.
 
 ---
 
@@ -642,7 +659,7 @@ The mockups for Screens 1–5, 9–11 represent **desktop layouts** (~1200–144
 ### Screen 1 — Homepage
 - **Hero**: Desktop splits headline/CTAs (left) + dog photo (right). Mobile: Stack vertically — headline → CTAs → dog photo below; photo becomes full-width below the buttons.
 - **How It Works**: Desktop 3-column row. Mobile: Stack into a single column (1, 2, 3 vertically).
-- **Featured Dogs**: Desktop horizontal carousel. Mobile: Full-width single-card view with swipe or scroll.
+- **Featured Dogs**: Desktop horizontal carousel with working `< >` arrows. Mobile: horizontal scroll/swipe (arrows still present).
 - **Profile Prompt Banner**: Full-width at all breakpoints.
 
 ### Screen 2 — Browse Anonymous
