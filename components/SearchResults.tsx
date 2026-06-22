@@ -28,7 +28,7 @@ export function SearchResults({
         </p>
         <Link
           href="/search"
-          className="bg-primary text-white rounded-button-inline px-4 py-2 text-sm font-semibold hover:opacity-90 transition-opacity"
+          className="bg-primary text-white rounded-button-inline px-4 py-2 text-sm font-semibold hover:opacity-90 transition-opacity hover-press"
         >
           Browse Dogs
         </Link>

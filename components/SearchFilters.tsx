@@ -133,7 +133,7 @@ export function SearchFilters({
       <button
         type="submit"
         disabled={isLoading}
-        className="bg-primary text-white rounded-button-inline px-4 py-2 text-sm font-semibold hover:opacity-90 transition-opacity disabled:opacity-60"
+        className="bg-primary text-white rounded-button-inline px-4 py-2 text-sm font-semibold hover:opacity-90 transition-opacity disabled:opacity-60 hover-press"
       >
         {isLoading ? "Searching..." : "Search"}
       </button>

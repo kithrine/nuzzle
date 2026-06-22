@@ -241,7 +241,7 @@ export function SearchPageClient() {
                 <button
                   onClick={() => goToPage(state.page - 1)}
                   disabled={state.page <= 1}
-                  className="bg-surface border border-border rounded-button-inline px-4 py-2 text-sm font-medium text-text-primary hover:bg-primary-light transition-colors disabled:opacity-40 disabled:hover:bg-surface"
+                  className="bg-surface border border-border rounded-button-inline px-4 py-2 text-sm font-medium text-text-primary hover:bg-primary-light transition-colors disabled:opacity-40 disabled:hover:bg-surface hover-press"
                 >
                   Previous
                 </button>
@@ -249,7 +249,7 @@ export function SearchPageClient() {
                 <button
                   onClick={() => goToPage(state.page + 1)}
                   disabled={!state.hasMore}
-                  className="bg-surface border border-border rounded-button-inline px-4 py-2 text-sm font-medium text-text-primary hover:bg-primary-light transition-colors disabled:opacity-40 disabled:hover:bg-surface"
+                  className="bg-surface border border-border rounded-button-inline px-4 py-2 text-sm font-medium text-text-primary hover:bg-primary-light transition-colors disabled:opacity-40 disabled:hover:bg-surface hover-press"
                 >
                   Next Page
                 </button>

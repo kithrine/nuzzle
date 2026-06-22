@@ -83,14 +83,14 @@ export default function Home() {
           <div className="mt-8 flex flex-col sm:flex-row gap-3 justify-center md:justify-start">
             <Link
               href="/search"
-              className="bg-primary text-white rounded-button-full px-6 py-3 font-semibold inline-flex items-center justify-center gap-2 hover:opacity-90 transition-opacity"
+              className="bg-primary text-white rounded-button-full px-6 py-3 font-semibold inline-flex items-center justify-center gap-2 hover:opacity-90 transition-opacity hover-press"
             >
               <PawPrint size={18} fill="currentColor" />
               Browse Dogs
             </Link>
             <Link
               href="/questionnaire"
-              className="border-2 border-primary text-primary rounded-button-full px-6 py-3 font-semibold inline-flex items-center justify-center gap-2 hover:bg-primary-light transition-colors bg-white/70"
+              className="border-2 border-primary text-primary rounded-button-full px-6 py-3 font-semibold inline-flex items-center justify-center gap-2 hover:bg-primary-light transition-colors bg-white/70 hover-press"
             >
               <Heart size={18} fill="currentColor" />
               Create Compatibility Profile
@@ -278,7 +278,7 @@ export default function Home() {
             </p>
             <Link
               href="/questionnaire"
-              className="bg-primary text-white rounded-button-full px-6 py-3 text-sm font-semibold flex-shrink-0 hover:opacity-90 transition-opacity whitespace-nowrap"
+              className="bg-primary text-white rounded-button-full px-6 py-3 text-sm font-semibold flex-shrink-0 hover:opacity-90 transition-opacity whitespace-nowrap hover-press"
             >
               Create Your Profile →
             </Link>

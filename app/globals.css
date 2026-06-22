@@ -102,4 +102,26 @@
   .rounded-button-full           { border-radius: 10px; }
   .rounded-button-inline         { border-radius: 8px; }
   .rounded-badge                 { border-radius: 6px; }
+
+  /* ── Hover micro-interactions ──────────────────────────── */
+  /* Buttons / links: subtle lift on hover, press on click. */
+  .hover-press        { transition: transform .18s ease, box-shadow .18s ease, opacity .18s ease; }
+  .hover-press:hover  { transform: translateY(-1px); box-shadow: 0 4px 12px rgb(0 0 0 / 0.10); }
+  .hover-press:active { transform: translateY(0) scale(0.98); }
+  /* Cards: larger lift + shadow on hover. */
+  .hover-lift         { transition: transform .2s ease, box-shadow .2s ease; }
+  .hover-lift:hover   { transform: translateY(-3px); box-shadow: 0 8px 20px rgb(0 0 0 / 0.10); }
+}
+
+/* Honor users who prefer reduced motion (Rule 13). */
+@media (prefers-reduced-motion: reduce) {
+  .hover-press,
+  .hover-press:hover,
+  .hover-press:active,
+  .hover-lift,
+  .hover-lift:hover {
+    transform: none;
+    box-shadow: none;
+    transition: none;
+  }
 }

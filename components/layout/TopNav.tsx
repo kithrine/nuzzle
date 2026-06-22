@@ -29,7 +29,7 @@ export function TopNav() {
             ) : (
               <Link
                 href="/login"
-                className="rounded-full bg-primary px-4 py-2 text-sm font-semibold text-white hover:opacity-90 transition-opacity"
+                className="rounded-full bg-primary px-4 py-2 text-sm font-semibold text-white hover:opacity-90 transition-opacity hover-press"
               >
                 Log In
               </Link>

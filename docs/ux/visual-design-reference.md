@@ -573,6 +573,17 @@ Confidence always rendered as text label ("High Confidence", "Medium Confidence"
 
 ---
 
+## Motion & Interaction
+
+Subtle motion makes the app feel responsive and alive. **All motion is gated behind `prefers-reduced-motion`** — users who opt out get no transforms/transitions (Rule 13). Utilities live in `app/globals.css`.
+
+### Hover micro-interactions (site-wide)
+- **`.hover-press`** — buttons & links: a small lift (`translateY(-1px)`) + soft shadow on hover, and a press (`scale(.98)`) on `:active`. Applied to primary CTAs across the app (hero CTAs, Get My Match / View Details, Log In, Create Account, search submit, pagination, Edit Profile, Browse Dogs, etc.).
+- **`.hover-lift`** — cards: a larger lift (`translateY(-3px)`) + shadow on hover. Applied to the dog cards (browse/match), featured cards, and saved-dog cards.
+- Both are additive to existing `hover:opacity`/`hover:bg` styles; they don't change behavior.
+
+---
+
 ## Botanical Design Theme
 
 Illustrated botanical elements appear throughout the UI as decorative accents. They are purely decorative and must not interfere with interactive content.
