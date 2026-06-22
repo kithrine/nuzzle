@@ -222,7 +222,7 @@ export default function Home() {
       {/* ── Featured Dogs ─────────────────────────────────────────────── */}
       <section className="bg-background py-12">
         <Reveal>
-        <div className="max-w-5xl mx-auto px-6 mb-6 flex items-center justify-between">
+        <div className="max-w-7xl mx-auto px-6 mb-6 flex items-center justify-between">
           <h2 className="text-xl font-bold text-text-primary">Featured Dogs</h2>
           <Link href="/search" className="text-primary text-sm font-medium hover:underline">
             View All →
