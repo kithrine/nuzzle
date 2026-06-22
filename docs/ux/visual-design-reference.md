@@ -105,7 +105,7 @@ Values are inferred from mockup analysis. Confirm exact hex values against rende
 ![Home Page](mockups/01-mockup-homepage.png)
 
 ### Header / Navigation
-- Nuzzle heart-shield logo (teal) left-aligned, "Nuzzle" wordmark beside it
+- Nuzzle logo image (`public/images/logo.png` — heart + paw + botanical accents) left-aligned, "Nuzzle" wordmark beside it
 - Right-aligned nav: "Browse Dogs" text link + "Log In" solid teal pill button
 - Navigation is minimal and unobtrusive — hero content dominates
 
@@ -345,7 +345,7 @@ Match Results (Screen 8) shares the same visual layout as Browse Dogs — Authen
 - Rounded top corners on modal card
 
 ### Modal Header
-- Nuzzle heart-shield logo centered
+- Nuzzle logo image centered
 
 ### Content
 - Heading: "Save [Dog Name] to your favorites"
@@ -610,7 +610,7 @@ Active tab: Teal fill on icon. Inactive tabs: Gray outline icon.
 
 | Element | Anonymous | Authenticated |
 |---------|-----------|--------------|
-| Nuzzle logo + heart-shield | Visible | Visible |
+| Nuzzle logo image (`public/images/logo.png`) | Visible | Visible |
 | "Browse Dogs" link | Visible | Visible |
 | "Log In" pill button (teal) | Visible | Hidden |
 | User avatar (circular) | Hidden | Visible — top right |

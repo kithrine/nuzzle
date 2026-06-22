@@ -81,7 +81,7 @@ export function FavoriteButton({
 
               {/* Logo + wordmark */}
               <div className="flex items-center justify-center gap-2">
-                <NuzzleLogo size={28} />
+                <NuzzleLogo size={32} />
                 <span className="text-xl font-bold text-primary">Nuzzle</span>
               </div>
 
