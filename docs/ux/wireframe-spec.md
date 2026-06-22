@@ -111,9 +111,12 @@ Avoid:
 **Layout order**:
 
 1. Search controls (ZIP — optional, Radius, Filters, Sort)
-2. Results count (e.g., "247 Dogs Found")
-3. Dog cards (see below)
-4. Pagination (Previous / Next)
+2. **Active-filter chips** — when breed/age/size/location filters are applied, each shows as a removable chip (✕) with a "Clear all filters" button to return to the full list
+3. Results count (e.g., "247 Dogs Found")
+4. Dog cards (see below)
+5. Pagination (Previous / Next)
+
+Filters (breed/age/size) narrow the result set; they apply for both anonymous and profiled users.
 
 **Dog Card**:
 - Photo (aspect ratio locked, no crop distortion)
@@ -138,8 +141,9 @@ Avoid:
 **Layout order**:
 
 1. Search controls (Zip Code, Radius, Filters; Default sort: Best Match)
-2. Dog cards (see below)
-3. Pagination
+2. **Active-filter chips** (removable, + "Clear all filters") — filtering by breed/age/size narrows the matches but keeps them compatibility-sorted *within* the filter, so the user can search a breed and still see it ranked by fit (including lower-scoring dogs); clearing returns to overall matches
+3. Dog cards (see below)
+4. Pagination
 
 **Dog Card**:
 - Photo

@@ -9,6 +9,15 @@ import type { NormalizedDog, CompatibilityResult } from "@/lib/compatibility/typ
 import { toCardCompatibility, type CardCompatibility } from "@/lib/search/card-compatibility";
 import { SearchFilters, type FilterValues } from "@/components/SearchFilters";
 import { SearchResults } from "@/components/SearchResults";
+import { ActiveFilters } from "@/components/ActiveFilters";
+
+const EMPTY_FILTERS: FilterValues = {
+  zip: "",
+  radius: "25",
+  breed: "",
+  ageGroup: "",
+  sizeGroup: "",
+};
 
 type SearchResult = { dog: NormalizedDog; compatibility: CardCompatibility };
 
@@ -63,11 +72,10 @@ export function SearchPageClient() {
   const [favoriteIds, setFavoriteIds] = useState<Set<string>>(new Set());
   // Cache fetched pages so paging back doesn't re-hit RescueGroups (rate limits).
   const cacheRef = useRef<Map<number, PageData>>(new Map());
-  const activeFilters = useRef<FilterValues>(initialFilters);
+  // The filters currently applied to the displayed results (drives the chips).
+  const [appliedFilters, setAppliedFilters] = useState<FilterValues>(initialFilters);
 
   async function loadPage(filters: FilterValues, page: number) {
-    activeFilters.current = filters;
-
     const cached = cacheRef.current.get(page);
     if (cached) {
       setState({ status: "success", page, zip: filters.zip, ...cached });
@@ -103,9 +111,17 @@ export function SearchPageClient() {
   }
 
   function goToPage(page: number) {
-    const filters = activeFilters.current;
+    const filters = appliedFilters;
     router.push(buildPageUrl(filters, page, source));
     loadPage(filters, page);
+  }
+
+  // Apply a brand-new filter set (form submit, chip removal, clear all).
+  function applyFilters(filters: FilterValues) {
+    setAppliedFilters(filters);
+    cacheRef.current.clear();
+    router.push(buildPageUrl(filters, 1, source));
+    loadPage(filters, 1);
   }
 
   // Everyone gets dogs on load — nationwide when there's no zip, zip-filtered
@@ -129,9 +145,15 @@ export function SearchPageClient() {
   }, [isSignedIn]);
 
   function handleSubmit(filters: FilterValues) {
-    cacheRef.current.clear();
-    router.push(buildPageUrl(filters, 1, source));
-    loadPage(filters, 1);
+    applyFilters(filters);
+  }
+
+  function removeFilter(field: "zip" | "breed" | "ageGroup" | "sizeGroup") {
+    applyFilters({ ...appliedFilters, [field]: "" });
+  }
+
+  function clearFilters() {
+    applyFilters(EMPTY_FILTERS);
   }
 
   // Heading + subline vary by source (post-questionnaire) and auth state.
@@ -181,10 +203,13 @@ export function SearchPageClient() {
       {/* Content */}
       <div className="max-w-7xl mx-auto px-4 py-6 md:px-6 md:py-8">
         <SearchFilters
-          defaultValues={initialFilters}
+          key={JSON.stringify(appliedFilters)}
+          defaultValues={appliedFilters}
           onSubmit={handleSubmit}
           isLoading={state.status === "loading"}
         />
+
+        <ActiveFilters filters={appliedFilters} onRemove={removeFilter} onClear={clearFilters} />
 
         {state.status === "loading" && (
           <p className="text-text-secondary mt-6">Loading dogs…</p>
