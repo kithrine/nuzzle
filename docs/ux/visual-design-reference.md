@@ -427,9 +427,10 @@ Use the canonical app-wide 3-tier system (see "Component Patterns → Match Badg
 
 ### View 2 — "Edit Your Profile" form
 - "‹ Cancel" link; "Edit Your Profile" heading
-- 2-step indicator (① Phase 1 · Quick Match (6) —— ② Additional (6))
+- A **"Your Name"** section at the top (editable First/Last name → stored on the User, shown in the sidebar greeting)
+- 2-step indicator (① Phase 1 · Quick Match (6) —— ② Additional (8))
 - **Section "Phase 1: Quick Match"** and **Section "Phase 2: Additional Details (Optional)"**, each with a green checkmark when all its fields are complete
-- Compact controls per the mockup: `<select>` dropdowns (home type, children, cats, other dogs, grooming, fence, yard, special needs, distance, size), a **segmented control** for Activity Level (with description), and **radio buttons** for Experience Level; distance also has a range slider
+- Phase 2 controls (`<select>` unless noted): grooming commitment, **Yard (Fenced / Unfenced / No yard — one question)**, special needs (Yes / No / Maybe), **Age preference**, **Sex preference**, size, **hours alone**, and a **distance slider that snaps to 5/10/25/50/100 mi with a live readout**. Phase 1 uses a **segmented control** for Activity Level and **radio buttons** for Experience Level.
 - Confirmation banner: "Your profile will be updated to Version {n+1} · Your matches may update based on your changes."
 
 ### Actions

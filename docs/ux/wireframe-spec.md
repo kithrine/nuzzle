@@ -215,6 +215,7 @@ Filters (breed/age/size) narrow the result set; they apply for both anonymous an
 **Goal**: Collect minimum information to generate compatibility scores in under 3 minutes.
 
 **Layout**:
+- A short **name step first** ("Welcome! What should we call you?" — First/Last name, skippable) personalizes the dashboard; stored on the User.
 - Progress bar at top (steps 1–6)
 - One question per screen on mobile
 - Question headline
@@ -235,7 +236,7 @@ Filters (breed/age/size) narrow the result set; they apply for both anonymous an
 **Post-questionnaire screen**:
 - "Your matches are ready!"
 - "See My Matches" → Search Results (with scores now showing)
-- "Answer 6 more questions to improve accuracy" → Expanded Questionnaire
+- "Answer 8 more questions to improve accuracy" → Expanded Questionnaire
 - Small print: "You can always update your profile later"
 
 ---
@@ -244,15 +245,17 @@ Filters (breed/age/size) narrow the result set; they apply for both anonymous an
 
 **Goal**: Optional additional questions to improve recommendation quality and increase confidence scores.
 
-**Layout**: Same pattern as Quick Match (progress bar, one question per screen on mobile).
+**Layout**: Same pattern as Quick Match (progress bar — 8 steps, one question per screen on mobile).
 
-**Questions** (6 screens):
-1. Grooming tolerance: Low / Moderate / High
-2. Fenced yard: Yes / No
-3. Yard (unfenced ok): Yes / No
-4. Special needs: Yes / No / Open to it
-5. Distance preference: slider or dropdown (miles)
+**Questions** (8 screens) — these feed the rebalanced compatibility engine (grooming, age, and sex are scored):
+1. Grooming commitment: Low / Moderate / High
+2. Yard: Fenced yard / Unfenced yard / No yard (one question → sets yard + fence)
+3. Special needs: Yes / No / Maybe
+4. Age preference: Puppy / Young / Adult / Senior / No preference
+5. Sex preference: Male / Female / No preference
 6. Size preference: Small / Medium / Large / X-Large / No Preference
+7. Hours alone per day: Under 4h / 4–8h / 8h+ (soft signal — not in the % score)
+8. Distance preference: slider snapping to 5 / 10 / 25 / 50 / 100 mi with a live readout
 
 **Final action**: "Improve My Matches"
 
