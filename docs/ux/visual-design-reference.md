@@ -617,9 +617,13 @@ Active tab: Teal fill on icon. Inactive tabs: Gray outline icon.
 | Element | Anonymous | Authenticated |
 |---------|-----------|--------------|
 | Nuzzle logo + heart-shield | Visible | Visible |
-| "Browse Dogs" link | Visible | Visible |
+| "Home" link (→ `/`) | Visible | Visible |
+| "Browse Dogs" link (→ `/search`) | Visible | Visible |
+| "Dashboard" link (→ `/favorites`) | Hidden | Visible |
 | "Log In" pill button (teal) | Visible | Hidden |
 | User avatar (circular) | Hidden | Visible — top right |
+
+Desktop links (`md+`) highlight the active route (teal) via `usePathname()`; on mobile the `BottomTabBar` provides Home / Browse / Favorites / Profile.
 
 ---
 

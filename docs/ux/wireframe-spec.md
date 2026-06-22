@@ -87,7 +87,7 @@ Avoid:
 
 **Layout order (top to bottom)**:
 
-1. Header (logo, Browse Dogs, Login)
+1. Header (logo, Home, Browse Dogs, Dashboard [authenticated], Login / user avatar)
 2. Hero section
    - Headline: "Find a dog that fits your lifestyle."
    - Subheadline: "Browse adoptable dogs and receive personalized compatibility matching."
