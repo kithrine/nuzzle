@@ -222,6 +222,8 @@ RULES.md                        ← Hard rules all agents must follow
 | Sort order (anonymous) | Distance |
 | Confidence display | Human labels (High/Medium/Low) not raw numbers on cards |
 | Match display on card | Label + percentage + confidence label + 2–3 match reasons |
+| Favorited heart | Filled **red** (`#EF4444`) persistent state + pop animation (paired with `aria-pressed`, reduced-motion safe) |
+| Featured Dogs (homepage) | 8 nationwide dogs, rotate every ~5h (window-seeded pick + ISR `revalidate`) |
 | V2 features | Documented separately; do not build in V1 |
 
 ---

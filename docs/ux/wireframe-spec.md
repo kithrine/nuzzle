@@ -156,7 +156,7 @@ Filters (breed/age/size) narrow the result set; they apply for both anonymous an
 
 **Interactions**:
 - Full card is tappable → Dog Detail Page
-- Tap favorite icon → saves immediately
+- Tap favorite icon (lucide heart) → saves immediately; the heart pops and fills **red** as the persistent favorited state (reduced-motion safe). Anonymous tap opens the account-creation prompt instead.
 - Sort: best match by default; **setting a ZIP switches to nearest-first** (distance), with match scores still shown. Header reflects this ("Showing Nearby Dogs" / "Nearest first…" when a ZIP is set).
 
 ---

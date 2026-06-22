@@ -41,7 +41,7 @@ export function DogCard({
       {/* Photo */}
       <div className="relative aspect-[4/3] overflow-hidden bg-primary-light">
         <DogImage src={photo} alt={dog.name} />
-        <div className="absolute top-2 right-2 bg-surface/80 backdrop-blur-sm rounded-full w-9 h-9 flex items-center justify-center shadow-sm text-primary z-10">
+        <div className="absolute top-2 right-2 bg-surface/80 backdrop-blur-sm rounded-full w-10 h-10 flex items-center justify-center shadow-sm text-primary z-10">
           <FavoriteButton
             provider={dog.provider}
             externalId={dog.externalId}

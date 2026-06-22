@@ -577,6 +577,13 @@ Confidence always rendered as text label ("High Confidence", "Medium Confidence"
 - `DogCardSkeletonGrid` renders these in the same responsive grid as results (`grid-cols-1 sm:grid-cols-2 lg:grid-cols-3`) and carries a screen-reader loading status (`role="status"`, accessible name "Loading dogs"). Individual skeletons are `aria-hidden`.
 - Used on **Search / Matches** (in-page loading state) and as route-level loaders on **Favorites** (`favorites/loading.tsx`, dashboard shell) and **Dog Detail** (`loading.tsx`, hero + info + compatibility shell).
 
+### Favorite Heart (`FavoriteButton`)
+- A lucide `Heart` icon — `size 22` on dog cards (in a `w-10 h-10` chip), `size 26` next to the name on the Dog Detail page.
+- **Unfavorited:** outline heart (`fill="none"`, stroke inherits `currentColor` — teal in the card chip).
+- **Favorited:** **filled red** (`#EF4444`) and stays red as the persistent favorited state, paired with `aria-pressed` (never color-only — Rule 13).
+- Clicking to favorite plays a brief **pop** animation (`animate-heart-pop`, scale 1 → 1.35 → 1), disabled under `prefers-reduced-motion`.
+- Anonymous click still opens the Screen 9 account-creation sheet (`login-prompt`) and performs no fetch.
+
 ---
 
 ## Botanical Design Theme
