@@ -19,6 +19,7 @@ import {
 } from "lucide-react";
 import { getOrCreateUser } from "@/lib/auth/get-or-create-user";
 import { DashboardSidebar } from "@/components/DashboardSidebar";
+import { DogImage } from "@/components/DogImage";
 import { prisma } from "@/lib/db/prisma";
 import { getRescueGroupsDog } from "@/lib/rescuegroups/client";
 import { normalizeRescueGroupsDog } from "@/lib/compatibility/normalize";
@@ -226,11 +227,9 @@ export default async function FavoritesPage({
                   />
                   <div className="flex gap-4">
                     {dog.photos[0] && (
-                      <img
-                        src={dog.photos[0]}
-                        alt={dog.name}
-                        className="w-24 h-24 sm:w-32 sm:h-32 rounded-button-inline object-cover flex-shrink-0"
-                      />
+                      <div className="relative w-24 h-24 sm:w-32 sm:h-32 rounded-button-inline overflow-hidden bg-primary-light flex-shrink-0">
+                        <DogImage src={dog.photos[0]} alt={dog.name} />
+                      </div>
                     )}
                     <div className="flex-1 min-w-0 flex flex-col sm:flex-row sm:justify-between gap-3">
                       {/* Info */}
