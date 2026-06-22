@@ -29,6 +29,7 @@ export type RescueGroupsApiAnimal = {
     energyLevel?: string | null;
     activityLevel?: string | null;
     exerciseNeeds?: string | null;
+    coatLength?: string | null;
     isSpecialNeeds?: boolean | null;
     isYardRequired?: boolean | null;
     fenceNeeds?: string | null;
@@ -116,6 +117,7 @@ export type RescueGroupsRawDog = {
     energyLevel?: string | null;
     activityLevel?: string | null;
     exerciseNeeds?: string | null;
+    coatLength?: string | null;
     isSpecialNeeds?: boolean | null;
     isYardRequired?: boolean | null;
     fenceNeeds?: string | null;

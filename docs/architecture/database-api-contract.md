@@ -51,6 +51,8 @@ model User {
   id          String   @id @default(uuid())
   clerkUserId String   @unique
   email       String   @unique
+  firstName   String?  // shown on the dashboard sidebar; seeded from Clerk, editable in-app
+  lastName    String?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
@@ -84,6 +86,9 @@ model AdopterProfile {
   specialNeedsWilling Boolean?
   maxDistance         Int?     // miles
   sizePreference      String?  // "Small" | "Medium" | "Large" | "X-Large" | "No Preference"
+  agePreference       String?  // "Baby" | "Young" | "Adult" | "Senior" | "No Preference"
+  sexPreference       String?  // "Male" | "Female" | "No Preference"
+  hoursAlone          String?  // "Under 4h" | "4-8h" | "8h+" (soft signal, not scored)
 
   // Version tracking — incremented on every update, used to detect stale scores
   profileVersion Int @default(1)
@@ -226,6 +231,7 @@ type NormalizedDog = {
   energyLevel:   "Low" | "Moderate" | "High" | "Unknown";
   activityLevel: "Low" | "Moderate" | "High" | "Unknown";
   exerciseNeeds: "Low" | "Moderate" | "High" | "Unknown";
+  groomingNeeds: "Low" | "Moderate" | "High" | "Unknown"; // derived from animals.coatLength
 
   isKidsOk:      boolean | "Unknown";
   isCatsOk:      boolean | "Unknown";
@@ -260,6 +266,7 @@ The v5 API returns `data` as an **array** (even for a single-animal fetch), phot
 | `animals.ageGroup` | `ageGroup` | Map to Baby/Young/Adult/Senior or `"Unknown"` |
 | `animals.sizeGroup` | `sizeGroup` | Map to Small/Medium/Large/X-Large or `"Unknown"` |
 | `animals.sex` | `gender` | Map to Male/Female or `"Unknown"` |
+| `animals.coatLength` | `groomingNeeds` | Short/Hairless→Low, Medium→Moderate, Long→High, else `"Unknown"` |
 | `animals.distance` | `distance` | Miles from search location; `null` when not a radius search |
 | `animals.isKidsOk` | `isKidsOk` | `"Unknown"` if not present or ambiguous |
 | `animals.isCatsOk` | `isCatsOk` | `"Unknown"` if not present or ambiguous |

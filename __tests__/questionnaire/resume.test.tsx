@@ -12,7 +12,7 @@ vi.mock("next/navigation", () => ({
 }));
 
 import { QuestionnaireClient } from "@/app/questionnaire/QuestionnaireClient";
-import { savePendingProfile } from "@/lib/questionnaire/pending-profile";
+import { savePendingProfile, loadPendingProfile } from "@/lib/questionnaire/pending-profile";
 
 describe("questionnaire resume + anonymous routing", () => {
   beforeEach(() => {
@@ -55,6 +55,10 @@ describe("questionnaire resume + anonymous routing", () => {
 
     const next = () => fireEvent.click(screen.getByRole("button", { name: /^next$/i }));
 
+    // Onboarding name step comes first.
+    fireEvent.change(screen.getByPlaceholderText("First name"), { target: { value: "Ada" } });
+    fireEvent.click(screen.getByRole("button", { name: /continue/i }));
+
     fireEvent.click(screen.getByRole("button", { name: /house/i }));
     next();
     fireEvent.click(screen.getByRole("button", { name: /^yes$/i })); // children
@@ -70,5 +74,7 @@ describe("questionnaire resume + anonymous routing", () => {
 
     await waitFor(() => expect(mockPush).toHaveBeenCalledWith("/signup"));
     expect(fetch).not.toHaveBeenCalled();
+    // Name is carried into the pending profile for the post-signup resume.
+    expect(loadPendingProfile()?.firstName).toBe("Ada");
   });
 });

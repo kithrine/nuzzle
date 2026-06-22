@@ -355,6 +355,10 @@ We recommend asking the shelter:
 
 ## Questionnaire Flow
 
+### Onboarding — Name (first screen)
+
+Before Phase 1, a short card asks the user's first/last name ("Welcome! What should we call you?"). Optional and skippable, but it personalizes the dashboard ("Welcome back, {firstName}"). Stored on the `User` (seeded from Clerk if available, editable later on the profile page). For the questionnaire-first flow the name is carried in the pending profile and saved on resume.
+
 ### Phase 1 — Quick Match (~2 min, required)
 
 Progress indicator visible throughout. One question per screen on mobile.
@@ -371,15 +375,19 @@ After Phase 1:
 → Show results immediately (no account required)
 → Prompt to continue to Phase 2 to improve accuracy
 
-### Phase 2 — Improve Accuracy (~1–2 min, optional)
+### Phase 2 — Improve Accuracy (~2–3 min, optional, 8 questions)
+
+These now feed the rebalanced compatibility engine (Grooming, Age, and Sex were added as scored categories).
 
 **Questions**:
-7. How much grooming are you comfortable with? (Low / Moderate / High)
-8. Do you have a fenced yard? (Yes / No)
-9. Do you have a yard (fenced or not)? (Yes / No)
-10. Are you open to adopting a dog with special needs? (Yes / No / Open to it)
-11. How far are you willing to travel to adopt? (slider or dropdown, miles)
+7. How much grooming are you comfortable with? (Low / Moderate / High) — scored vs the dog's coat/grooming needs
+8. Do you have a yard? (Fenced yard / Unfenced yard / No yard) — one question that sets both yard + fence
+9. Are you open to adopting a dog with special needs? (Yes / No / Maybe)
+10. Any age preference? (Puppy / Young / Adult / Senior / No preference) — scored vs the dog's age
+11. Any sex preference? (Male / Female / No preference) — scored vs the dog's sex
 12. Do you have a size preference? (Small / Medium / Large / X-Large / No Preference)
+13. How long is your dog alone on a typical day? (Under 4h / 4–8h / 8h+) — soft signal (not in the % score; informs guidance)
+14. Preferred adoption distance — slider that snaps to 5 / 10 / 25 / 50 / 100 miles with a live readout
 
 ---
 
@@ -387,7 +395,7 @@ After Phase 1:
 
 - Never show the questionnaire as a gate to browsing
 - Phase 1 framing: "Answer 6 quick questions to see how dogs match your lifestyle"
-- Phase 2 framing: "Improve your match accuracy — 6 more optional questions"
+- Phase 2 framing: "Improve your match accuracy — 8 more optional questions"
 - No question should feel like a disqualification
 - "First-time owner" must not feel shameful — it is the majority of adopters
 - Questionnaire comes before account creation; account creation prompt comes after results are shown

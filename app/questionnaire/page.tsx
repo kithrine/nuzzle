@@ -27,6 +27,11 @@ export default async function QuestionnairePage() {
         specialNeedsWilling: profile.specialNeedsWilling,
         maxDistance: profile.maxDistance,
         sizePreference: profile.sizePreference,
+        agePreference: profile.agePreference,
+        sexPreference: profile.sexPreference,
+        hoursAlone: profile.hoursAlone,
+        firstName: user?.firstName ?? null,
+        lastName: user?.lastName ?? null,
         profileVersion: profile.profileVersion,
         updatedAt: profile.updatedAt.toISOString(),
       }
@@ -36,7 +41,7 @@ export default async function QuestionnairePage() {
     <Suspense>
       <QuestionnaireClient
         initialProfile={initialProfile}
-        firstName={clerkUser?.firstName ?? "there"}
+        firstName={user?.firstName ?? clerkUser?.firstName ?? "there"}
       />
     </Suspense>
   );

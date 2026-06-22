@@ -31,6 +31,17 @@ export async function POST(req: NextRequest) {
     );
   }
 
+  // Name lives on the User (shown on the dashboard), not the profile.
+  if (body.firstName !== undefined || body.lastName !== undefined) {
+    await prisma.user.update({
+      where: { id: user.id },
+      data: {
+        firstName: body.firstName ?? undefined,
+        lastName: body.lastName ?? undefined,
+      },
+    });
+  }
+
   const profile = await prisma.adopterProfile.create({
     data: {
       userId: user.id,
@@ -46,6 +57,9 @@ export async function POST(req: NextRequest) {
       specialNeedsWilling: body.specialNeedsWilling ?? undefined,
       maxDistance: body.maxDistance ?? undefined,
       sizePreference: body.sizePreference ?? undefined,
+      agePreference: body.agePreference ?? undefined,
+      sexPreference: body.sexPreference ?? undefined,
+      hoursAlone: body.hoursAlone ?? undefined,
     },
   });
 
@@ -57,9 +71,19 @@ export async function PUT(req: NextRequest) {
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const body = await req.json();
+  // Name is a User field, not an AdopterProfile field — pull it out before the
+  // profile update so Prisma doesn't reject unknown columns.
+  const { firstName, lastName, ...profileData } = body;
+  if (firstName !== undefined || lastName !== undefined) {
+    await prisma.user.update({
+      where: { id: user.id },
+      data: { firstName: firstName ?? undefined, lastName: lastName ?? undefined },
+    });
+  }
+
   const profile = await prisma.adopterProfile.update({
     where: { userId: user.id },
-    data: { ...body, profileVersion: { increment: 1 } },
+    data: { ...profileData, profileVersion: { increment: 1 } },
   });
 
   return NextResponse.json({ profileVersion: profile.profileVersion });

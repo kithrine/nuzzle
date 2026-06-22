@@ -18,6 +18,8 @@ model User {
   id          String   @id @default(uuid())
   clerkUserId String   @unique
   email       String   @unique
+  firstName   String?
+  lastName    String?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
@@ -51,6 +53,9 @@ model AdopterProfile {
   specialNeedsWilling Boolean?
   maxDistance         Int?     // miles
   sizePreference      String?  // "Small" | "Medium" | "Large" | "X-Large" | "No Preference"
+  agePreference       String?  // "Baby" | "Young" | "Adult" | "Senior" | "No Preference"
+  sexPreference       String?  // "Male" | "Female" | "No Preference"
+  hoursAlone          String?  // "Under 4h" | "4-8h" | "8h+" (soft signal, not scored)
 
   // Version tracking — incremented on every update, used to detect stale scores
   profileVersion Int @default(1)

@@ -56,6 +56,24 @@ function toGender(v: string | null | undefined): "Male" | "Female" | "Unknown" {
   return "Unknown";
 }
 
+// Grooming effort is derived from RescueGroups `coatLength`: a longer coat
+// generally means more grooming. Unknown when the shelter didn't provide it.
+function toGroomingNeeds(
+  coatLength: string | null | undefined,
+): "Low" | "Moderate" | "High" | "Unknown" {
+  switch (coatLength) {
+    case "Hairless":
+    case "Short":
+      return "Low";
+    case "Medium":
+      return "Moderate";
+    case "Long":
+      return "High";
+    default:
+      return "Unknown";
+  }
+}
+
 // Keyed by entity name (without the surrounding & and ;).
 const NAMED_ENTITIES: Record<string, string> = {
   amp: "&", lt: "<", gt: ">", quot: '"', apos: "'", nbsp: " ",
@@ -112,6 +130,7 @@ export function normalizeRescueGroupsDog(
     energyLevel: toEnergyLevel(animals.energyLevel),
     activityLevel: toEnergyLevel(animals.activityLevel),
     exerciseNeeds: toEnergyLevel(animals.exerciseNeeds),
+    groomingNeeds: toGroomingNeeds(animals.coatLength),
     isKidsOk: toBooleanOrUnknown(animals.isKidsOk),
     isCatsOk: toBooleanOrUnknown(animals.isCatsOk),
     isDogsOk: toBooleanOrUnknown(animals.isDogsOk),

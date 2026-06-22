@@ -73,7 +73,7 @@ export default async function FavoritesPage({
     currentUser(),
   ]);
 
-  const firstName = clerkUser?.firstName ?? "there";
+  const firstName = user.firstName ?? clerkUser?.firstName ?? "there";
 
   const sidebar = <DashboardSidebar firstName={firstName} active="saved" />;
 

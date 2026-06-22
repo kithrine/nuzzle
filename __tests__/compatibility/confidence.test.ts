@@ -19,9 +19,11 @@ const BASE_DOG: NormalizedDog = {
   breed: "Lab",
   ageGroup: "Adult",
   sizeGroup: "Medium",
+  gender: "Male",
   energyLevel: "Moderate",
   activityLevel: "Moderate",
   exerciseNeeds: "Moderate",
+  groomingNeeds: "Low",
   isKidsOk: true,
   isCatsOk: true,
   isDogsOk: true,
@@ -115,18 +117,45 @@ describe("Confidence Scoring", () => {
     expect(result.confidenceScore).toBe(95);
   });
 
-  it("CONF-011: all penalties applied → confidence = 8 (never below 0)", () => {
-    // Total penalties: 15+15+12+15+8+8+8+6+5 = 92 → confidence = 100−92 = 8
+  it("CONF-013: groomingNeeds Unknown → confidence reduced by 6", () => {
+    const result = calculateCompatibility(BASE_PROFILE, {
+      ...BASE_DOG,
+      groomingNeeds: "Unknown",
+    });
+    expect(result.confidenceScore).toBe(94);
+  });
+
+  it("CONF-014: ageGroup Unknown → confidence reduced by 4", () => {
+    const result = calculateCompatibility(BASE_PROFILE, {
+      ...BASE_DOG,
+      ageGroup: "Unknown",
+    });
+    expect(result.confidenceScore).toBe(96);
+  });
+
+  it("CONF-015: gender Unknown → confidence reduced by 2", () => {
+    const result = calculateCompatibility(BASE_PROFILE, {
+      ...BASE_DOG,
+      gender: "Unknown",
+    });
+    expect(result.confidenceScore).toBe(98);
+  });
+
+  it("CONF-011: all penalties applied → confidence = 0 (never below 0)", () => {
+    // Penalties: 15+15+12+15+8+8+8+6+6+5+4+2 = 104 → clamped to 0.
     const result = calculateCompatibility(
       { ...BASE_PROFILE, hasChildren: true, hasCats: true, hasOtherDogs: true },
       {
         ...BASE_DOG,
+        ageGroup: "Unknown",
+        gender: "Unknown",
         isKidsOk: "Unknown",
         isCatsOk: "Unknown",
         isDogsOk: "Unknown",
         energyLevel: "Unknown",
         activityLevel: "Unknown",
         exerciseNeeds: "Unknown",
+        groomingNeeds: "Unknown",
         isYardRequired: "Unknown",
         fenceNeeds: "Unknown",
         ownerExperience: "Unknown",
@@ -134,7 +163,7 @@ describe("Confidence Scoring", () => {
         isSpecialNeeds: "Unknown",
       },
     );
-    expect(result.confidenceScore).toBe(8);
+    expect(result.confidenceScore).toBe(0);
     expect(result.confidenceScore).toBeGreaterThanOrEqual(0);
   });
 
