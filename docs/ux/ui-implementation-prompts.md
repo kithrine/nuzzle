@@ -236,7 +236,7 @@ Read `app/questionnaire/QuestionnaireClient.tsx` in full before writing any code
 **Post-phase-1 screen ("Your matches are ready!"):**
 - `bg-surface rounded-card p-8 text-center max-w-md mx-auto`
 - Heading in `text-text-primary font-bold text-2xl`
-- "See My Matches" → teal full button, "Answer 6 more questions →" → outlined teal button
+- "See My Matches" → teal full button, "Answer 8 more questions →" → outlined teal button
 - Small print: `text-text-secondary text-sm`
 
 **Botanical decoration:** Add subtle SVG botanical elements (leaves, stems) at the bottom corners of the page using `text-botanical-green` and `text-botanical-pink`. These should be `position: absolute` / `fixed`, decorative only (`aria-hidden="true"`), and not interfere with the form content.

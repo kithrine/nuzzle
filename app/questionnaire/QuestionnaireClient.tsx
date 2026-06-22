@@ -1173,7 +1173,7 @@ function ProfileSummary({
             <span className="flex flex-col">
               <span className="font-semibold text-primary">Improve Accuracy</span>
               <span className="text-text-secondary text-sm">
-                Answer 6 more questions to improve your matches
+                Answer 8 more questions to improve your matches
               </span>
             </span>
           </span>
