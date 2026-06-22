@@ -132,10 +132,12 @@
   .page-fade          { animation: page-fade-in 0.4s ease-out; }
 }
 
-/* Baseline scale over-covers the frame so the ±4% drift never reveals an edge. */
+/* Baseline scale over-covers the frame so the ±4% drift never reveals an edge.
+   Start at +4% (scroll top) so the focal point (dog's head, desktop object-position:top)
+   sits at the frame top un-clipped, then drift up to -4% as the hero scrolls away. */
 @keyframes hero-parallax {
-  from { transform: translateY(-4%) scale(1.08); }
-  to   { transform: translateY(4%) scale(1.08); }
+  from { transform: translateY(4%) scale(1.08); }
+  to   { transform: translateY(-4%) scale(1.08); }
 }
 
 @keyframes heart-pop {
