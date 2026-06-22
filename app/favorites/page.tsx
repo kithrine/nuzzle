@@ -103,7 +103,7 @@ export default async function FavoritesPage({
               </p>
               <Link
                 href="/search"
-                className="bg-primary text-white rounded-button-full px-6 py-3 font-semibold inline-flex items-center gap-2 hover:opacity-90 transition-opacity"
+                className="bg-primary text-white rounded-button-full px-6 py-3 font-semibold inline-flex items-center gap-2 hover:opacity-90 transition-opacity hover-press"
               >
                 <PawPrint size={18} /> Browse Dogs
               </Link>
@@ -175,7 +175,7 @@ export default async function FavoritesPage({
             </div>
             <Link
               href="/questionnaire"
-              className="flex-shrink-0 inline-flex items-center gap-2 border border-border rounded-button-inline px-4 py-2 text-sm font-medium text-text-primary hover:bg-primary-light/50 transition-colors"
+              className="flex-shrink-0 inline-flex items-center gap-2 border border-border rounded-button-inline px-4 py-2 text-sm font-medium text-text-primary hover:bg-primary-light/50 transition-colors hover-press"
             >
               <SquarePen size={16} /> Edit Profile
             </Link>
@@ -217,7 +217,7 @@ export default async function FavoritesPage({
               return (
                 <article
                   key={`${provider}-${externalId}`}
-                  className="relative bg-surface rounded-card border border-border p-4"
+                  className="relative bg-surface rounded-card border border-border p-4 hover-lift"
                 >
                   <RemoveFavoriteButton
                     provider={provider}
@@ -227,9 +227,13 @@ export default async function FavoritesPage({
                   />
                   <div className="flex gap-4">
                     {dog.photos[0] && (
-                      <div className="relative w-24 h-24 sm:w-32 sm:h-32 rounded-button-inline overflow-hidden bg-primary-light flex-shrink-0">
+                      <Link
+                        href={`/dogs/${provider}/${externalId}`}
+                        aria-label={`View ${dog.name}`}
+                        className="relative block w-24 h-24 sm:w-32 sm:h-32 rounded-button-inline overflow-hidden bg-primary-light flex-shrink-0"
+                      >
                         <DogImage src={dog.photos[0]} alt={dog.name} />
-                      </div>
+                      </Link>
                     )}
                     <div className="flex-1 min-w-0 flex flex-col sm:flex-row sm:justify-between gap-3">
                       {/* Info */}
@@ -284,8 +288,8 @@ export default async function FavoritesPage({
                         )}
                       </div>
 
-                      {/* Match + actions */}
-                      <div className="flex flex-row sm:flex-col items-start sm:items-end justify-between gap-2 flex-shrink-0 sm:text-right">
+                      {/* Match + actions (sm:pr-7 reserves a corner lane for the × remove button) */}
+                      <div className="flex flex-row sm:flex-col items-start sm:items-end justify-between gap-2 flex-shrink-0 sm:text-right sm:pr-7">
                         <div className="sm:mb-2">
                           {compatibility ? (
                             <>
@@ -315,7 +319,7 @@ export default async function FavoritesPage({
                         </div>
                         <Link
                           href={`/dogs/${provider}/${externalId}`}
-                          className="inline-flex items-center justify-center border border-primary text-primary rounded-button-inline px-4 py-2 text-sm font-medium hover:bg-primary-light transition-colors whitespace-nowrap"
+                          className="inline-flex items-center justify-center border border-primary text-primary rounded-button-inline px-4 py-2 text-sm font-medium hover:bg-primary-light transition-colors whitespace-nowrap hover-press"
                         >
                           View Details
                         </Link>

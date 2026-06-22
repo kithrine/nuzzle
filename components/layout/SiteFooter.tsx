@@ -33,7 +33,7 @@ export function SiteFooter() {
       <div className="max-w-5xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
         <div className="flex flex-col items-center md:items-start gap-1">
           <div className="flex items-center gap-2">
-            <NuzzleLogo size={24} />
+            <NuzzleLogo size={28} />
             <span className="font-semibold text-text-primary">Nuzzle</span>
           </div>
           <p className="text-text-secondary text-xs">Better matches. Happier tails.</p>

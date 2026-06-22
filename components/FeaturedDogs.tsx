@@ -44,7 +44,7 @@ export async function FeaturedDogs() {
         <Link
           key={`${dog.provider}-${dog.externalId}`}
           href={`/dogs/${dog.provider}/${dog.externalId}`}
-          className="bg-surface rounded-card shadow-sm flex-shrink-0 w-48 overflow-hidden block hover:shadow-md transition-shadow"
+          className="bg-surface rounded-card shadow-sm flex-shrink-0 w-48 overflow-hidden block hover-lift"
         >
           <div className="relative h-36 overflow-hidden bg-primary-light">
             {dog.photos[0] && <DogImage src={dog.photos[0]} alt={dog.name} />}

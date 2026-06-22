@@ -96,7 +96,7 @@ export function FavoriteButton({
 
               {/* Logo + wordmark */}
               <div className="flex items-center justify-center gap-2">
-                <NuzzleLogo size={28} />
+                <NuzzleLogo size={32} />
                 <span className="text-xl font-bold text-primary">Nuzzle</span>
               </div>
 
@@ -152,7 +152,7 @@ export function FavoriteButton({
               {/* Create Account → /signup */}
               <Link
                 href="/signup"
-                className="bg-primary text-white rounded-button-full w-full py-3 font-semibold mt-4 flex items-center justify-center gap-2 hover:opacity-90 transition-opacity"
+                className="bg-primary text-white rounded-button-full w-full py-3 font-semibold mt-4 flex items-center justify-center gap-2 hover:opacity-90 transition-opacity hover-press"
               >
                 <UserRoundPlus size={18} aria-hidden="true" />
                 Create Account

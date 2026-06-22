@@ -105,7 +105,7 @@ Values are inferred from mockup analysis. Confirm exact hex values against rende
 ![Home Page](mockups/01-mockup-homepage.png)
 
 ### Header / Navigation
-- Nuzzle heart-shield logo (teal) left-aligned, "Nuzzle" wordmark beside it
+- Nuzzle logo image (`public/images/logo.png` — heart + paw + botanical accents) left-aligned, "Nuzzle" wordmark beside it
 - Right-aligned nav: "Browse Dogs" text link + "Log In" solid teal pill button
 - Navigation is minimal and unobtrusive — hero content dominates
 
@@ -158,7 +158,7 @@ Values are inferred from mockup analysis. Confirm exact hex values against rende
 
 ### Dog Cards (Anonymous)
 Each card shows:
-- Large dog photo
+- Large dog photo — **links to the dog's detail page** (in addition to "View Details"; the heart chip sits above the link and still toggles favorites)
 - Dog name (bold)
 - Breed + age + size descriptor (e.g., "Golden Retriever • Adult • 2 yrs")
 - Location icon + distance (e.g., "18 miles away")
@@ -346,7 +346,7 @@ Match Results (Screen 8) shares the same visual layout as Browse Dogs — Authen
 - Rounded top corners on modal card
 
 ### Modal Header
-- Nuzzle heart-shield logo centered
+- Nuzzle logo image centered
 
 ### Content
 - Heading: "Save [Dog Name] to your favorites"
@@ -384,7 +384,7 @@ Match Results (Screen 8) shares the same visual layout as Browse Dogs — Authen
 
 ### Saved Dogs List
 Horizontal-layout cards (stacked vertically), each showing:
-- Square thumbnail photo (left)
+- Square thumbnail photo (left) — **links to the dog's detail page** (in addition to "View Details")
 - Dog name with filled heart icon
 - Breed, age, gender, size
 - Shelter name with location icon + distance
@@ -392,7 +392,7 @@ Horizontal-layout cards (stacked vertically), each showing:
 - **2-line description preview** (clamped)
 - Match score badge (color-coded by tier, e.g., "96% MATCH") + confidence label ("{High/Medium/Low} Confidence")
 - "View Details" button (teal)
-- **× remove button** (top-right) — deletes the favorite (`DELETE /api/favorites/[provider]/[externalId]`) and refreshes the list
+- **× remove button** (top-right) — deletes the favorite (`DELETE /api/favorites/[provider]/[externalId]`) and refreshes the list; shows a **"Remove from favorites" tooltip** on hover (`aria-label` kept for screen readers)
 
 ### Match Score Colors in Dashboard
 Use the canonical app-wide 3-tier system (see "Component Patterns → Match Badge") — the same thresholds as the search cards and detail page; the dashboard does not define its own scheme:
@@ -586,6 +586,24 @@ Confidence always rendered as text label ("High Confidence", "Medium Confidence"
 
 ---
 
+## Motion & Interaction
+
+Subtle motion makes the app feel responsive and alive. **All motion is gated behind `prefers-reduced-motion`** — users who opt out get no transforms/transitions (Rule 13). Utilities live in `app/globals.css`.
+
+### Hover micro-interactions (site-wide)
+- **`.hover-press`** — buttons & links: a small lift (`translateY(-1px)`) + soft shadow on hover, and a press (`scale(.98)`) on `:active`. Applied to primary CTAs across the app (hero CTAs, Get My Match / View Details, Log In, Create Account, search submit, pagination, Edit Profile, Browse Dogs, etc.).
+- **`.hover-lift`** — cards: a larger lift (`translateY(-3px)`) + shadow on hover. Applied to the dog cards (browse/match), featured cards, and saved-dog cards.
+- Both are additive to existing `hover:opacity`/`hover:bg` styles; they don't change behavior.
+
+### Scroll reveals (homepage)
+- The `Reveal` component (`components/Reveal.tsx`, IntersectionObserver) wraps each homepage section (value props, how it works, featured dogs, profile banner). Sections **fade + slide in when scrolled into view and fade back out when scrolled away** — both directions, since the observer fires on enter and exit. Classes: `.reveal` (hidden) / `.reveal-in` (shown).
+- Degrades gracefully: under `prefers-reduced-motion`, or where IntersectionObserver is unavailable, content shows immediately.
+
+### Hero parallax (homepage)
+- The homepage hero background image drifts subtly as the page scrolls (`.hero-parallax`, CSS scroll-driven `animation-timeline: scroll()`). Progressive enhancement — browsers without scroll-driven-animation support render it static; disabled under reduced motion. A baseline `scale(1.08)` keeps the frame covered through the drift.
+
+---
+
 ## Botanical Design Theme
 
 Illustrated botanical elements appear throughout the UI as decorative accents. They are purely decorative and must not interfere with interactive content.
@@ -623,7 +641,7 @@ Active tab: Teal fill on icon. Inactive tabs: Gray outline icon.
 
 | Element | Anonymous | Authenticated |
 |---------|-----------|--------------|
-| Nuzzle logo + heart-shield | Visible | Visible |
+| Nuzzle logo image (`public/images/logo.png`) | Visible | Visible |
 | "Home" link (→ `/`) | Visible | Visible |
 | "Browse Dogs" link (→ `/search`) | Visible | Visible |
 | "Dashboard" link (→ `/favorites`) | Hidden | Visible |
