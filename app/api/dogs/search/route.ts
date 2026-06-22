@@ -12,17 +12,12 @@ type SearchResult = { dog: NormalizedDog; compatibility?: CompatibilityResult };
 export async function GET(req: NextRequest) {
   const { searchParams } = req.nextUrl;
 
-  const zip = searchParams.get("zip");
-  if (!zip) {
-    return NextResponse.json(
-      { error: { code: "VALIDATION_ERROR", message: "zip is required" } },
-      { status: 422 },
-    );
-  }
+  // zip is optional — when omitted we search nationwide.
+  const zip = searchParams.get("zip") ?? undefined;
 
   const radius = Number(searchParams.get("radius") ?? 25);
   const page = Number(searchParams.get("page") ?? 1);
-  const limit = Number(searchParams.get("limit") ?? 20);
+  const limit = Number(searchParams.get("limit") ?? 12);
   const breed = searchParams.get("breed") ?? undefined;
   const ageGroup = searchParams.get("ageGroup") ?? undefined;
   const sizeGroup = searchParams.get("sizeGroup") ?? undefined;
@@ -37,7 +32,7 @@ export async function GET(req: NextRequest) {
   const sort = useCompatibilitySort ? "best_match" : "distance";
 
   try {
-    const { dogs, hasMore } = await searchRescueGroupsDogs({
+    const { dogs, hasMore, total } = await searchRescueGroupsDogs({
       zip,
       radius,
       page,
@@ -84,6 +79,7 @@ export async function GET(req: NextRequest) {
       sort,
       page,
       hasMore,
+      total,
     });
   } catch (err) {
     if (err instanceof RateLimitError) {

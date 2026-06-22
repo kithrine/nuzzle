@@ -1,16 +1,12 @@
 import Link from "next/link";
 import { Sparkles } from "lucide-react";
 import type { NormalizedDog } from "@/lib/compatibility/types";
+import type { CardCompatibility } from "@/lib/search/card-compatibility";
 import { DogCard } from "@/components/DogCard";
-
-type AnonymousCompatibility = {
-  available: false;
-  teaser: string;
-};
 
 type SearchResult = {
   dog: NormalizedDog;
-  compatibility: AnonymousCompatibility;
+  compatibility: CardCompatibility;
 };
 
 export function SearchResults({
@@ -26,7 +22,9 @@ export function SearchResults({
     return (
       <div className="flex flex-col items-center text-center gap-4 py-16">
         <p className="text-text-secondary">
-          No dogs found near {zip}. Try expanding your search radius.
+          {zip
+            ? `No dogs found near ${zip}. Try expanding your search radius.`
+            : "No dogs found. Try adjusting your filters."}
         </p>
         <Link
           href="/search"
@@ -38,12 +36,21 @@ export function SearchResults({
     );
   }
 
+  // "Your Matches" only once results are actually scored (profiled user);
+  // otherwise anonymous/unprofiled visitors see a neutral label.
+  const scored = results.some((r) => r.compatibility.available);
+  const label = zip
+    ? "Showing Nearby Dogs"
+    : scored
+      ? "Showing Your Matches"
+      : "Showing Available Dogs";
+
   return (
     <div className="mt-6">
       <div className="mb-4">
         <p className="text-text-secondary text-sm flex items-center gap-1.5">
           <Sparkles size={14} className="text-primary" />
-          Showing Nearby Dogs
+          {label}
         </p>
         <p className="text-text-primary font-semibold text-lg">
           {results.length} dogs found

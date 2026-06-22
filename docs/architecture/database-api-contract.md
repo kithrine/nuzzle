@@ -288,16 +288,19 @@ Search adoptable dogs via RescueGroups.
 
 **Query parameters**:
 ```
-zip:        string               // required
-radius?:    number               // miles, default 25
+zip?:       string               // optional — omit for a nationwide search
+radius?:    number               // miles, default 25 (only applied when zip is present)
 page?:      number               // default 1
-limit?:     number               // default 20, max 50
+limit?:     number               // default 12, max 50
 breed?:     string
 ageGroup?:  string
 sizeGroup?: string
 shelter?:   string
 sort?:      "distance" | "best_match"
 ```
+
+`total` (from RescueGroups `meta.count`) is returned so the UI can show how many
+dogs are available; pagination is lazy (one provider call per page) — see RG client.
 
 **Anonymous response**:
 ```json
@@ -308,31 +311,36 @@ sort?:      "distance" | "best_match"
     "teaser": "Create a profile to unlock compatibility matching."
   },
   "page": 1,
-  "hasMore": true
+  "hasMore": true,
+  "total": 33084
 }
 ```
 
-**Profiled response**:
+**Profiled response** — `compatibility.available` is `true` at the top level, and
+each result carries its full `CompatibilityResult`:
 ```json
 {
   "results": [
     {
       "dog": {},
       "compatibility": {
-        "available": true,
-        "score": 91,
+        "compatibilityScore": 91,
         "matchLabel": "Strong Match",
         "confidenceLabel": "High",
         "positiveFactors": ["Good with cats", "Moderate energy"]
       }
     }
   ],
+  "compatibility": { "available": true },
   "page": 1,
-  "hasMore": true
+  "hasMore": true,
+  "total": 33084
 }
 ```
 
-Default sort: `best_match` for profiled users, `distance` for anonymous.
+Default sort: `best_match` for profiled users (Compatibility → Confidence → Distance),
+`distance` for anonymous. The client adapts each result into DogCard's compatibility
+union via `toCardCompatibility`.
 
 ---
 

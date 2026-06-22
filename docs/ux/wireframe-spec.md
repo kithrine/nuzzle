@@ -106,9 +106,11 @@ Avoid:
 
 **Goal**: Allow browsing while encouraging profile creation.
 
+**Scope**: Nationwide by default — dogs load on page open with **no zip required**. ZIP/Radius is an optional filter to narrow by distance. 12 per page, lazy pagination (cached pages).
+
 **Layout order**:
 
-1. Search controls (Zip Code, Radius, Filters, Sort)
+1. Search controls (ZIP — optional, Radius, Filters, Sort)
 2. Results count (e.g., "247 Dogs Found")
 3. Dog cards (see below)
 4. Pagination (Previous / Next)
@@ -262,7 +264,11 @@ Avoid:
 
 **Header**: "Your Best Matches"
 
-**Summary line**: "Profile Complete · [N] Strong Matches Found"
+**Summary line**: "Ranked by your compatibility profile · [N] dogs available" (the count is RescueGroups' total available dogs — a true count of *strong* matches would require fetching/scoring every page, which we avoid to respect API rate limits).
+
+**Scope**: Nationwide by default (no location filter required); a zip/radius is an optional filter.
+
+**Pagination**: 12 dogs per page, lazy — the next page only calls the provider when the user advances; previously-fetched pages are cached so paging back doesn't re-hit the API.
 
 **Content**: Same dog card structure as Screen 3 (Authenticated Search Results), sorted by compatibility desc → confidence desc → distance asc.
 

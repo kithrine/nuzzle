@@ -33,7 +33,7 @@ export default function LoginPage() {
           <span className="text-3xl font-bold text-primary">Nuzzle</span>
         </div>
         <p className="text-text-primary font-medium mt-1 mb-6">Better matches. Happier tails.</p>
-        <SignIn appearance={appearance} />
+        <SignIn appearance={appearance} fallbackRedirectUrl="/search" signUpUrl="/signup" />
       </div>
     </main>
   );

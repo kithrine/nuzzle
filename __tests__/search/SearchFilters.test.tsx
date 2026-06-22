@@ -66,6 +66,17 @@ describe("SearchFilters", () => {
     );
   });
 
+  it("ZIP is optional — no required attribute, form submits nationwide with empty zip", () => {
+    const onSubmit = vi.fn();
+    render(<SearchFilters defaultValues={DEFAULT_VALUES} onSubmit={onSubmit} />);
+
+    expect(screen.getByLabelText(/zip/i)).not.toHaveAttribute("required");
+
+    fireEvent.click(screen.getByRole("button", { name: /search/i }));
+
+    expect(onSubmit).toHaveBeenCalledWith(expect.objectContaining({ zip: "" }));
+  });
+
   it("optional filters are not required — form submits successfully with only zip", () => {
     const onSubmit = vi.fn();
     render(

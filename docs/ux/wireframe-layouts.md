@@ -506,8 +506,8 @@ Distance Preference
 │  Your Best Matches                  │
 └─────────────────────────────────────┘
 
-Profile Complete
-12 Strong Matches Found
+Ranked by your compatibility profile
+33,084 dogs available   (nationwide; 12 per page)
 
 ───────────────────────────────────────
 

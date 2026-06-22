@@ -5,40 +5,41 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useUser } from "@clerk/nextjs";
-import type { NormalizedDog } from "@/lib/compatibility/types";
+import type { NormalizedDog, CompatibilityResult } from "@/lib/compatibility/types";
+import { toCardCompatibility, type CardCompatibility } from "@/lib/search/card-compatibility";
 import { SearchFilters, type FilterValues } from "@/components/SearchFilters";
 import { SearchResults } from "@/components/SearchResults";
 
-type AnonymousCompatibility = { available: false; teaser: string };
-type SearchResult = { dog: NormalizedDog; compatibility: AnonymousCompatibility };
+type SearchResult = { dog: NormalizedDog; compatibility: CardCompatibility };
+
+type PageData = { results: SearchResult[]; hasMore: boolean; total: number };
 
 type SearchState =
   | { status: "idle" }
   | { status: "loading" }
   | { status: "error" }
-  | { status: "success"; results: SearchResult[]; zip: string; page: number; hasMore: boolean };
+  | ({ status: "success"; page: number; zip: string } & PageData);
 
-function buildApiUrl(filters: FilterValues & { page: number }): string {
-  const params = new URLSearchParams({
-    zip: filters.zip,
-    radius: filters.radius,
-    page: String(filters.page),
-  });
+const DEFAULT_TEASER = "Create a profile to unlock compatibility matching.";
+
+function buildApiUrl(filters: FilterValues, page: number): string {
+  const params = new URLSearchParams({ page: String(page), limit: "12" });
+  if (filters.zip) params.set("zip", filters.zip);
+  if (filters.zip && filters.radius) params.set("radius", filters.radius);
   if (filters.breed) params.set("breed", filters.breed);
   if (filters.ageGroup) params.set("ageGroup", filters.ageGroup);
   if (filters.sizeGroup) params.set("sizeGroup", filters.sizeGroup);
   return `/api/dogs/search?${params}`;
 }
 
-function buildPageUrl(filters: FilterValues & { page: number }): string {
-  const params = new URLSearchParams({
-    zip: filters.zip,
-    radius: filters.radius,
-    page: String(filters.page),
-  });
+function buildPageUrl(filters: FilterValues, page: number, source: string | null): string {
+  const params = new URLSearchParams({ page: String(page) });
+  if (filters.zip) params.set("zip", filters.zip);
+  if (filters.zip && filters.radius) params.set("radius", filters.radius);
   if (filters.breed) params.set("breed", filters.breed);
   if (filters.ageGroup) params.set("ageGroup", filters.ageGroup);
   if (filters.sizeGroup) params.set("sizeGroup", filters.sizeGroup);
+  if (source) params.set("source", source);
   return `/search?${params}`;
 }
 
@@ -46,6 +47,8 @@ export function SearchPageClient() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const { isSignedIn } = useUser();
+
+  const source = searchParams.get("source");
 
   const initialFilters: FilterValues = {
     zip: searchParams.get("zip") ?? "",
@@ -58,39 +61,63 @@ export function SearchPageClient() {
 
   const [state, setState] = useState<SearchState>({ status: "idle" });
   const [favoriteIds, setFavoriteIds] = useState<Set<string>>(new Set());
-  const didAutoSearch = useRef(false);
+  // Cache fetched pages so paging back doesn't re-hit RescueGroups (rate limits).
+  const cacheRef = useRef<Map<number, PageData>>(new Map());
+  const activeFilters = useRef<FilterValues>(initialFilters);
 
-  async function runSearch(filters: FilterValues, page: number) {
+  async function loadPage(filters: FilterValues, page: number) {
+    activeFilters.current = filters;
+
+    const cached = cacheRef.current.get(page);
+    if (cached) {
+      setState({ status: "success", page, zip: filters.zip, ...cached });
+      return;
+    }
+
     setState({ status: "loading" });
     try {
-      const res = await fetch(buildApiUrl({ ...filters, page }));
+      const res = await fetch(buildApiUrl(filters, page));
       if (!res.ok) {
         setState({ status: "error" });
         return;
       }
       const body = await res.json();
-      setState({
-        status: "success",
-        results: body.results ?? [],
-        zip: filters.zip,
-        page,
+      const available: boolean = body.compatibility?.available ?? false;
+      const teaser: string = body.compatibility?.teaser ?? DEFAULT_TEASER;
+      const results: SearchResult[] = (body.results ?? []).map(
+        (r: { dog: NormalizedDog; compatibility?: CompatibilityResult }) => ({
+          dog: r.dog,
+          compatibility: toCardCompatibility(r.compatibility, available, teaser),
+        }),
+      );
+      const data: PageData = {
+        results,
         hasMore: body.hasMore ?? false,
-      });
+        total: body.total ?? results.length,
+      };
+      cacheRef.current.set(page, data);
+      setState({ status: "success", page, zip: filters.zip, ...data });
     } catch {
       setState({ status: "error" });
     }
   }
 
-  // Auto-search on mount when URL already has a zip (refresh / direct link)
+  function goToPage(page: number) {
+    const filters = activeFilters.current;
+    router.push(buildPageUrl(filters, page, source));
+    loadPage(filters, page);
+  }
+
+  // Everyone gets dogs on load — nationwide when there's no zip, zip-filtered
+  // when the URL carries one. One provider call per page (rate-limit friendly).
+  // The server scores results from the session, so this works for anonymous
+  // and profiled users alike.
   useEffect(() => {
-    if (initialFilters.zip && !didAutoSearch.current) {
-      didAutoSearch.current = true;
-      runSearch(initialFilters, initialPage);
-    }
+    loadPage(initialFilters, initialPage);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Fetch favorites once for authenticated users to show correct initial heart state
+  // Fetch favorites once for authenticated users to show correct heart state.
   useEffect(() => {
     if (!isSignedIn) return;
     fetch("/api/favorites")
@@ -102,38 +129,24 @@ export function SearchPageClient() {
   }, [isSignedIn]);
 
   function handleSubmit(filters: FilterValues) {
-    router.push(buildPageUrl({ ...filters, page: 1 }));
-    runSearch(filters, 1);
-  }
-
-  function handleNextPage() {
-    if (state.status !== "success") return;
-    const filters: FilterValues = {
-      zip: state.zip,
-      radius: initialFilters.radius,
-      breed: initialFilters.breed,
-      ageGroup: initialFilters.ageGroup,
-      sizeGroup: initialFilters.sizeGroup,
-    };
-    const nextPage = state.page + 1;
-    router.push(buildPageUrl({ ...filters, page: nextPage }));
-    runSearch(filters, nextPage);
+    cacheRef.current.clear();
+    router.push(buildPageUrl(filters, 1, source));
+    loadPage(filters, 1);
   }
 
   // Heading + subline vary by source (post-questionnaire) and auth state.
-  const source = searchParams.get("source");
-  const resultCount = state.status === "success" ? state.results.length : 0;
+  const total = state.status === "success" ? state.total : 0;
 
   let heading = "Browse Dogs";
   let subline: React.ReactNode =
     "Browse adoptable dogs and find one that fits your lifestyle.";
 
-  if (source === "questionnaire") {
-    heading = "Your Best Matches";
-    subline = `Profile Complete · ${resultCount} Strong Matches Found`;
-  } else if (isSignedIn) {
-    heading = "Best Matches For You";
-    subline = "Based on your profile and what matters most to you.";
+  if (source === "questionnaire" || isSignedIn) {
+    heading = source === "questionnaire" ? "Your Best Matches" : "Best Matches For You";
+    subline =
+      state.status === "success"
+        ? `Ranked by your compatibility profile · ${total.toLocaleString()} dogs available`
+        : "Ranked by your compatibility profile.";
   } else {
     subline = (
       <>
@@ -161,9 +174,7 @@ export function SearchPageClient() {
         <div className="absolute inset-0 bg-gradient-to-r from-white/40 via-white/15 to-transparent" />
         <div className="relative z-10 max-w-7xl mx-auto h-full px-4 md:px-6 flex flex-col justify-center">
           <h1 className="text-3xl md:text-4xl font-bold text-text-primary">{heading}</h1>
-          <p className="mt-1 text-text-primary text-sm md:text-base max-w-md">
-            {subline}
-          </p>
+          <p className="mt-1 text-text-primary text-sm md:text-base max-w-md">{subline}</p>
         </div>
       </section>
 
@@ -192,12 +203,20 @@ export function SearchPageClient() {
               zip={state.zip}
               favoriteIds={favoriteIds}
             />
-            {state.hasMore && (
+            {(state.page > 1 || state.hasMore) && (
               <div className="flex items-center justify-center gap-4 mt-8">
+                <button
+                  onClick={() => goToPage(state.page - 1)}
+                  disabled={state.page <= 1}
+                  className="bg-surface border border-border rounded-button-inline px-4 py-2 text-sm font-medium text-text-primary hover:bg-primary-light transition-colors disabled:opacity-40 disabled:hover:bg-surface"
+                >
+                  Previous
+                </button>
                 <span className="text-text-secondary text-sm">Page {state.page}</span>
                 <button
-                  onClick={handleNextPage}
-                  className="bg-surface border border-border rounded-button-inline px-4 py-2 text-sm font-medium text-text-primary hover:bg-primary-light transition-colors"
+                  onClick={() => goToPage(state.page + 1)}
+                  disabled={!state.hasMore}
+                  className="bg-surface border border-border rounded-button-inline px-4 py-2 text-sm font-medium text-text-primary hover:bg-primary-light transition-colors disabled:opacity-40 disabled:hover:bg-surface"
                 >
                   Next Page
                 </button>

@@ -1,8 +1,9 @@
 "use client";
 
 import type { Dispatch, ReactNode, SetStateAction } from "react";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import { useUser } from "@clerk/nextjs";
 import Link from "next/link";
 import {
   Building2,
@@ -34,6 +35,11 @@ import {
   MapPin,
 } from "lucide-react";
 import { DashboardSidebar } from "@/components/DashboardSidebar";
+import {
+  savePendingProfile,
+  loadPendingProfile,
+  clearPendingProfile,
+} from "@/lib/questionnaire/pending-profile";
 
 export type EditProfileData = {
   homeType: string;
@@ -82,9 +88,12 @@ export function QuestionnaireClient({
   firstName?: string;
 } = {}) {
   const router = useRouter();
+  const { isSignedIn, isLoaded } = useUser();
   const [step, setStep] = useState<UIPhase>(0);
   const [p2step, setP2step] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
+  const [resuming, setResuming] = useState(false);
+  const resumedRef = useRef(false);
   const [errorMsg, setErrorMsg] = useState("");
 
   const [p1, setP1] = useState<Phase1Answers>({
@@ -106,14 +115,71 @@ export function QuestionnaireClient({
   });
   const [specialNeedsChoice, setSpecialNeedsChoice] = useState<"" | "Yes" | "No" | "Open">("");
 
+  // Questionnaire-first flow: a user who answered while anonymous, then created
+  // an account, returns here signed-in with their answers in localStorage.
+  // Create the profile from those answers and send them straight to matches.
+  useEffect(() => {
+    if (initialProfile) return;
+    if (!isLoaded || !isSignedIn || resumedRef.current) return;
+    const pending = loadPendingProfile();
+    if (!pending) return;
+    resumedRef.current = true;
+    setResuming(true);
+    (async () => {
+      try {
+        const res = await fetch("/api/profile", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(pending),
+        });
+        clearPendingProfile();
+        if (res.ok) {
+          router.replace("/search?source=questionnaire");
+          return;
+        }
+      } catch {
+        // fall through to the normal questionnaire below
+      }
+      setResuming(false);
+    })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isLoaded, isSignedIn, initialProfile]);
+
   // Authenticated user with an existing profile → edit mode (Screen 11).
   if (initialProfile) {
     return <EditProfileView initialProfile={initialProfile} firstName={firstName} />;
   }
 
+  if (resuming) {
+    return (
+      <Shell>
+        <div className="bg-surface rounded-card shadow-sm p-8 text-center w-full max-w-md mx-auto">
+          <h1 className="text-2xl font-bold text-text-primary">Setting up your matches…</h1>
+          <p className="text-text-secondary text-sm mt-2">
+            Creating your profile from your answers.
+          </p>
+        </div>
+      </Shell>
+    );
+  }
+
   const skipToBrowse = () => router.push("/search");
 
   async function submitPhase1() {
+    // Anonymous: stash the answers and send them to create an account first.
+    if (!isSignedIn) {
+      savePendingProfile({
+        homeType: p1.homeType as string,
+        hasChildren: p1.hasChildren as boolean,
+        hasCats: p1.hasCats as boolean,
+        hasOtherDogs: p1.hasOtherDogs as boolean,
+        activityLevel: p1.activityLevel as string,
+        experienceLevel: p1.experienceLevel as string,
+      });
+      router.push("/signup");
+      return;
+    }
+
     setIsLoading(true);
     setErrorMsg("");
     try {

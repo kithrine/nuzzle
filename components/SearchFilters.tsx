@@ -53,8 +53,7 @@ export function SearchFilters({
             type="text"
             value={values.zip}
             onChange={(e) => set("zip", e.target.value)}
-            placeholder="Enter ZIP code"
-            required
+            placeholder="ZIP (optional) — filter by distance"
             className={`${inputClasses} w-full pl-9`}
           />
         </div>
