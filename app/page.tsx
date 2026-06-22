@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Sparkles, MessageCircleHeart, ShieldCheck, PawPrint, Heart } from "lucide-react";
 import { FeaturedDogs } from "@/components/FeaturedDogs";
+import { Reveal } from "@/components/Reveal";
 
 // ─── Icons ────────────────────────────────────────────────────────────────────
 
@@ -62,7 +63,7 @@ export default function Home() {
             src="/images/homepage-hero.png"
             alt=""
             fill
-            className="object-cover object-hero"
+            className="object-cover object-hero hero-parallax"
             priority
             aria-hidden="true"
           />
@@ -101,6 +102,7 @@ export default function Home() {
 
       {/* ── Value Propositions ───────────────────────────────────────── */}
       <section className="bg-surface py-5 px-4">
+        <Reveal>
         <div className="max-w-5xl mx-auto bg-surface rounded-2xl border border-border shadow-sm flex flex-col sm:flex-row items-center">
           <ValueProp
             icon={<Sparkles size={22} />}
@@ -120,10 +122,12 @@ export default function Home() {
             desc="Stronger matches lead to happier, lasting adoptions."
           />
         </div>
+        </Reveal>
       </section>
 
       {/* ── How It Works ─────────────────────────────────────────────── */}
       <section className="bg-surface py-14 px-6">
+        <Reveal>
         <div className="max-w-5xl mx-auto">
           <h2 className="text-2xl font-bold text-text-primary text-center mb-12">
             How It Works
@@ -214,10 +218,12 @@ export default function Home() {
 
           </div>
         </div>
+        </Reveal>
       </section>
 
       {/* ── Featured Dogs ─────────────────────────────────────────────── */}
       <section className="bg-background py-12">
+        <Reveal>
         <div className="max-w-5xl mx-auto px-6 mb-6 flex items-center justify-between">
           <h2 className="text-xl font-bold text-text-primary">Featured Dogs</h2>
           <Link href="/search" className="text-primary text-sm font-medium hover:underline">
@@ -243,10 +249,12 @@ export default function Home() {
             ›
           </button>
         </div>
+        </Reveal>
       </section>
 
       {/* ── Profile Prompt Banner ─────────────────────────────────────── */}
       <section className="bg-surface pt-20 px-4 md:px-6 pb-12">
+        <Reveal>
         <div className="relative bg-primary-light rounded-card max-w-5xl mx-auto overflow-visible">
 
           {/* Husky + plants: bigger, anchored bottom-left, overflows top + bottom + left */}
@@ -285,6 +293,7 @@ export default function Home() {
           </div>
 
         </div>
+        </Reveal>
       </section>
 
     </main>

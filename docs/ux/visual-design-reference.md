@@ -582,6 +582,13 @@ Subtle motion makes the app feel responsive and alive. **All motion is gated beh
 - **`.hover-lift`** — cards: a larger lift (`translateY(-3px)`) + shadow on hover. Applied to the dog cards (browse/match), featured cards, and saved-dog cards.
 - Both are additive to existing `hover:opacity`/`hover:bg` styles; they don't change behavior.
 
+### Scroll reveals (homepage)
+- The `Reveal` component (`components/Reveal.tsx`, IntersectionObserver) wraps each homepage section (value props, how it works, featured dogs, profile banner). Sections **fade + slide in when scrolled into view and fade back out when scrolled away** — both directions, since the observer fires on enter and exit. Classes: `.reveal` (hidden) / `.reveal-in` (shown).
+- Degrades gracefully: under `prefers-reduced-motion`, or where IntersectionObserver is unavailable, content shows immediately.
+
+### Hero parallax (homepage)
+- The homepage hero background image drifts subtly as the page scrolls (`.hero-parallax`, CSS scroll-driven `animation-timeline: scroll()`). Progressive enhancement — browsers without scroll-driven-animation support render it static; disabled under reduced motion. A baseline `scale(1.08)` keeps the frame covered through the drift.
+
 ---
 
 ## Botanical Design Theme

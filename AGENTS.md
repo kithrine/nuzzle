@@ -222,6 +222,8 @@ RULES.md                        ← Hard rules all agents must follow
 | Sort order (anonymous) | Distance |
 | Confidence display | Human labels (High/Medium/Low) not raw numbers on cards |
 | Match display on card | Label + percentage + confidence label + 2–3 match reasons |
+| Brand logo | Image asset `public/images/logo.png` (also the favicon via `app/icon.png`), shown beside the "Nuzzle" wordmark |
+| Motion | Hover micro-interactions (`.hover-press`/`.hover-lift`) site-wide + homepage scroll reveals (`Reveal`, both directions) + subtle hero parallax — all `prefers-reduced-motion` safe |
 | V2 features | Documented separately; do not build in V1 |
 
 ---
