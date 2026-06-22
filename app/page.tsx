@@ -4,6 +4,11 @@ import Image from "next/image";
 import Link from "next/link";
 import { Sparkles, MessageCircleHeart, ShieldCheck, PawPrint, Heart } from "lucide-react";
 import { FeaturedDogs } from "@/components/FeaturedDogs";
+import { FeaturedCarousel } from "@/components/FeaturedCarousel";
+
+// Regenerate the homepage every 5 hours so Featured Dogs rotates on that
+// cadence (one RescueGroups call per window) rather than on every request.
+export const revalidate = 18000;
 
 // ─── Icons ────────────────────────────────────────────────────────────────────
 
@@ -20,7 +25,7 @@ function HeartIcon() {
 function FeaturedDogsSkeleton() {
   return (
     <div className="flex gap-4 w-max">
-      {Array.from({ length: 5 }).map((_, i) => (
+      {Array.from({ length: 8 }).map((_, i) => (
         <div
           key={i}
           className="bg-surface rounded-card shadow-sm flex-shrink-0 w-48 overflow-hidden"

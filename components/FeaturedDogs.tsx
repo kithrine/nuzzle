@@ -4,28 +4,31 @@ import { normalizeRescueGroupsDog } from "@/lib/compatibility/normalize";
 import { formatAgeGroup } from "@/lib/compatibility/display";
 import type { NormalizedDog } from "@/lib/compatibility/types";
 import { DogImage } from "@/components/DogImage";
+import { featuredWindowSeed, pickFeatured } from "@/lib/homepage/featured";
 
-// A default location is used purely to surface a few real, adoptable dogs on
-// the marketing homepage. Each card links to that dog's real detail page.
-const FEATURED_ZIP = "10001";
+// Featured Dogs surfaces 8 real, adoptable dogs nationwide that rotate every
+// ~5 hours. The homepage is regenerated on that cadence (ISR `revalidate` in
+// app/page.tsx), so this makes ~one RescueGroups call per window. The seed
+// both varies the page we fetch and shuffles the picks, so the set changes
+// each window. Each card links to that dog's real detail page.
+const FEATURED_POOL_PAGES = 8;
+const FEATURED_COUNT = 8;
 
 export async function FeaturedDogs() {
+  const seed = featuredWindowSeed(Date.now());
+
   let dogs: NormalizedDog[] = [];
   try {
     const { dogs: raw } = await searchRescueGroupsDogs({
-      zip: FEATURED_ZIP,
-      radius: 100,
-      page: 1,
-      limit: 6,
+      page: (seed % FEATURED_POOL_PAGES) + 1,
+      limit: 40,
     });
     dogs = raw.map(({ id, raw: rawDog }) => normalizeRescueGroupsDog(rawDog, id, null));
   } catch {
     dogs = [];
   }
 
-  // Prefer dogs that have a photo, but fall back to whatever we have.
-  const withPhotos = dogs.filter((d) => d.photos[0]);
-  const featured = (withPhotos.length > 0 ? withPhotos : dogs).slice(0, 5);
+  const featured = pickFeatured(dogs, seed, FEATURED_COUNT);
 
   if (featured.length === 0) {
     return (

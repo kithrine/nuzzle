@@ -125,14 +125,15 @@ Values are inferred from mockup analysis. Confirm exact hex values against rende
   3. Fewer Returns
 
 ### Featured Dogs Section
-- Heading "Featured Dogs" with carousel navigation arrows (< >)
-- Horizontal scrollable row of dog cards, each showing:
-  - Square dog photo
-  - Compatibility percentage badge (top-right overlay, e.g., "91%")
+- Heading "Featured Dogs" + "View All →" link to `/search`
+- **8 real, adoptable dogs drawn nationwide** (live RescueGroups data), shown in a horizontal scrollable row. Each card shows:
+  - Dog photo (`DogImage`, face never cropped)
   - Dog name bold
-  - Breed, age, size in secondary text
-  - "View Details" link
-- Dogs shown: Charlie, Bella, Luna, Milo, Daisy (example names)
+  - Breed · age in secondary text
+  - "View Details" link → that dog's real detail page
+  - (No compatibility percentage — the homepage is anonymous/marketing context.)
+- **Functional carousel arrows** (`< >`) flank the row and scroll it left/right (`FeaturedCarousel` client wrapper owns the scroll ref).
+- **Rotation:** the featured set rotates every ~5 hours. A time-window seed (`featuredWindowSeed`) both varies which page is fetched and shuffles the picks (`pickFeatured`); the homepage uses ISR (`revalidate = 18000`) so it regenerates on that cadence with ~one RescueGroups call per window. The same 8 dogs are shown to everyone within a window.
 
 ### Profile Prompt Banner
 - Teal background banner below featured dogs
@@ -624,7 +625,7 @@ The mockups for Screens 1–5, 9–11 represent **desktop layouts** (~1200–144
 ### Screen 1 — Homepage
 - **Hero**: Desktop splits headline/CTAs (left) + dog photo (right). Mobile: Stack vertically — headline → CTAs → dog photo below; photo becomes full-width below the buttons.
 - **How It Works**: Desktop 3-column row. Mobile: Stack into a single column (1, 2, 3 vertically).
-- **Featured Dogs**: Desktop horizontal carousel. Mobile: Full-width single-card view with swipe or scroll.
+- **Featured Dogs**: Desktop horizontal carousel with working `< >` arrows. Mobile: horizontal scroll/swipe (arrows still present).
 - **Profile Prompt Banner**: Full-width at all breakpoints.
 
 ### Screen 2 — Browse Anonymous
