@@ -7,6 +7,11 @@ import { prisma } from "@/lib/db/prisma";
 import { calculateCompatibility } from "@/lib/compatibility/engine";
 import type { AdopterProfile, CompatibilityResult, NormalizedDog } from "@/lib/compatibility/types";
 
+// Results depend on the signed-in user's profile, so this response must never be
+// cached or shared across sessions — otherwise a guest can be served a logged-in
+// user's scored results, or a profile's scores stay stale after an edit.
+export const dynamic = "force-dynamic";
+
 type SearchResult = { dog: NormalizedDog; compatibility?: CompatibilityResult };
 
 export async function GET(req: NextRequest) {
@@ -89,7 +94,7 @@ export async function GET(req: NextRequest) {
       page,
       hasMore,
       total,
-    });
+    }, { headers: { "Cache-Control": "no-store" } });
   } catch (err) {
     if (err instanceof RateLimitError) {
       return NextResponse.json(
