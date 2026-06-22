@@ -15,6 +15,10 @@ const FEATURED_POOL_PAGES = 8;
 const FEATURED_COUNT = 8;
 
 export async function FeaturedDogs() {
+  // Server component: reading the wall clock is intentional — it selects the
+  // current 5-hour rotation window. The page is ISR-regenerated on that cadence
+  // (revalidate in app/page.tsx), so this isn't a per-render instability.
+  // eslint-disable-next-line react-hooks/purity
   const seed = featuredWindowSeed(Date.now());
 
   let dogs: NormalizedDog[] = [];

@@ -10,16 +10,6 @@ import { FeaturedCarousel } from "@/components/FeaturedCarousel";
 // cadence (one RescueGroups call per window) rather than on every request.
 export const revalidate = 18000;
 
-// ─── Icons ────────────────────────────────────────────────────────────────────
-
-function HeartIcon() {
-  return (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-      <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
-    </svg>
-  );
-}
-
 // ─── Sub-components ───────────────────────────────────────────────────────────
 
 function FeaturedDogsSkeleton() {
@@ -229,25 +219,11 @@ export default function Home() {
             View All →
           </Link>
         </div>
-        <div className="max-w-5xl mx-auto px-4 flex items-center gap-2">
-          <button
-            className="flex-shrink-0 w-8 h-8 rounded-full bg-surface border border-border flex items-center justify-center text-text-secondary hover:text-text-primary shadow-sm text-xl leading-none"
-            aria-label="Scroll left"
-          >
-            ‹
-          </button>
-          <div className="overflow-x-auto pb-2 flex-1">
-            <Suspense fallback={<FeaturedDogsSkeleton />}>
-              <FeaturedDogs />
-            </Suspense>
-          </div>
-          <button
-            className="flex-shrink-0 w-8 h-8 rounded-full bg-surface border border-border flex items-center justify-center text-text-secondary hover:text-text-primary shadow-sm text-xl leading-none"
-            aria-label="Scroll right"
-          >
-            ›
-          </button>
-        </div>
+        <FeaturedCarousel>
+          <Suspense fallback={<FeaturedDogsSkeleton />}>
+            <FeaturedDogs />
+          </Suspense>
+        </FeaturedCarousel>
       </section>
 
       {/* ── Profile Prompt Banner ─────────────────────────────────────── */}
