@@ -7,6 +7,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useUser } from "@clerk/nextjs";
 import type { NormalizedDog, CompatibilityResult } from "@/lib/compatibility/types";
 import { toCardCompatibility, type CardCompatibility } from "@/lib/search/card-compatibility";
+import { formatDogCount } from "@/lib/compatibility/display";
 import { SearchFilters, type FilterValues } from "@/components/SearchFilters";
 import { SearchResults } from "@/components/SearchResults";
 import { ActiveFilters } from "@/components/ActiveFilters";
@@ -189,12 +190,12 @@ export function SearchPageClient() {
       // A ZIP switches ordering to nearest-first (scores still shown).
       subline =
         state.status === "success"
-          ? `Nearest first · ${total.toLocaleString()} dogs within ${appliedFilters.radius} mi of ${appliedFilters.zip}`
+          ? `Nearest first · ${formatDogCount(total)} within ${appliedFilters.radius} mi of ${appliedFilters.zip}`
           : "Sorted by distance from your ZIP.";
     } else {
       subline =
         state.status === "success"
-          ? `Ranked by your compatibility profile · ${total.toLocaleString()} dogs available`
+          ? `Ranked by your compatibility profile · ${formatDogCount(total)} available`
           : "Ranked by your compatibility profile.";
     }
   } else {
