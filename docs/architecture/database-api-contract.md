@@ -306,8 +306,22 @@ shelter?:   string
 sort?:      "distance" | "best_match"
 ```
 
-`total` (from RescueGroups `meta.count`) is returned so the UI can show how many
-dogs are available; pagination is lazy (one provider call per page) — see RG client.
+**Two modes:**
+- **`best_match`** (profiled, no zip): the route ranks a **large candidate pool**
+  via `getCandidatePool` ([lib/search/candidate-pool.ts](../../lib/search/candidate-pool.ts)) —
+  up to `CANDIDATE_POOL_SIZE` (500) dogs walked across RescueGroups pages, deduped,
+  cached ~1h with `unstable_cache`. The pool is **user-independent** (dogs only) and
+  shared across users; the route then scores the *whole pool* against the requesting
+  user's **live** profile, sorts, and paginates the ranked list. So two different
+  profiles surface different top dogs (not the same first page re-scored), and editing
+  a profile re-ranks immediately. Here `total` = the number of ranked candidates
+  (pool size) and pagination walks the ranked pool.
+- **`distance`** (anonymous, zip search, or `sort=distance`): lazy single-page browse
+  (one provider call per page), nearest-first. Here `total` is the catalog count
+  (RescueGroups `meta.count`).
+
+The response is always `Cache-Control: no-store` (+ route `dynamic = "force-dynamic"`):
+it carries per-user scores and must never be cached or shared across sessions.
 
 `breed`/`ageGroup`/`sizeGroup` narrow the result set for **both anonymous and
 profiled users** (sent to RescueGroups as `data.filters`). Profiled results stay
@@ -346,15 +360,15 @@ each result carries its full `CompatibilityResult`:
   "compatibility": { "available": true },
   "page": 1,
   "hasMore": true,
-  "total": 33084
+  "total": 500
 }
 ```
 
-Sort: `best_match` for profiled users **without** a zip (Compatibility → Confidence →
-Distance); **`distance` (nearest first, compatibility breaks ties) when a zip is set**;
-`distance` for anonymous. Profiled users are scored regardless of sort, so match
-badges show in either order. The client adapts each result into DogCard's
-compatibility union via `toCardCompatibility`.
+Sort comparators: `best_match` = Compatibility → Confidence → Distance, applied
+across the **whole candidate pool** (not just one page); `distance` = nearest first,
+compatibility breaks ties, applied within the page. Profiled users are scored
+regardless of sort, so match badges show in either order. The client adapts each
+result into DogCard's compatibility union via `toCardCompatibility`.
 
 ---
 

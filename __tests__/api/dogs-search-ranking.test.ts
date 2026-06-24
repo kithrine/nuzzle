@@ -6,6 +6,7 @@ import type { NormalizedDog, CompatibilityResult } from "@/lib/compatibility/typ
 
 // All vi.mock calls are hoisted — must appear before route import.
 vi.mock("@/lib/rescuegroups/client");
+vi.mock("@/lib/search/candidate-pool");
 vi.mock("@/lib/compatibility/normalize");
 vi.mock("@/lib/compatibility/engine");
 vi.mock("@/lib/auth/get-or-create-user");
@@ -14,6 +15,7 @@ vi.mock("@/lib/db/prisma", () => ({
 }));
 
 import { searchRescueGroupsDogs } from "@/lib/rescuegroups/client";
+import { getCandidatePool } from "@/lib/search/candidate-pool";
 import { normalizeRescueGroupsDog } from "@/lib/compatibility/normalize";
 import { calculateCompatibility } from "@/lib/compatibility/engine";
 import { getOrCreateUser } from "@/lib/auth/get-or-create-user";
@@ -21,6 +23,7 @@ import { prisma } from "@/lib/db/prisma";
 import { GET } from "@/app/api/dogs/search/route";
 
 const mockSearch = vi.mocked(searchRescueGroupsDogs);
+const mockGetPool = vi.mocked(getCandidatePool);
 const mockNormalize = vi.mocked(normalizeRescueGroupsDog);
 const mockCalculate = vi.mocked(calculateCompatibility);
 const mockGetOrCreateUser = vi.mocked(getOrCreateUser);
@@ -101,6 +104,10 @@ const BASE_COMPAT: CompatibilityResult = {
   shelterQuestions: [],
 };
 
+function dog(name: string, over: Partial<NormalizedDog> = {}): NormalizedDog {
+  return { ...BASE_DOG, name, externalId: name, ...over };
+}
+
 function makeRequest(qs: string) {
   return new NextRequest(`http://localhost/api/dogs/search${qs}`);
 }
@@ -108,18 +115,14 @@ function makeRequest(qs: string) {
 describe("GET /api/dogs/search — Ranking", () => {
   afterEach(() => vi.resetAllMocks());
 
+  // ── Best match (profiled, no zip) ranks the cached candidate pool ───────────
+
   it("RANK-001: higher compatibility score ranks first", async () => {
-    // mockSearch returns [DogB, DogA] — wrong order, ranking should fix it
-    mockSearch.mockResolvedValueOnce({
-      dogs: [
-        { id: "dog-b", raw: MOCK_RAW },
-        { id: "dog-a", raw: MOCK_RAW },
-      ],
-      hasMore: false,
+    // Pool comes back in the wrong order; ranking should fix it.
+    mockGetPool.mockResolvedValueOnce({
+      pool: [dog("Dog B", { distance: 20 }), dog("Dog A", { distance: 10 })],
+      total: 2,
     });
-    mockNormalize
-      .mockReturnValueOnce({ ...BASE_DOG, name: "Dog B", distance: 20 })
-      .mockReturnValueOnce({ ...BASE_DOG, name: "Dog A", distance: 10 });
     mockCalculate
       .mockReturnValueOnce({ ...BASE_COMPAT, compatibilityScore: 70 }) // Dog B
       .mockReturnValueOnce({ ...BASE_COMPAT, compatibilityScore: 90 }); // Dog A
@@ -136,16 +139,10 @@ describe("GET /api/dogs/search — Ranking", () => {
   });
 
   it("RANK-002: equal compatibility → higher confidence ranks first", async () => {
-    mockSearch.mockResolvedValueOnce({
-      dogs: [
-        { id: "dog-b", raw: MOCK_RAW },
-        { id: "dog-a", raw: MOCK_RAW },
-      ],
-      hasMore: false,
+    mockGetPool.mockResolvedValueOnce({
+      pool: [dog("Dog B"), dog("Dog A")],
+      total: 2,
     });
-    mockNormalize
-      .mockReturnValueOnce({ ...BASE_DOG, name: "Dog B" })
-      .mockReturnValueOnce({ ...BASE_DOG, name: "Dog A" });
     mockCalculate
       .mockReturnValueOnce({ ...BASE_COMPAT, compatibilityScore: 80, confidenceScore: 70 }) // Dog B
       .mockReturnValueOnce({ ...BASE_COMPAT, compatibilityScore: 80, confidenceScore: 90 }); // Dog A
@@ -160,16 +157,10 @@ describe("GET /api/dogs/search — Ranking", () => {
   });
 
   it("RANK-003: equal compatibility and confidence → shorter distance ranks first", async () => {
-    mockSearch.mockResolvedValueOnce({
-      dogs: [
-        { id: "dog-b", raw: MOCK_RAW },
-        { id: "dog-a", raw: MOCK_RAW },
-      ],
-      hasMore: false,
+    mockGetPool.mockResolvedValueOnce({
+      pool: [dog("Dog B", { distance: 30 }), dog("Dog A", { distance: 10 })],
+      total: 2,
     });
-    mockNormalize
-      .mockReturnValueOnce({ ...BASE_DOG, name: "Dog B", distance: 30 })
-      .mockReturnValueOnce({ ...BASE_DOG, name: "Dog A", distance: 10 });
     mockCalculate
       .mockReturnValueOnce({ ...BASE_COMPAT, compatibilityScore: 80, confidenceScore: 90 }) // Dog B
       .mockReturnValueOnce({ ...BASE_COMPAT, compatibilityScore: 80, confidenceScore: 90 }); // Dog A
@@ -182,6 +173,51 @@ describe("GET /api/dogs/search — Ranking", () => {
     expect(body.results[0].dog.name).toBe("Dog A");
     expect(body.results[1].dog.name).toBe("Dog B");
   });
+
+  it("RANK-005: best match ranks across the WHOLE pool, not just the first page", async () => {
+    // 30 candidates; the best match sits deep in the pool (index 25). A page-only
+    // ranking would never surface it — a pool-wide ranking must.
+    const pool = Array.from({ length: 30 }, (_, i) => dog(`Dog ${i}`));
+    mockGetPool.mockResolvedValueOnce({ pool, total: 30 });
+    mockCalculate.mockImplementation((_p, d) => ({
+      ...BASE_COMPAT,
+      compatibilityScore: d.name === "Dog 25" ? 99 : 50,
+    }));
+    mockGetOrCreateUser.mockResolvedValueOnce({ id: "u1" } as never);
+    mockFindUnique.mockResolvedValueOnce(MOCK_PROFILE as never);
+
+    const res = await GET(makeRequest(""));
+    const body = await res.json();
+
+    expect(body.results[0].dog.name).toBe("Dog 25");
+    expect(body.total).toBe(30);
+  });
+
+  it("RANK-006: two different profiles surface different top dogs from the same pool", async () => {
+    const pool = [dog("Dog X"), dog("Dog Y")];
+    mockGetPool.mockResolvedValue({ pool, total: 2 });
+    mockGetOrCreateUser.mockResolvedValue({ id: "u1" } as never);
+    mockFindUnique.mockResolvedValue(MOCK_PROFILE as never);
+
+    // Profile that favors Dog X.
+    mockCalculate.mockImplementation((_p, d) => ({
+      ...BASE_COMPAT,
+      compatibilityScore: d.name === "Dog X" ? 90 : 40,
+    }));
+    const bodyA = await (await GET(makeRequest(""))).json();
+
+    // Profile that favors Dog Y.
+    mockCalculate.mockImplementation((_p, d) => ({
+      ...BASE_COMPAT,
+      compatibilityScore: d.name === "Dog Y" ? 90 : 40,
+    }));
+    const bodyB = await (await GET(makeRequest(""))).json();
+
+    expect(bodyA.results[0].dog.name).toBe("Dog X");
+    expect(bodyB.results[0].dog.name).toBe("Dog Y");
+  });
+
+  // ── ZIP search stays nearest-first (single-page distance path) ──────────────
 
   it("RANK-004: ZIP set → nearest first (distance), even over higher compatibility; scores still shown", async () => {
     mockSearch.mockResolvedValueOnce({
@@ -206,7 +242,6 @@ describe("GET /api/dogs/search — Ranking", () => {
     expect(body.sort).toBe("distance");
     expect(body.results[0].dog.name).toBe("Dog Near"); // nearest first despite lower compatibility
     expect(body.results[1].dog.name).toBe("Dog Far");
-    // Profiled users still get their scores even when distance-sorted.
     expect(body.results[0].compatibility.compatibilityScore).toBe(60);
   });
 });
