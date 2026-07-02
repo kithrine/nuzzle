@@ -10,6 +10,7 @@ adoption decisions and reduce return rates.
 ### ▶️ Live app: **[www.nuzzledogadoption.us](https://www.nuzzledogadoption.us)**
 
 <!-- Tip: drop a screenshot of the live app here, e.g. ![Nuzzle home](docs/screenshot.png) -->
+![Nuzzle home](public/images/homepage-screenshot-readme.png)
 
 ---
 
